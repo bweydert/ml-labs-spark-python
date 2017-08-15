@@ -26,7 +26,7 @@ several ways to do this. One way is to run the script included here
 
 Labs
 ----
-1. Linear Regression Intro - [Jupyter Notebook](linear-regression/1-lm.ipynb)
+1. Linear Regression Intro - [Jupyter Notebook](linear-regression/1-lr.ipynb)
 1. Clustering Intro - [Jupyter Notebook](clustering/1-kmeans-mtcars.ipynb)
 
 
