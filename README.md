@@ -26,8 +26,10 @@ several ways to do this. One way is to run the script included here
 
 Labs
 ----
-1. Linear Regression Intro - [Jupyter Notebook](linear-regression/1-lr.ipynb)
-1. Clustering Intro - [Jupyter Notebook](clustering/1-kmeans-mtcars.ipynb)
+1.1. Linear Regression Intro - [Jupyter Notebook](linear-regression/1-lr.ipynb)
+1.2. Multiple Linear Regresssion: House Prices - [Jupyter Notebook](linear-regression/2-house-prices.ipynb)
+1.3. Multiple Linear Regresssion: AIC House Prices - [Jupyter Notebook](linear-regression/3-AIC-house-prices.ipynb)
+2.1. Clustering Intro - [Jupyter Notebook](clustering/1-kmeans-mtcars.ipynb)
 
 
 ## How to Run these labs:
