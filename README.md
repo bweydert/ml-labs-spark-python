@@ -32,6 +32,10 @@ Labs
  * 1.3. Multiple Linear Regresssion: AIC House Prices - [Jupyter Notebook](linear-regression/3-mlr-AIC-house-prices.ipynb)
  * 2.1. Logistic Regression Intro - [Jupyter Notebook](logistic-regression/1-credit-approval.ipynb)
  * 3.1. Clustering Intro - [Jupyter Notebook](clustering/1-kmeans-mtcars.ipynb)
+ * 3.2. Clustering: Walmart  - [Jupyter Notebook](clustering/1-kmeans-walmart.ipynb)
+ * 4.1. Dimensionality Reduction (PCA): Walmart  - [Jupyter Notebook](dim-reduction/1-pca-walmart.ipynb)
+ * 5.1. Text Mining (Naive Bayes): Spam SMS  - [Jupyter Notebook](text-mining/1-naive-bayes.ipynb)
+
 
 
 ## How to Run these labs:
