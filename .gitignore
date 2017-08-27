@@ -104,3 +104,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# IntelliJ (yes, some people do use that)
+.idea/
