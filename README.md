@@ -49,6 +49,7 @@ several ways to do this. One way is to run the script included here
 
  6. [Logistic Regression](logistic-regression/README.md)
     * 6.1. Logistic Regression Intro - [Jupyter Notebook](logistic-regression/1-credit-approval.ipynb)
+    * 6.2. Logistic Regression: College Admission - [Jupyter Notebook](logistic-regression/2-college-admission.ipynb)
 
  7. [Classification](classification/README.md)
     * 7.1. SVM: College Dataset - [Jupyter Notebook](classification/1-svm-college.ipynb)
