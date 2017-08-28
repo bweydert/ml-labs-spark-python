@@ -25,22 +25,22 @@ several ways to do this. One way is to run the script included here
 ## Labs
 
  1. [Python Analysis](python-analysis/README.md)
-    * 1.1 Numpy - [Jupyter Notebook](numpy.ipynb)
-    * 1.2 Pandas - [Jupyter Notebook](pandas.ipynb)
-    * 1.3 Exporing Pandas - [Jupyter Notebook](nycflights13.ipynb)
+    * 1.1 Numpy - [Jupyter Notebook](python-analysis/numpy.ipynb)
+    * 1.2 Pandas - [Jupyter Notebook](python-analysis/pandas.ipynb)
+    * 1.3 Exporing Pandas - [Jupyter Notebook](python-analysis/exploring-pandas.ipynb)
 
  2. [Exploration](exploration/README.md)
-    * 2.1 Data Cleanup - [Jupyter Notebook](data-cleanup.ipynb)
-    * 2.2 House Sales Exploration - [Jupyter Notebook](explore-house-sales.ipynb)
-    * 2.3 House Sales Visualization - [Jupyter Notebook](visualize-house-sales.ipynb)
-    * 2.4 Prosper Loan Exploration - [Jupyter Notebook](1-explore-prosper.ipynb)
-    * 2.5 Walmart Triptype Exploration - [Jupyter Notebook](2-explore-wlamart.ipynb)
+    * 2.1 Data Cleanup - [Jupyter Notebook](exploration/data-cleanup.ipynb)
+    * 2.2 House Sales Exploration - [Jupyter Notebook](exploration/explore-house-sales.ipynb)
+    * 2.3 House Sales Visualization - [Jupyter Notebook](exploration/visualize-house-sales.ipynb)
+    * 2.4 Prosper Loan Exploration - [Jupyter Notebook](exploration/1-explore-prosper.ipynb)
+    * 2.5 Walmart Triptype Exploration - [Jupyter Notebook](exploration/2-explore-wlamart.ipynb)
 
  3. [Feature Engineering](feature-engineering/README.md)
-    * 3.1 Feature Engineering - [Jupyter Notebook](1-election.ipynb)
+    * 3.1 Feature Engineering - [Jupyter Notebook](feature-engineering/1-election.ipynb)
 
  4. [Machine Learning Basics](basics/README.md)
-    * 4.1 Feature Engineeirng - [Jupyter Notebook](ml-basics.ipynb)
+    * 4.1 Feature Engineeirng - [Jupyter Notebook](basics/ml-basics.ipynb)
 
  5. [Linear Regression](linear-regression/README.md)
     * 5.1. Linear Regression Intro - [Jupyter Notebook](linear-regression/1-lr.ipynb)
@@ -51,12 +51,12 @@ several ways to do this. One way is to run the script included here
     * 6.1. Logistic Regression Intro - [Jupyter Notebook](logistic-regression/1-credit-approval.ipynb)
 
  7. [Classification](classification/README.md)
-    * 7.1. SVM: College Dataset - [Jupyter Notebook](1-svm-college.ipynb)
+    * 7.1. SVM: College Dataset - [Jupyter Notebook](classification/1-svm-college.ipynb)
 
  8. [Decision Trees](decision-trees/README.md)
-    * 8.1. Decision Trees: Prosper Loan Dataset - [Jupyter Notebook](1-tree-prosper.ipynb)
-    * 8.2. Random Forests: Election Data Classification - [Jupyter Notebook](2-randomf-election-classification.ipynb)
-    * 8.3. Random Forests: Eleciton Data  Regresssion - [Jupyter Notebook](3-randomf-election-regression.ipynb)
+    * 8.1. Decision Trees: Prosper Loan Dataset - [Jupyter Notebook](decision-trees/1-tree-prosper.ipynb)
+    * 8.2. Random Forests: Election Data Classification - [Jupyter Notebook](decision-trees/2-randomf-election-classification.ipynb)
+    * 8.3. Random Forests: Eleciton Data  Regresssion - [Jupyter Notebook](decision-trees/3-randomf-election-regression.ipynb)
 
  9. [Text Mining](text-mining/README.md)
     * 9.1. Text Mining (Naive Bayes): Spam SMS  - [Jupyter Notebook](text-mining/1-naive-bayes.ipynb)
@@ -69,7 +69,7 @@ several ways to do this. One way is to run the script included here
     * 11.1. Dimensionality Reduction (PCA): Walmart  - [Jupyter Notebook](dim-reduction/1-pca-walmart.ipynb)
 
  12. [Recommendations](recommendations/README.md)
-    * 12.1. Recommendations - [Jupyter Notebook](1-recommendations.ipynb)
+    * 12.1. Recommendations - [Jupyter Notebook](recommendations/1-recommender.ipynb)
 
 
 
