@@ -22,19 +22,55 @@ several ways to do this. One way is to run the script included here
 ./run_jupyter.sh
 ```
 
+## Labs
 
+ 1. [Python Analysis](python-analysis/README.md)
+    * 1.1 Numpy - [Jupyter Notebook](numpy.ipynb)
+    * 1.2 Pandas - [Jupyter Notebook](pandas.ipynb)
+    * 1.3 Exporing Pandas - [Jupyter Notebook](nycflights13.ipynb)
 
-Labs
-----
+ 2. [Exploration](exploration/README.md)
+    * 2.1 Data Cleanup - [Jupyter Notebook](data-cleanup.ipynb)
+    * 2.2 House Sales Exploration - [Jupyter Notebook](explore-house-sales.ipynb)
+    * 2.3 House Sales Visualization - [Jupyter Notebook](visualize-house-sales.ipynb)
+    * 2.4 Prosper Loan Exploration - [Jupyter Notebook](1-explore-prosper.ipynb)
+    * 2.5 Walmart Triptype Exploration - [Jupyter Notebook](2-explore-wlamart.ipynb)
 
- * 1.1. Linear Regression Intro - [Jupyter Notebook](linear-regression/1-lr.ipynb)
- * 1.2. Multiple Linear Regresssion: House Prices - [Jupyter Notebook](linear-regression/2-mlr-house-prices.ipynb)
- * 1.3. Multiple Linear Regresssion: AIC House Prices - [Jupyter Notebook](linear-regression/3-mlr-AIC-house-prices.ipynb)
- * 2.1. Logistic Regression Intro - [Jupyter Notebook](logistic-regression/1-credit-approval.ipynb)
- * 3.1. Clustering Intro - [Jupyter Notebook](clustering/1-kmeans-mtcars.ipynb)
- * 3.2. Clustering: Walmart  - [Jupyter Notebook](clustering/1-kmeans-walmart.ipynb)
- * 4.1. Dimensionality Reduction (PCA): Walmart  - [Jupyter Notebook](dim-reduction/1-pca-walmart.ipynb)
- * 5.1. Text Mining (Naive Bayes): Spam SMS  - [Jupyter Notebook](text-mining/1-naive-bayes.ipynb)
+ 3. [Feature Engineering](feature-engineering/README.md)
+    * 3.1 Feature Engineering - [Jupyter Notebook](1-election.ipynb)
+
+ 4. [Machine Learning Basics](basics/README.md)
+    * 4.1 Feature Engineeirng - [Jupyter Notebook](ml-basics.ipynb)
+
+ 5. [Linear Regression](linear-regression/README.md)
+    * 5.1. Linear Regression Intro - [Jupyter Notebook](linear-regression/1-lr.ipynb)
+    * 5.2. Multiple Linear Regresssion: House Prices - [Jupyter Notebook](linear-regression/2-mlr-house-prices.ipynb)
+    * 5.3. Multiple Linear Regresssion: AIC House Prices - [Jupyter Notebook](linear-regression/3-mlr-AIC-house-prices.ipynb)
+
+ 6. [Logistic Regression](logistic-regression/README.md)
+    * 6.1. Logistic Regression Intro - [Jupyter Notebook](logistic-regression/1-credit-approval.ipynb)
+
+ 7. [Classification](classification/README.md)
+    * 7.1. SVM: College Dataset - [Jupyter Notebook](1-svm-college.ipynb)
+
+ 8. [Decision Trees](decision-trees/README.md)
+    * 8.1. Decision Trees: Prosper Loan Dataset - [Jupyter Notebook](1-tree-prosper.ipynb)
+    * 8.2. Random Forests: Election Data Classification - [Jupyter Notebook](2-randomf-election-classification.ipynb)
+    * 8.3. Random Forests: Eleciton Data  Regresssion - [Jupyter Notebook](3-randomf-election-regression.ipynb)
+
+ 9. [Text Mining](text-mining/README.md)
+    * 9.1. Text Mining (Naive Bayes): Spam SMS  - [Jupyter Notebook](text-mining/1-naive-bayes.ipynb)
+
+ 10. [Clustering](clustering/README.md)
+    * 10.1. Clustering Intro - [Jupyter Notebook](clustering/1-kmeans-mtcars.ipynb)
+    * 10.2. Clustering: Walmart  - [Jupyter Notebook](clustering/1-kmeans-walmart.ipynb)
+
+ 11. [Dimensionality Reduction](dim-reduction/README.md)
+    * 11.1. Dimensionality Reduction (PCA): Walmart  - [Jupyter Notebook](dim-reduction/1-pca-walmart.ipynb)
+
+ 12. [Recommendations](recommendations/README.md)
+    * 12.1. Recommendations - [Jupyter Notebook](1-recommendations.ipynb)
+
 
 
 
@@ -45,11 +81,5 @@ You can run the [script](./run_jupyter.sh).  Or, you can type the following on t
 ```bash
   PYSPARK_PYTHON=python3 PYSPARK_DRIVER_PYTHON="jupyter" PYSPARK_DRIVER_PYTHON_OPTS="notebook" ~/spark/bin/pyspark
 ```
-
-
-
-```
-
-
 
 
