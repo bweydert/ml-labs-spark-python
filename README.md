@@ -24,6 +24,8 @@ several ways to do this. One way is to run the script included here
 
 ## Labs
 
+[Test the setup](0-testing-123.ipynb)
+
  1. [Python Analysis](python-analysis/README.md)
     * 1.1 Numpy - [Jupyter Notebook](python-analysis/numpy.ipynb)
     * 1.2 Pandas - [Jupyter Notebook](python-analysis/pandas.ipynb)
