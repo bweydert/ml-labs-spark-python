@@ -53,26 +53,29 @@ several ways to do this. One way is to run the script included here
     * 6.1. Logistic Regression Intro - [Jupyter Notebook](logistic-regression/1-credit-approval.ipynb)
     * 6.2. Logistic Regression: College Admission - [Jupyter Notebook](logistic-regression/2-college-admission.ipynb)
 
- 7. [Classification](classification/README.md)
-    * 7.1. SVM: College Dataset - [Jupyter Notebook](classification/1-svm-college.ipynb)
+ 7. [Pipeline](pipeline/README.md)
+    * 7.1. Pipeline- Prosper Dataset - [Jupyter Notebook](pipeline/1-pipeline-prosper.ipynb)
 
- 8. [Decision Trees](decision-trees/README.md)
-    * 8.1. Decision Trees: Prosper Loan Dataset - [Jupyter Notebook](decision-trees/1-tree-prosper.ipynb)
-    * 8.2. Random Forests: Election Data Classification - [Jupyter Notebook](decision-trees/2-randomf-election-classification.ipynb)
-    * 8.3. Random Forests: Eleciton Data  Regresssion - [Jupyter Notebook](decision-trees/3-randomf-election-regression.ipynb)
+ 8. [Classification](classification/README.md)
+    * 8.1. SVM: College Dataset - [Jupyter Notebook](classification/1-svm-college.ipynb)
 
- 9. [Text Mining](text-mining/README.md)
-    * 9.1. Text Mining (Naive Bayes): Spam SMS  - [Jupyter Notebook](text-mining/1-naive-bayes.ipynb)
+ 9. [Decision Trees](decision-trees/README.md)
+    * 9.1. Decision Trees: Prosper Loan Dataset - [Jupyter Notebook](decision-trees/1-tree-prosper.ipynb)
+    * 9.2. Random Forests: Election Data Classification - [Jupyter Notebook](decision-trees/2-randomf-election-classification.ipynb)
+    * 9.3. Random Forests: Eleciton Data  Regresssion - [Jupyter Notebook](decision-trees/3-randomf-election-regression.ipynb)
 
- 10. [Clustering](clustering/README.md)
-    * 10.1. Clustering Intro - [Jupyter Notebook](clustering/1-kmeans-mtcars.ipynb)
-    * 10.2. Clustering: Walmart  - [Jupyter Notebook](clustering/1-kmeans-walmart.ipynb)
+ 10. [Text Mining](text-mining/README.md)
+    * 10.1. Text Mining (Naive Bayes): Spam SMS  - [Jupyter Notebook](text-mining/1-naive-bayes.ipynb)
 
- 11. [Dimensionality Reduction](dim-reduction/README.md)
-    * 11.1. Dimensionality Reduction (PCA): Walmart  - [Jupyter Notebook](dim-reduction/1-pca-walmart.ipynb)
+ 11. [Clustering](clustering/README.md)
+    * 11.1. Clustering Intro - [Jupyter Notebook](clustering/1-kmeans-mtcars.ipynb)
+    * 11.2. Clustering: Walmart  - [Jupyter Notebook](clustering/1-kmeans-walmart.ipynb)
 
- 12. [Recommendations](recommendations/README.md)
-    * 12.1. Recommendations - [Jupyter Notebook](recommendations/1-recommender.ipynb)
+ 12. [Dimensionality Reduction](dim-reduction/README.md)
+    * 12.1. Dimensionality Reduction (PCA): Walmart  - [Jupyter Notebook](dim-reduction/1-pca-walmart.ipynb)
+
+ 13. [Recommendations](recommendations/README.md)
+    * 13.1. Recommendations - [Jupyter Notebook](recommendations/1-recommender.ipynb)
 
 
 
