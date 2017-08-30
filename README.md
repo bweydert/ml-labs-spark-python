@@ -19,12 +19,34 @@ Jupyter notebook files (.ipynb) must be run with Jupyter notebook.  As these are
 several ways to do this. One way is to run the script included here
 
 ```bash
-./run_jupyter.sh
+    ./run_jupyter.sh
 ```
 
 ## Labs
 
-[Test the setup](0-testing-123.ipynb)
+Running the labs
+```bash
+    # go to home directory
+    $   cd
+
+    # get data
+    $   git clone git@github.com:elephantscale/datasets.git  data
+    # if you already have ~/data then update it
+    $   cd  ~/data
+    $   git pull
+
+    # download the DS labs
+    $   cd
+    $   git clone --depth 1  git@github.com:elephantscale/ds-spark-labs.git
+
+    $   cd   ds-spark-labs
+    $   ./run_jupyter.sh
+
+    # In your browser, navigate to :
+            http://YOUR_IP_ADDRESS:8888
+```
+
+[Test the setup](testing/0-testing-123.ipynb)
 
  1. [Python Analysis](python-analysis/README.md)
     * 1.1 Numpy - [Jupyter Notebook](python-analysis/numpy.ipynb)
@@ -84,5 +106,3 @@ You can run the [script](./run_jupyter.sh).  Or, you can type the following on t
 ```bash
   PYSPARK_PYTHON=python3 PYSPARK_DRIVER_PYTHON="jupyter" PYSPARK_DRIVER_PYTHON_OPTS="notebook" ~/spark/bin/pyspark
 ```
-
-
