@@ -19,5 +19,6 @@ mv -f a.html  README.html
 
 # create a zipfile
 
-rm -f ml-labs-spark-python.zip
-zip -r ml-labs-spark-python.zip . -x *.git*   -x "*metastore_db*"  -x "*derby.log"  -x "*.out"  -x "*.zip"  -x "*.ipynb_checkpoints*"
+zip_file_name=$(basename `pwd`)
+rm -f ../$zip_file_name.zip
+(cd .. ; zip -r ${zip_file_name}.zip ${zip_file_name} -x *.git*   -x *metastore_db*  -x *derby.log*  -x *.out  -x *.zip  -x *.ipynb_checkpoints*  ;  mv ${zip_file_name}.zip ${zip_file_name}  )
