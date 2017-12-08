@@ -108,5 +108,4 @@ ENV/
 # IntelliJ (yes, some people do use that)
 .idea/
 
-*.html
 *.zip
