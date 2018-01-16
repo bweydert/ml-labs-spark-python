@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>2-randomf-election-classification</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>decision-tree-2-prosper</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,22 +11775,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Random-Forests:-Presidential-Contributions">Random Forests: Presidential Contributions<a class="anchor-link" href="#Random-Forests:-Presidential-Contributions">&#182;</a></h1><p>Let's look at a random forests models for the presidential dataset.</p>
-<p>This dataset defines all presidential contribution amounts from publicly available information.</p>
-<p>The purpose here is to try to classify the candidate to whom the contributor contributes.</p>
-<p>Here are the feature columns we will use:</p>
-<ol>
-<li>Last Name (converted from Contributor Name)</li>
-<li>First Name (converted from Contributor Name)</li>
-<li>State </li>
-<li>Latitude (converted from Zipcode)</li>
-<li>Longitude (converted from zipcode)</li>
-<li>Employer</li>
-<li>Occupation</li>
-</ol>
-<h3 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h3><p>This is going to be a very difficult dataset to get high accuracy, because we don't have any features that are highly correlated with the outcome. Part of our analysis is to see which features prove to be the most useful.</p>
-<p>One might suspect that information like State, might be very predictive -- because presumably New Yorkers might contribute to Hillary Clinton and Texans might contribute to Donald Trump. However, it turns out that State is pretty weakly correlated to the outcome.</p>
-<p>One nice thing about random forests is that since we "bag" featues in differnet trees, we can empirically see which variables have hte most predictive power.  This is helpful for analytical reasons.</p>
+<h1 id="Decision-Tree-Learning:-Prosper-Loan-Dataset">Decision Tree Learning: Prosper Loan Dataset<a class="anchor-link" href="#Decision-Tree-Learning:-Prosper-Loan-Dataset">&#182;</a></h1><p>A decision tree a learned set of rules that allows us to make decisions on data.</p>
+<p>We are going to look at the prosper loan dataset.  This dataset shows a history of loans made by Prosper.</p>
 
 </div>
 </div>
@@ -11801,19 +11787,13 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StandardScaler</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span><span class="p">,</span> <span class="n">VectorIndexer</span><span class="p">,</span> <span class="n">IndexToString</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">DecisionTreeClassifier</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span><span class="p">,</span> <span class="n">VectorIndexer</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
-<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">when</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">trim</span><span class="p">,</span> <span class="n">countDistinct</span><span class="p">,</span> <span class="nb">abs</span> 
-<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">RandomForestRegressor</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorIndexer</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">RegressionEvaluator</span>
-<span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="k">import</span> <span class="n">IntegerType</span>
-
-<span class="kn">import</span> <span class="nn">pyspark.sql.functions</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
@@ -11827,7 +11807,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-1:-Load-the-data">Step 1: Load the data<a class="anchor-link" href="#Step-1:-Load-the-data">&#182;</a></h2>
+<h2 id="Step-1:-Load-the-Data">Step 1: Load the Data<a class="anchor-link" href="#Step-1:-Load-the-Data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11836,7 +11816,21 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/presidential_election_contribs/2016/2016-medium-clean.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## small file, start with this</span>
+<span class="n">datafile</span> <span class="o">=</span> <span class="s2">&quot;/data/prosper-loan/prosper-loan-data-simplified.csv&quot;</span>
+<span class="c1">## this is a large file</span>
+<span class="c1">#datafile = &quot;/data/prosper-loan/prosper-loan-data.csv.gz&quot;</span>
+
+<span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span> \
+          <span class="n">option</span><span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span><span class="o">.</span> \
+          <span class="n">option</span><span class="p">(</span><span class="s2">&quot;inferSchema&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span><span class="o">.</span>  \
+          <span class="n">csv</span><span class="p">(</span><span class="n">datafile</span><span class="p">)</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;read </span><span class="si">{:,}</span><span class="s2"> records in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
+<span class="c1"># schema</span>
+<span class="n">data</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11849,92 +11843,15 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prediction_column</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CAND_NM&#39;</span><span class="p">]</span>
-<span class="n">numeric_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LAT&#39;</span><span class="p">,</span> <span class="s1">&#39;LNG&#39;</span><span class="p">]</span>
-<span class="n">feature_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LASTNAME&#39;</span><span class="p">,</span> <span class="s1">&#39;FIRSTNAME&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_ST&#39;</span><span class="p">,</span> <span class="s1">&#39;LAT&#39;</span><span class="p">,</span> <span class="s1">&#39;LNG&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_EMPLOYER&#39;</span><span class="p">,</span> <span class="s2">&quot;CONTBR_OCCUPATION&quot;</span><span class="p">]</span>
-<span class="n">categorical_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LASTNAME&#39;</span><span class="p">,</span> <span class="s1">&#39;FIRSTNAME&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_ST&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_EMPLOYER&#39;</span><span class="p">,</span> <span class="s2">&quot;CONTBR_OCCUPATION&quot;</span><span class="p">]</span>
-<span class="n">categorical_index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LASTNAME_index&#39;</span><span class="p">,</span> <span class="s1">&#39;FIRSTNAME_index&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_ST_index&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_EMPLOYER_index&#39;</span><span class="p">,</span> 
-                     <span class="s2">&quot;CONTBR_OCCUPATION_index&quot;</span><span class="p">]</span>
-</pre></div>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : select a few columns </span>
+<span class="c1">## start with: &#39;LoanStatus&#39;,  &#39;EmploymentStatus&#39;, &#39;CreditScore&#39;, &#39;StatedMonthlyIncome&#39;, &#39;ListingCategory&#39;</span>
+<span class="c1">## we can add more later</span>
 
-</div>
-</div>
-</div>
+<span class="n">select_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LoanStatus&#39;</span><span class="p">,</span> <span class="s1">&#39;EmploymentStatus&#39;</span><span class="p">,</span> <span class="s1">&#39;CreditScore&#39;</span><span class="p">,</span> <span class="s1">&#39;???&#39;</span><span class="p">,</span> <span class="s1">&#39;???&#39;</span><span class="p">]</span>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO: Print out a count broken down by candidate? </strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print out a grouping by candidate</span>
-<span class="c1"># TODO: Print Breakdown.</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; Which candidates got the most donations? (in terms of number of donors) </strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2:-Build-Indexers-and-feature-vector">Step 2: Build Indexers and feature vector<a class="anchor-link" href="#Step-2:-Build-Indexers-and-feature-vector">&#182;</a></h2><p>Let's index all the categorical columns, and build a labeld index.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">indexers</span> <span class="o">=</span> <span class="p">[</span><span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="n">column</span><span class="o">+</span><span class="s2">&quot;_index&quot;</span><span class="p">,</span> <span class="n">handleInvalid</span><span class="o">=</span><span class="s2">&quot;keep&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">categorical_columns</span> <span class="p">]</span>
-<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="n">indexers</span><span class="p">)</span>
-<span class="n">df_r2</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO: Build vectors from all the numeric and categorical_index columns </strong></p>
-<p><strong>HINT: numeric_columns and categorical_index</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">assembler2</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="err">???</span> <span class="o">+</span> <span class="err">???</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
-<span class="n">fv2</span> <span class="o">=</span> <span class="n">assembler2</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_r2</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">drop</span><span class="p">())</span>
+<span class="c1">## Note : vector columns can only have Numbers, don&#39;t include Categorical columns here</span>
+<span class="c1">## And dfefinitely not &#39;LoanStatus&#39;  (if you are curiuos include and see what happens!)</span>
+<span class="n">vector_columns</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;EmpIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;CreditScore&#39;</span><span class="p">,</span> <span class="s1">&#39;StatedMonthlyIncome&#39;</span><span class="p">,</span> <span class="s1">&#39;CategoryIndex&#39;</span><span class="p">]</span>
 </pre></div>
 
 </div>
@@ -11947,14 +11864,12 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Index labels, adding metadata to the label column.</span>
-<span class="c1"># Fit on whole dataset to include all labels in index.</span>
-<span class="n">labelIndexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;CAND_NM&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;indexedLabel&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fv2</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Extract only the columns we are interested in</span>
+<span class="c1">## Hint : &#39;select_columns&#39;</span>
+<span class="n">prosper</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>  
 
-
-<span class="c1"># We specify maxCategories so features with &gt; 4 distinct values are treated as continuous.</span>
-<span class="n">featureIndexer2</span> <span class="o">=</span>\
-    <span class="n">VectorIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;indexedFeatures&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fv2</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">prosper</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+<span class="n">prosper</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11966,9 +11881,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-Train-Random-Forest-Model-with-Pipeline">Step 3: Train Random Forest Model with Pipeline<a class="anchor-link" href="#Step-3:-Train-Random-Forest-Model-with-Pipeline">&#182;</a></h2><p>Train the model here.</p>
-<p><strong>=&gt; TODO: Create pipeline with labelIndexer, featureIndexer2, rf2 </strong></p>
-
+<h2 id="Step-2-:-Clean-Data">Step 2 : Clean Data<a class="anchor-link" href="#Step-2-:-Clean-Data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11977,11 +11890,13 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Train a RandomForest model.</span>
-<span class="n">rf2</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;indexedLabel&quot;</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;indexedFeatures&quot;</span><span class="p">,</span> <span class="n">numTrees</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">maxBins</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO :  Drop any NA, null values.  </span>
+<span class="c1">## Hint : Using `.na.drop()`</span>
+<span class="n">prosper_clean</span> <span class="o">=</span> <span class="n">prosper</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="err">???</span><span class="p">()</span>
 
-<span class="c1"># Chain indexer and forest in a Pipeline</span>
-<span class="n">pipeline2</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="err">???</span><span class="p">,</span> <span class="err">???</span><span class="p">,</span> <span class="err">???</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original record count </span><span class="si">{:,}</span><span class="s2">, cleaned records count </span><span class="si">{:,}</span><span class="s2">,  dropped </span><span class="si">{:,}</span><span class="s2">&quot;</span>\
+      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prosper</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="n">prosper_clean</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">prosper</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">-</span> <span class="n">prosper_clean</span><span class="o">.</span><span class="n">count</span><span class="p">())))</span>
+<span class="n">prosper_clean</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11993,7 +11908,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Split-data-into-training-and-test">Step 4: Split data into training and test<a class="anchor-link" href="#Step-4:-Split-data-into-training-and-test">&#182;</a></h2><p><strong>=&gt; TODO: build training and test datasets 70%/30% </strong></p>
+<h2 id="Look-at-some-summary-data">Look at some summary data<a class="anchor-link" href="#Look-at-some-summary-data">&#182;</a></h2><p><strong>=&gt; Q : What does that say about the cardinality of these categorical columns?</strong></p>
 
 </div>
 </div>
@@ -12003,8 +11918,14 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the data into training and test sets (30% held out for testing)</span>
-<span class="p">(</span><span class="n">trainingData2</span><span class="p">,</span> <span class="n">testData2</span><span class="p">)</span> <span class="o">=</span> <span class="n">fv2</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="err">???</span><span class="p">,</span><span class="err">???</span><span class="p">])</span> <span class="c1"># do a random split 70%/30%</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Look at some summaries</span>
+<span class="c1">## We are going to group counts by &#39;LoanStatus&#39;,  &#39;EmploymentStatus&#39; ,   &#39;ListingCategory&#39;</span>
+
+<span class="n">prosper_clean</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;LoanStatus&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">prosper_clean</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;EmploymentStatus&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">prosper_clean</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;???&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
+
+<span class="c1">## Question : What does that say about the cardinality of these categorical columns? *</span>
 </pre></div>
 
 </div>
@@ -12016,7 +11937,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5:-Train-the-Model">Step 5: Train the Model<a class="anchor-link" href="#Step-5:-Train-the-Model">&#182;</a></h2><p><strong>=&gt; TODO: Get predictions by transforming testData2 </strong></p>
+<h2 id="Step-3:-Converting-Categorical-columns">Step 3: Converting Categorical columns<a class="anchor-link" href="#Step-3:-Converting-Categorical-columns">&#182;</a></h2><p>Convert categorical columns to numeric.<br>
+Here let's convert <strong>EmploymentStatus</strong> column</p>
 
 </div>
 </div>
@@ -12026,127 +11948,11 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Train model.  This also runs the indexers.</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Create a StringIndexer with inputCol=&#39;EmploymentStatus&#39;  and outputCol = &#39;Emplndex&#39;</span>
+<span class="n">strIndexer_employment</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
+<span class="n">prosper_indexed</span> <span class="o">=</span> <span class="n">strIndexer_employment</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span>
 
-
-<span class="n">model2</span> <span class="o">=</span> <span class="n">pipeline2</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">trainingData2</span><span class="p">)</span>
-
-<span class="c1"># Make predictions.</span>
-<span class="n">predictions2</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>  <span class="c1">#Transform test data</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions2</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">feature_columns</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;probability&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-6:-Evaulate-the-model">Step 6: Evaulate the model<a class="anchor-link" href="#Step-6:-Evaulate-the-model">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select example rows to display.</span>
-<span class="n">predictions2</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="s2">&quot;CAND_NM&quot;</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-
-<span class="c1"># Select (prediction, true label) and compute test error</span>
-<span class="n">evaluator2</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span>
-    <span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;indexedLabel&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
-<span class="n">accuracy</span> <span class="o">=</span> <span class="n">evaluator2</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions2</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test Error = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">accuracy</span><span class="p">))</span>
-
-<span class="n">rfModel2</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">rfModel2</span><span class="p">)</span>  <span class="c1"># summary only</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO: Think about the test error here?  Does it seem high?  What does that say about our model?</strong></p>
-<p><strong>=&gt; How do we define model success? </strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Decoding-the-Label">Decoding the Label<a class="anchor-link" href="#Decoding-the-Label">&#182;</a></h3><ol>
-<li>Hillary Clinton</li>
-<li>Bernie Sanders</li>
-<li>Donald Trump</li>
-<li>Ted Cruz</li>
-</ol>
-<h2 id="Step-7:-Print-out-the-Confusion-Matrix">Step 7: Print out the Confusion Matrix<a class="anchor-link" href="#Step-7:-Print-out-the-Confusion-Matrix">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions2</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;CAND_NM&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">22</span><span class="p">))</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;CAND_NM&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Use the list above to interpret the label.</p>
-<p><strong>=&gt;What can you conclude from the confusion matrix?</strong></p>
-<p>Is our model better at predicting candidates with many donations (Clinton, Sanders), or few donations?</p>
-<p>What can you say about our model perfromance.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-8:-Print-the-feature-importanes">Step 8: Print the feature importanes<a class="anchor-link" href="#Step-8:-Print-the-feature-importanes">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rfModel2</span><span class="o">.</span><span class="n">featureImportances</span>
+<span class="n">prosper_indexed</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12159,7 +11965,11 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">numeric_columns</span> <span class="o">+</span> <span class="n">categorical_columns</span><span class="p">)</span> <span class="c1"># for reference</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Create another StringIndexer,  inputCol=&#39;ListingCategory&#39;,   outputCol=&#39;CategoryIndex&#39;</span>
+<span class="n">strIndexer_category</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;ListingCategory&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;CategoryIndex&quot;</span><span class="p">)</span>
+<span class="n">prosper_indexed</span> <span class="o">=</span> <span class="n">strIndexer_category</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">prosper_indexed</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_indexed</span><span class="p">)</span>
+
+<span class="n">prosper_indexed</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12171,41 +11981,141 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO Compare the relative weight of the feature importances? </strong></p>
+<h2 id="Step-4:-Build-feature-vectors-using-VectorAssembler.">Step 4: Build feature vectors using VectorAssembler.<a class="anchor-link" href="#Step-4:-Build-feature-vectors-using-VectorAssembler.">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">vector_columns</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">feature_vector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_indexed</span><span class="p">)</span>
+<span class="n">feature_vector</span> <span class="o">=</span> <span class="n">feature_vector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">feature_vector</span><span class="p">[</span><span class="s2">&quot;LoanStatus&quot;</span><span class="p">])</span>
+<span class="n">feature_vector</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
 
 </div>
 </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Conclusion:-Most-important-Fields">Conclusion: Most important Fields<a class="anchor-link" href="#Conclusion:-Most-important-Fields">&#182;</a></h2><ol>
-<li>Employer</li>
-<li>Occupation</li>
-<li>LastName</li>
-<li>State</li>
-</ol>
-<p>Other fields not significant</p>
+<h2 id="Step-5:-Split-Data-into-training-and-test.">Step 5: Split Data into training and test.<a class="anchor-link" href="#Step-5:-Split-Data-into-training-and-test.">&#182;</a></h2><p>We will split our the data up into training and test.  (You know the drill by now).</p>
+<p><strong>=&gt; TODO: Split dataset into 70% training, 30% validation</strong></p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO :  Split the data into 70% training and 30% test sets </span>
+<span class="c1">## Hint : 0.7   , 0.3</span>
+<span class="p">(</span><span class="n">training</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span>  <span class="n">feature_vector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="err">???</span><span class="p">,</span>  <span class="err">???</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training set = &quot;</span> <span class="p">,</span> <span class="n">training</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;testing set = &quot;</span> <span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO Compare the relative weight of the feature importances? </strong></p>
-<p>Why do you think that the lat/long and other fields did not contribute?</p>
+<h2 id="Step-6:-Decision-Tree">Step 6: Decision Tree<a class="anchor-link" href="#Step-6:-Decision-Tree">&#182;</a></h2><p><strong> Q : How many nodes the tree has? </strong></p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">##  TODO: Create a DecisionTree model with 5000 Maxbins</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">maxBins</span><span class="o">=</span><span class="err">???</span><span class="p">)</span>
+
+<span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="c1">## TODO : train with training data set</span>
+<span class="c1">## Hint : training</span>
+<span class="n">tree_model</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+<span class="c1">## TODO : Notice the time took to train</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;traind on </span><span class="si">{:,}</span><span class="s2"> records using </span><span class="si">{:,}</span><span class="s2"> features in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span>\
+      <span class="nb">format</span><span class="p">(</span><span class="n">training</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector_columns</span><span class="p">),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
+
+<span class="c1">## TODO : Observe the output</span>
+<span class="c1">## how many nodes does the tree have?</span>
+<span class="n">tree_model</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : create predictions using test dataset</span>
+<span class="c1">## Hint : test</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">tree_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+
+<span class="n">predictions2</span><span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;rawPrediction&#39;</span><span class="p">,</span> <span class="s1">&#39;probability&#39;</span><span class="p">)</span>
+<span class="n">predictions2</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; BONUS: Do a Pearson Correlation Matrix of the variables to the outcome, to see correlation </strong></p>
+<h2 id="Step-7:-Evaluate-the-model.">Step 7: Evaluate the model.<a class="anchor-link" href="#Step-7:-Evaluate-the-model.">&#182;</a></h2><p>Let us check to see how the model did, using accuracy as a measure.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select (prediction, true label) and compute test error</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span>
+    <span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;accuracy &quot;</span><span class="p">,</span>  <span class="n">accuracy</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-8:-Improve-Accuracy">Step 8: Improve Accuracy<a class="anchor-link" href="#Step-8:-Improve-Accuracy">&#182;</a></h2><h3 id="Add-more-data">Add more data<a class="anchor-link" href="#Add-more-data">&#182;</a></h3><p>In Step-1 change the 'datafile' to the full dataset.<br>
+And see how the accuracy above changes</p>
+<h3 id="Add-more-features">Add more features<a class="anchor-link" href="#Add-more-features">&#182;</a></h3><p>Look at the schema of the full dataset.  Are there any columns you want to add</p>
 
 </div>
 </div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>2b-randomf-election-regression</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>decision-tree-1-college-admission</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,35 +11775,26 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Random-Forests:-Presidential-Contributions">Random Forests: Presidential Contributions<a class="anchor-link" href="#Random-Forests:-Presidential-Contributions">&#182;</a></h1><p>Let's look at a random forests models for the presidential dataset.</p>
-<p>We are going to try to predict two variables:</p>
-<ol>
-<li>Amount of contribution (regression)</li>
-<li>Candidate of Contribution (classification).</li>
-</ol>
+<h1 id="Decision-Tree-Learning:-College-Admission">Decision Tree Learning: College Admission<a class="anchor-link" href="#Decision-Tree-Learning:-College-Admission">&#182;</a></h1><p>A decision tree a learned set of rules that allows us to make decisions on data.</p>
+<p>We are going to look at the prosper loan dataset.  This dataset shows a history of loans made by Prosper.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StandardScaler</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">DecisionTreeClassifier</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span><span class="p">,</span> <span class="n">VectorIndexer</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
-<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">when</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">trim</span><span class="p">,</span> <span class="n">countDistinct</span><span class="p">,</span> <span class="nb">abs</span> 
-<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">RandomForestRegressor</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorIndexer</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">RegressionEvaluator</span>
-<span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="k">import</span> <span class="n">IntegerType</span>
 
-<span class="kn">import</span> <span class="nn">pyspark.sql.functions</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -11811,12 +11802,26 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-1:-Load-the-Data">Step 1: Load the Data<a class="anchor-link" href="#Step-1:-Load-the-Data">&#182;</a></h2>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/presidential_election_contribs/2016/2016-medium-clean.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/college-admissions/admission-data.csv&quot;</span><span class="p">,</span> 
+                         <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">## clean </span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">drop</span><span class="p">()</span>
+
+<span class="n">dataset</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11824,73 +11829,27 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-2:-Build-feature-vectors-using-VectorAssembler.">Step 2: Build feature vectors using VectorAssembler.<a class="anchor-link" href="#Step-2:-Build-feature-vectors-using-VectorAssembler.">&#182;</a></h2>
 </div>
 </div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>+-----------------+--------------------+------------+------------+---------+---------+-----------+--------------------+--------------------+
-|CONTB_RECEIPT_AMT|             CAND_NM|    LASTNAME|   FIRSTNAME|CONTBR_ST|      LAT|        LNG|     CONTBR_EMPLOYER|   CONTBR_OCCUPATION|
-+-----------------+--------------------+------------+------------+---------+---------+-----------+--------------------+--------------------+
-|              5.0|Clinton, Hillary ...|      RIGNEY|     FARRELL|       CA|33.147294|-117.322181|       SELF-EMPLOYED|          CONTRACTOR|
-|            100.0|    Sanders, Bernard|      ARNOLD|         IRA|       CA| 38.34642|-122.694127|                NONE|        NOT EMPLOYED|
-|             24.0|Cruz, Rafael Edwa...|    VANDOREN|HELEN E. MS.|       MD|39.002745| -76.931721|             RETIRED|             RETIRED|
-|            100.0|Clinton, Hillary ...|    RICHARDS|        MARC|       CA| 34.07041|-118.350411|       SELF-EMPLOYED|                 ART|
-|             10.0|Clinton, Hillary ...|       MOYER|      DENNIS|       CA|37.916555|-122.341233|         MARIN HONDA|WARRANTY ADMINIST...|
-|            300.0|Clinton, Hillary ...|      SNYDER|       DAVID|       OH|41.139872| -81.860559|INFORMATION REQUE...|INFORMATION REQUE...|
-|            100.0|      Huckabee, Mike|        WARD|       JAMES|       NM|34.129177|-103.299416|REQUESTED PER BES...|REQUESTED PER BES...|
-|              1.5|    Sanders, Bernard|       KELLY|      ELAINE|       MO| 39.02037| -92.296535|                NONE|        NOT EMPLOYED|
-|              5.0|    Sanders, Bernard|   UNDERWOOD|       KELSY|       MD|38.379757| -76.442883|SOUTHERN MARYLAND...|          DISPATCHER|
-|             12.0|    Trump, Donald J.|    MCCAULOU|        LILA|       AZ|31.917849|-111.019049|INFORMATION REQUE...|INFORMATION REQUE...|
-|            100.0|    Sanders, Bernard|      LOUDIN|     CYNTHIA|       IL|41.993019| -87.759627|            CNA/NNOC|     UNION ORGANIZER|
-|            250.0|    Trump, Donald J.|       JANES|       DAVID|       CA|33.634626|-117.874882|       SELF-EMPLOYED|        MANUFACTURER|
-|             3.75|Clinton, Hillary ...|ST. GERMAINE|       JULIE|       CA|37.959549|-122.283578|PACIFIC GAS &amp; ELE...| SAFETY PROFESSIONAL|
-|             50.0|    Sanders, Bernard|  HILFENHAUS|       JAMES|       CA|34.204568|-118.326365|                NONE|        NOT EMPLOYED|
-|             27.0|    Sanders, Bernard|      MURRAY|      PAMELA|       MO|37.167533| -93.324773|CURVES FITNESS FO...|           PART-TIME|
-|              5.0|    Sanders, Bernard|       KNOTT|        RYAN|       SC|34.092634| -80.919271|                SELF|            MUSICIAN|
-|             25.0|Clinton, Hillary ...|      LAUBER|      NICOLE|       FL|27.796346| -82.628737| NICOLE LAUBER, INC.|       CEO/PRESIDENT|
-|             37.0|Clinton, Hillary ...|     WHATLEY|     MICHAEL|       DC|38.936238| -77.059981|                 N/A|             RETIRED|
-|           2700.0|Clinton, Hillary ...|       NOLAN|     KENNETH|       NY|40.798601| -73.966622|               G-III|            DESIGNER|
-|            100.0|Clinton, Hillary ...|      FISHER|        JOEL|       NC|35.986719| -78.554351|       SELF-EMPLOYED|        VETERINARIAN|
-+-----------------+--------------------+------------+------------+---------+---------+-----------+--------------------+--------------------+
-only showing top 20 rows
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">feature_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CAND_NM&#39;</span><span class="p">,</span> <span class="s1">&#39;LASTNAME&#39;</span><span class="p">,</span> <span class="s1">&#39;FIRSTNAME&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_ST&#39;</span><span class="p">,</span> <span class="s1">&#39;LAT&#39;</span><span class="p">,</span> <span class="s1">&#39;LNG&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_EMPLOYER&#39;</span><span class="p">,</span> <span class="s2">&quot;CONTBR_OCCUPATION&quot;</span><span class="p">]</span>
-<span class="n">numeric_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LAT&#39;</span><span class="p">,</span> <span class="s1">&#39;LNG&#39;</span><span class="p">]</span>
-<span class="n">categorical_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CAND_NM&#39;</span><span class="p">,</span> <span class="s1">&#39;LASTNAME&#39;</span><span class="p">,</span> <span class="s1">&#39;FIRSTNAME&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_ST&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_EMPLOYER&#39;</span><span class="p">,</span> <span class="s2">&quot;CONTBR_OCCUPATION&quot;</span><span class="p">]</span>
-<span class="n">categorical_index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CAND_NM_index&#39;</span><span class="p">,</span> <span class="s1">&#39;FIRSTNAME_index&#39;</span><span class="p">,</span> <span class="s1">&#39;LASTNAME_index&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_ST_index&#39;</span><span class="p">,</span> <span class="s1">&#39;CONTBR_EMPLOYER_index&#39;</span><span class="p">,</span> 
-                     <span class="s2">&quot;CONTBR_OCCUPATION_index&quot;</span><span class="p">]</span>
-<span class="n">prediction_column</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CONTB_RECEIPT_AMT&#39;</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : create a feature vector using the following attributes</span>
+<span class="c1">## Hint :   &#39;gpa&#39; ,   &#39;gre&#39;,   &#39;rank&#39;</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;???&#39;</span><span class="p">,</span> <span class="s1">&#39;???&#39;</span><span class="p">,</span> <span class="s1">&#39;???&#39;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">feature_vector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+<span class="c1">## TODO : set &#39;admit&#39; as &#39;label&#39; column</span>
+<span class="n">feature_vector</span> <span class="o">=</span> <span class="n">feature_vector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">feature_vector</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">])</span>
+<span class="n">feature_vector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11898,14 +11857,24 @@ only showing top 20 rows
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-3:-Split-Data-into-training-and-test.">Step 3: Split Data into training and test.<a class="anchor-link" href="#Step-3:-Split-Data-into-training-and-test.">&#182;</a></h2><p>We will split our the data up into training and test.  (You know the drill by now).</p>
+<p><strong>=&gt; TODO: Split dataset into 80% training, 20% validation</strong></p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">indexers</span> <span class="o">=</span> <span class="p">[</span><span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="n">column</span><span class="o">+</span><span class="s2">&quot;_index&quot;</span><span class="p">,</span> <span class="n">handleInvalid</span><span class="o">=</span><span class="s2">&quot;keep&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">categorical_columns</span> <span class="p">]</span>
-<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="n">indexers</span><span class="p">)</span>
-<span class="n">df_r</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO :  Split the data into 80% training and 20% test sets </span>
+<span class="c1">## Hint :  0.8,   0.2</span>
+<span class="p">(</span><span class="n">training</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span>  <span class="n">feature_vector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="err">???</span><span class="p">,</span>   <span class="err">???</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -11913,82 +11882,26 @@ only showing top 20 rows
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">numeric_columns</span> <span class="o">+</span> <span class="n">categorical_index</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
-<span class="n">fv</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_r</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">drop</span><span class="p">())</span>
-</pre></div>
-
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-4:-Decision-Tree">Step 4: Decision Tree<a class="anchor-link" href="#Step-4:-Decision-Tree">&#182;</a></h2>
 </div>
 </div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Automatically identify categorical features, and index them.</span>
-<span class="c1"># We specify maxCategories so features with &gt; 4 distinct values are treated as continuous.</span>
-<span class="n">featureIndexer</span> <span class="o">=</span>\
-    <span class="n">VectorIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;indexedFeatures&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fv</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the data into training and test sets (30% held out for testing)</span>
-<span class="p">(</span><span class="n">trainingData</span><span class="p">,</span> <span class="n">testData</span><span class="p">)</span> <span class="o">=</span> <span class="n">fv</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Train a RandomForest model.</span>
-<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;indexedFeatures&quot;</span><span class="p">,</span> <span class="n">maxBins</span><span class="o">=</span><span class="mi">12000</span><span class="p">)</span>
-
-<span class="c1"># Chain indexer and forest in a Pipeline</span>
-<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">featureIndexer</span><span class="p">,</span> <span class="n">rf</span><span class="p">])</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Train model.  This also runs the indexers.</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Create a DecisionTree model with maximum bins = 500</span>
+<span class="c1">## </span>
+<span class="n">dt</span> <span class="o">=</span> <span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">maxBins</span><span class="o">=</span><span class="err">???</span><span class="p">)</span>
 
 
-<span class="n">trainingData</span> <span class="o">=</span> <span class="n">trainingData</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span><span class="n">trainingData</span><span class="o">.</span><span class="n">CONTB_RECEIPT_AMT</span><span class="p">)</span>
-
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">trainingData</span><span class="p">)</span>
-
-<span class="c1"># Make predictions.</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">testData</span><span class="p">)</span>
+<span class="c1">## TODO : observe the output</span>
+<span class="n">dt</span>
 </pre></div>
 
 </div>
@@ -12001,10 +11914,12 @@ only showing top 20 rows
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select example rows to display.</span>
-<span class="c1">#predictions.select(&quot;prediction&quot;, &quot;indexedLabel&quot;, &quot;features&quot;).show(5)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : train model on training dataset</span>
+<span class="c1">## Hint : pass &#39;training&#39; dataset name</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
 
-<span class="n">predictions</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;CONTB_RECEIPT_AMT&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="c1">## TODO : Look at the model output now</span>
+<span class="n">model</span>
 </pre></div>
 
 </div>
@@ -12014,103 +11929,19 @@ only showing top 20 rows
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select (prediction, true label) and compute test error</span>
-<span class="n">evaluator</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span>
-    <span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;CONTB_RECEIPT_AMT&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;rmse&quot;</span><span class="p">)</span>
-<span class="n">rmse</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Root Mean Squared Error (RMSE) on test data = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">rmse</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Get predictions on test data</span>
+<span class="c1">## Hint : &#39;test&#39; set name</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+<span class="n">predictions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="n">rfModel</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">rfModel</span><span class="p">)</span>  <span class="c1"># summary only</span>
+<span class="c1">## do a sample label</span>
+<span class="n">predictions</span><span class="o">.</span><span class="n">sampleBy</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">fractions</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Root Mean Squared Error (RMSE) on test data = 3625.69
-RandomForestRegressionModel (uid=RandomForestRegressor_4c94ae6bc47a138b2a88) with 20 trees
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rfModel</span><span class="o">.</span><span class="n">featureImportances</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[19]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>SparseVector(8, {0: 0.0031, 1: 0.0011, 2: 0.0094, 3: 0.193, 4: 0.5185, 5: 0.0155, 6: 0.2121, 7: 0.0472})</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">numeric_columns</span> <span class="o">+</span> <span class="n">categorical_columns</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[&#39;LAT&#39;, &#39;LNG&#39;, &#39;CAND_NM&#39;, &#39;LASTNAME&#39;, &#39;FIRSTNAME&#39;, &#39;CONTBR_ST&#39;, &#39;CONTBR_EMPLOYER&#39;, &#39;CONTBR_OCCUPATION&#39;]
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -12119,15 +11950,7 @@ RandomForestRegressionModel (uid=RandomForestRegressor_4c94ae6bc47a138b2a88) wit
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We see the following Variables in Order of Importnace</p>
-<ol>
-<li>CONTBR_ST</li>
-<li>LASTNAME</li>
-<li>FIRSTNAME</li>
-<li>CONTBR_EMPLOYER</li>
-<li>CONTBR_OCCUPATION</li>
-</ol>
-<p>LAT, LONG, and CAND_NM had virtually no impact.</p>
+<h2 id="Step-5:-Evaluate-the-model.">Step 5: Evaluate the model.<a class="anchor-link" href="#Step-5:-Evaluate-the-model.">&#182;</a></h2><p>Let us check to see how the model did, using accuracy as a measure.</p>
 
 </div>
 </div>
@@ -12138,10 +11961,10 @@ RandomForestRegressionModel (uid=RandomForestRegressor_4c94ae6bc47a138b2a88) wit
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select (prediction, true label) and compute test error</span>
-<span class="n">evaluator</span> <span class="o">=</span> <span class="n">RegressionEvaluator</span><span class="p">(</span>
-    <span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;CONTB_RECEIPT_AMT&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;r2&quot;</span><span class="p">)</span>
-<span class="n">r2</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Root Mean Squared Error (RMSE) on test data = </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">r2</span><span class="p">)</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span>
+    <span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;accuracy &quot;</span><span class="p">,</span>  <span class="n">accuracy</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12153,7 +11976,11 @@ RandomForestRegressionModel (uid=RandomForestRegressor_4c94ae6bc47a138b2a88) wit
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Negative R squared means our data fit worse than the null hypothesis.</p>
+<h2 id="Step-6:-Do-a-Few-Runs">Step 6: Do a Few Runs<a class="anchor-link" href="#Step-6:-Do-a-Few-Runs">&#182;</a></h2><ul>
+<li>Click 'Cell --&gt; Run All'</li>
+<li>Observe how the 'accuracy' output changes above</li>
+<li>Why?  Can we get the same accuracy all the times?</li>
+</ul>
 
 </div>
 </div>
