@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>3-kmeans-walmart</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>pipeline-1-basics-prosper</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,8 +11775,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Spark-Clustering-the-Walmart-data">Spark Clustering the Walmart data<a class="anchor-link" href="#Spark-Clustering-the-Walmart-data">&#182;</a></h1><p>Let's look at a clustering example in Spark MLLib.</p>
-<p>Here, we are going to load the mtcars dataset. This has some stats on different models of cars.  Here, we will load the CSV file as a spark dataframe, and view it.</p>
+<h1 id="Build-Spark-Pipelines">Build Spark Pipelines<a class="anchor-link" href="#Build-Spark-Pipelines">&#182;</a></h1><p>Let's build a simple Spark ML pipeline</p>
 
 </div>
 </div>
@@ -11786,9 +11785,92 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">OneHotEncoder</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-1-:-Load-'simplified'-Propsper-data">Step 1 : Load 'simplified' Propsper data<a class="anchor-link" href="#Step-1-:-Load-'simplified'-Propsper-data">&#182;</a></h2><p>And inspect</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prosper</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span> \
+          <span class="n">option</span><span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span><span class="o">.</span> \
+          <span class="n">option</span><span class="p">(</span><span class="s2">&quot;inferSchema&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span><span class="o">.</span>  \
+          <span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/prosper-loan/prosper-loan-data-simplified.csv&quot;</span><span class="p">)</span>
+
+<span class="n">prosper</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">prosper</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">prosper</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-2:-Extract-a-few-columns">Step 2: Extract a few columns<a class="anchor-link" href="#Step-2:-Extract-a-few-columns">&#182;</a></h2><p>Extract</p>
+<ul>
+<li>LoanStatus</li>
+<li>EmploymentStatus</li>
+<li>CreditScore</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prosper2</span> <span class="o">=</span> <span class="n">prosper</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">)</span>
+<span class="n">prosper2</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-3:-Sanity-check-data-and-clean-it">Step 3: Sanity check data and clean it<a class="anchor-link" href="#Step-3:-Sanity-check-data-and-clean-it">&#182;</a></h2><p>use <code>describe</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prosper2</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11801,7 +11883,88 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/walmart-triptype/train-transformed.csv.gz&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Drop any NA values.  Using `dataframe.na.drop()`</span>
+<span class="n">prosper_clean</span> <span class="o">=</span> <span class="n">prosper2</span><span class="o">.</span><span class="err">???</span><span class="o">.</span><span class="err">???</span><span class="p">()</span>
+<span class="n">prosper_clean</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prosper_clean</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-4:-StringIndexer-for-'EmploymentStatus'">Step 4: StringIndexer for 'EmploymentStatus'<a class="anchor-link" href="#Step-4:-StringIndexer-for-'EmploymentStatus'">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Hint : inputCol = EmploymentStatus,   outputCol=EmploymentStatusIndex</span>
+<span class="n">strIndexer_employment</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
+<span class="n">indexed1</span> <span class="o">=</span> <span class="n">strIndexer_employment</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span>
+<span class="n">indexed1</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-5:-One-Hot-Encoding-for-'EmploymentStatus'">Step 5: One Hot Encoding for 'EmploymentStatus'<a class="anchor-link" href="#Step-5:-One-Hot-Encoding-for-'EmploymentStatus'">&#182;</a></h2><p>Now that we have turned <code>EmploymentStatus</code> into a number, let's turn it into a vector</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Hint : inputCol = this is the outputcol of &#39;StringIndexer&#39; </span>
+<span class="c1">#                   (strIndexer_employment.getOutputCol()  )</span>
+<span class="n">encoder_employment</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;EmploymentStatusVector&quot;</span><span class="p">)</span>
+<span class="n">encoded1</span> <span class="o">=</span> <span class="n">encoder_employment</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">indexed1</span><span class="p">)</span>
+<span class="n">encoded1</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-6:-Create-a-pipeline">Step 6: Create a pipeline<a class="anchor-link" href="#Step-6:-Create-a-pipeline">&#182;</a></h2><p>Now we will do pipeline to do indexing and encoding</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Hint : complete the following pipeline as follows</span>
+<span class="c1">##   StringINdexer : inputCol=&#39;EmploymnetStatus&#39; --&gt; outputCol=&#39;EmpIndex&#39;</span>
+<span class="c1">##   OneHotEncoder : inputCol=strIndexer_employment.getOutputCol(), outputCol=&quot;EmpVector&quot;</span>
+
+<span class="n">strIndexer_employment</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
+<span class="n">encoder_employment</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">(</span><span class="n">strIndexer_employment</span><span class="p">,</span> <span class="n">encoder_employment</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -11814,34 +11977,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Creating-Vectors">Creating Vectors<a class="anchor-link" href="#Creating-Vectors">&#182;</a></h2><p>We'll again use the VectorAssembler class to create features from the data..</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">columns</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">columns</span>
-<span class="n">columns</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;VisitNumber&#39;</span><span class="p">)</span>
-<span class="n">columns</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;TripType&#39;</span><span class="p">)</span>
-
-<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
-<span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model1</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span>
+<span class="n">model1</span>
 </pre></div>
 
 </div>
@@ -11854,8 +11991,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;features&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Vector: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">)))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prosper4</span> <span class="o">=</span> <span class="n">model1</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span>
+<span class="n">prosper4</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11867,17 +12004,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Note the output. These are Sparse (not dense) Vectors.  That's because we our data IS sparse, we have relatively few of the variables at any given time.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-Running-Kmeans">Step 3: Running Kmeans<a class="anchor-link" href="#Step-3:-Running-Kmeans">&#182;</a></h2><p>We know there are 39 triptypes.  So that makes a good "natural" value of k.</p>
-<p>**=&gt; TODO: set K = 39, and then run kmeans</p>
+<h2 id="Step-7:-Add-Normalizer-to-CreditScore">Step 7: Add Normalizer to CreditScore<a class="anchor-link" href="#Step-7:-Add-Normalizer-to-CreditScore">&#182;</a></h2><p>The FICO credit score ranges between 350 and 850.  Let's normalize this to the range of 0 to 100.</p>
 
 </div>
 </div>
@@ -11887,12 +12014,59 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="err">?</span><span class="o">??</span>
-<span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">()</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="err">???</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-<span class="n">wssse</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">computeCost</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">wssse</span><span class="p">)</span>
+<span class="n">vector_assembler</span><span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CreditScore&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;CreditScoreVec&quot;</span><span class="p">)</span>
+<span class="n">prosper_credit_score_vectorized</span> <span class="o">=</span> <span class="n">vector_assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span>
+<span class="n">prosper_credit_score_vectorized</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">MinMaxScaler</span>
+
+<span class="c1">## Hint : set min=0 ,  max=100</span>
+<span class="n">scaler_credit_score</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;CreditScoreVec&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;CreditScoreVecNormalized&quot;</span><span class="p">)</span>
+
+<span class="n">scaler_credit_score_model</span> <span class="o">=</span> <span class="n">scaler_credit_score</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">prosper_credit_score_vectorized</span><span class="p">)</span>
+<span class="n">propser5_scaled</span> <span class="o">=</span> <span class="n">scaler_credit_score_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_credit_score_vectorized</span><span class="p">)</span>
+<span class="n">propser5_scaled</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## see the bottom score</span>
+<span class="n">propser5_scaled</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;CreditScore&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## see the top score</span>
+<span class="n">propser5_scaled</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s2">&quot;CreditScore&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11904,7 +12078,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's take a look at the transformed dataset.  let's look at a distribution of our transformed dataset</p>
+<h2 id="Step:-Final-Pipeline-Code">Step: Final Pipeline Code<a class="anchor-link" href="#Step:-Final-Pipeline-Code">&#182;</a></h2><p>Let's do a pipeline from scratch</p>
 
 </div>
 </div>
@@ -11914,80 +12088,59 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
-<span class="n">histogram</span> <span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span>
-<span class="n">histogram</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">OneHotEncoder</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">MinMaxScaler</span>
+
+<span class="n">prosper</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span> \
+          <span class="n">option</span><span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span><span class="o">.</span> \
+          <span class="n">option</span><span class="p">(</span><span class="s2">&quot;inferSchema&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span><span class="o">.</span>  \
+          <span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/prosper-loan/prosper-loan-data-simplified.csv&quot;</span><span class="p">)</span>
+
+<span class="n">prosper2</span> <span class="o">=</span> <span class="n">prosper</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;LoanStatus&quot;</span><span class="p">,</span> <span class="s2">&quot;EmploymentStatus&quot;</span><span class="p">,</span> <span class="s2">&quot;CreditScore&quot;</span><span class="p">)</span>
+<span class="n">prosper_clean</span> <span class="o">=</span> <span class="n">prosper2</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">drop</span><span class="p">()</span>
+
+
+
+<span class="c1">## Hint</span>
+<span class="c1">##       StringIndexer (inputCol=&#39;EmploymentStatus&#39;,  outputCol=&#39;EmpIndex&#39;)</span>
+<span class="c1">##       OneHotEncoder(inputCol=&#39;EmpIndex&#39;,  outputCol=&#39;EmpVector&#39;)</span>
+
+<span class="n">strIndexer_employment</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
+<span class="n">encoder_employment</span> <span class="o">=</span> <span class="n">OneHotEncoder</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
+<span class="n">vector_assembler</span><span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;CreditScore&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;CreditScoreVec&quot;</span><span class="p">)</span>
+<span class="n">scaler_credit_score</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;CreditScoreVec&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;CreditScoreNormalized&quot;</span><span class="p">)</span>
+
+<span class="n">pipeline2</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="p">[</span><span class="n">strIndexer_employment</span><span class="p">,</span> <span class="n">encoder_employment</span><span class="p">,</span> <span class="n">vector_assembler</span><span class="p">,</span> <span class="n">scaler_credit_score</span><span class="p">])</span>
+
+<span class="c1">## Hint : fit &#39;prosper_clean&#39; data</span>
+<span class="n">model2</span> <span class="o">=</span> <span class="n">pipeline2</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+
+<span class="c1">## Hint : transform &#39;prosper_clean&#39; data</span>
+<span class="n">prosper_final</span> <span class="o">=</span> <span class="n">model2</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+<span class="n">prosper_final</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; Do a matplotlib or Pandas plot showing the histogram</strong></p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">histogram</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span><span class="o">.</span><span class="err">????</span>  <span class="c1"># Show bar plot illustrating histogram</span>
+<div class=" highlight hl-ipython3"><pre><span></span> 
 </pre></div>
 
 </div>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Relate-Cluster-Numbers-to-Trip-Types">Step 4: Relate Cluster Numbers to Trip Types<a class="anchor-link" href="#Step-4:-Relate-Cluster-Numbers-to-Trip-Types">&#182;</a></h2><p>Is there a relationship here? Discuss the results.</p>
-<p>Remember, clustering is trying to find "natural" patterns -- it is not a classifier, and if we are trying to classify trip type we should use a classification algorithm and not k-means.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">38</span><span class="p">)):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cluster #&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
-    <span class="n">predictions</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;prediction == &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;TripType&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;`count` &gt;= 1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO Analyze and discuss your results  Does there appear to be a relationship between cluster and triptype</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO: Are there any outliers that don't seem to fit into any cluster? Look at the outliers</strong></p>
-
-</div>
-</div>
 </div>
     </div>
   </div>

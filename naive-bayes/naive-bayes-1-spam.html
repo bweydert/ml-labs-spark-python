@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>2-kmeans-uber-pickups</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>naive-bayes-1-spam</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,15 +11775,13 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Clustering-:-K-Means-:-Uber-Pickups">Clustering : K-Means : Uber Pickups<a class="anchor-link" href="#Clustering-:-K-Means-:-Uber-Pickups">&#182;</a></h1><p>This is data of Uber pickups in New York City.<br>
-The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-pickups-in-new-york-city">kaggle competition</a>.</p>
-<p>Sample data looks like this</p>
+<link rel='stylesheet' href='../assets/css/main.css'/>
 
-<pre><code>"Date_Time","Lat","Lon","Base"
-"4/1/2014 0:11:00",40.769,-73.9549,"B02512"
-"4/1/2014 0:17:00",40.7267,-74.0345,"B02512"
-"4/1/2014 0:21:00",40.7316,-73.9873,"B02512"
-"4/1/2014 0:28:00",40.7588,-73.9776,"B02512"</code></pre>
+<p><a href="../README.md">&lt;&lt; back to main index</a></p>
+<h1 id="Naive-Bayes-Spam-Filtering">Naive Bayes Spam Filtering<a class="anchor-link" href="#Naive-Bayes-Spam-Filtering">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>We all hate spam, so developing a classifier to classify email as spam or not spam is useful.</p>
+<h3 id="Builds-on">Builds on<a class="anchor-link" href="#Builds-on">&#182;</a></h3><p>None</p>
+<h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>approx. 20-30 minutes</p>
+<h3 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h3><p>PySpark has a class called Linear Regression that can be used to do simple linear regression models.</p>
 
 </div>
 </div>
@@ -11796,10 +11794,15 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 
 <span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">LinearRegression</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">KMeans</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span>
-<span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="k">import</span> <span class="n">StringType</span><span class="p">,</span> <span class="n">FloatType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">StructType</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">HashingTF</span><span class="p">,</span> <span class="n">IDF</span><span class="p">,</span> <span class="n">Tokenizer</span><span class="p">,</span> <span class="n">VectorAssembler</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">NaiveBayes</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
 </pre></div>
 
 </div>
@@ -11811,64 +11814,8 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-1:-Load-the-Data">Step 1: Load the Data<a class="anchor-link" href="#Step-1:-Load-the-Data">&#182;</a></h2><p>We will also specify schema to reduce loading time</p>
+<h2 id="Step-1:-Let's-load-the-dataframe">Step 1: Let's load the dataframe<a class="anchor-link" href="#Step-1:-Let's-load-the-dataframe">&#182;</a></h2><p>We will load the dataframe into spark.  Since the outcome label is "ham" or "spam", we'll just call it label.</p>
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># file to read</span>
-
-<span class="c1">## sample file with 10,000 records</span>
-<span class="n">data_file</span><span class="o">=</span><span class="s2">&quot;/data/uber-nyc/uber-sample-10k.csv&quot;</span>
-
-<span class="c1">## larger file with about 500k records</span>
-<span class="c1"># data_file = &quot;/data/uber-nyc/uber-raw-data-apr14.csv.gz&quot;</span>
-
-<span class="c1">## all data</span>
-<span class="c1"># data_file = &quot;/data/uber-nyc/*csv.gz&quot;</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Specify-Schema">Specify Schema<a class="anchor-link" href="#Specify-Schema">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pickup_time_field</span> <span class="o">=</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;pickup_time&quot;</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
-<span class="n">lat_field</span> <span class="o">=</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;Lat&quot;</span><span class="p">,</span> <span class="n">FloatType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
-<span class="n">lon_field</span> <span class="o">=</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;Lon&quot;</span><span class="p">,</span> <span class="n">FloatType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
-<span class="n">base_field</span> <span class="o">=</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;Base&quot;</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
-
-<span class="n">schema</span> <span class="o">=</span> <span class="n">StructType</span><span class="p">([</span><span class="n">pickup_time_field</span><span class="p">,</span> <span class="n">lat_field</span><span class="p">,</span> <span class="n">lon_field</span><span class="p">,</span> <span class="n">base_field</span><span class="p">])</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Read-Data">Read Data<a class="anchor-link" href="#Read-Data">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -11878,13 +11825,30 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<span class="n">uber_pickups</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span>
-<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
-<span class="n">records_count_total</span> <span class="o">=</span> <span class="n">uber_pickups</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;read </span><span class="si">{:,}</span><span class="s2"> records in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">records_count_total</span><span class="p">,</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
-<span class="n">uber_pickups</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
-<span class="n">uber_pickups</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">,</span><span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;delimiter&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span>\
+  <span class="n">option</span><span class="p">(</span><span class="s1">&#39;inferSchema&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/data/spam/SMSSpamCollection.txt&quot;</span><span class="p">)</span>
+
+<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> 
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;read </span><span class="si">{:,}</span><span class="s2"> records in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
+
+<span class="n">dataset</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Count spam/ham</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;isspam&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11896,7 +11860,8 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2:-Cleanup-data">Step 2: Cleanup data<a class="anchor-link" href="#Step-2:-Cleanup-data">&#182;</a></h2><p>make sure our data is clean</p>
+<h2 id="Step-2:-Vectorize-using-tf/idf">Step 2: Vectorize using tf/idf<a class="anchor-link" href="#Step-2:-Vectorize-using-tf/idf">&#182;</a></h2><p>Let's use tf/idf for vecorization at first.  TF/IDF will take and count the instances of each term, and then divide by the total frequecy of that term in the entire dataset.</p>
+<p>This leads to very highly dimensional data, because every word in the document will lead to a dimension in the data.</p>
 
 </div>
 </div>
@@ -11906,10 +11871,17 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">uber_pickups_clean</span> <span class="o">=</span> <span class="n">uber_pickups</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Lat&#39;</span><span class="p">,</span> <span class="s1">&#39;Lon&#39;</span><span class="p">])</span>
-<span class="n">records_count_clean</span> <span class="o">=</span> <span class="n">uber_pickups_clean</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;words&quot;</span><span class="p">)</span>
+<span class="n">wordsData</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;cleaned records </span><span class="si">{:,}</span><span class="s2">,  dropped </span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">records_count_clean</span><span class="p">,</span>  <span class="p">(</span><span class="n">records_count_total</span> <span class="o">-</span> <span class="n">records_count_clean</span><span class="p">)))</span>
+<span class="n">hashingTF</span> <span class="o">=</span> <span class="n">HashingTF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;words&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;rawFeatures&quot;</span><span class="p">,</span> <span class="n">numFeatures</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">featurizedData</span> <span class="o">=</span> <span class="n">hashingTF</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">wordsData</span><span class="p">)</span>
+
+<span class="n">idf</span> <span class="o">=</span> <span class="n">IDF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;rawFeatures&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">idfModel</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featurizedData</span><span class="p">)</span>
+<span class="n">rescaledData</span> <span class="o">=</span> <span class="n">idfModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">featurizedData</span><span class="p">)</span>
+
+<span class="n">rescaledData</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;isspam&quot;</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11921,7 +11893,7 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3-:-Create-Feature-Vectors">Step 3 : Create Feature Vectors<a class="anchor-link" href="#Step-3-:-Create-Feature-Vectors">&#182;</a></h2>
+<h2 id="Step-3:-Create-a-numeric-label-out-of-the-string-column-&quot;isspam.&quot;">Step 3: Create a numeric label out of the string column "isspam."<a class="anchor-link" href="#Step-3:-Create-a-numeric-label-out-of-the-string-column-&quot;isspam.&quot;">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11930,10 +11902,9 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : create a feature vectors using &#39;Lat&#39;  and &#39;Lon&#39;  attributes</span>
-<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
-<span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">uber_pickups_clean</span><span class="p">)</span>
-<span class="n">featureVector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;isspam&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+<span class="n">indexed</span> <span class="o">=</span> <span class="n">indexer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">rescaledData</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">rescaledData</span><span class="p">)</span>
+<span class="n">indexed</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11945,8 +11916,7 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Running-Kmeans">Step 4: Running Kmeans<a class="anchor-link" href="#Step-4:-Running-Kmeans">&#182;</a></h2><p>Now it's time to run kmeans on the resultant dataframe.  We don't know what value of k to use, so let's just start with k=4.  This means we will cluster into four groups.</p>
-<p>We will fit a model to the data, and then train it.</p>
+<h2 id="Step-4:-Split-into-Training-and-Test">Step 4: Split into Training and Test<a class="anchor-link" href="#Step-4:-Split-into-Training-and-Test">&#182;</a></h2><p>We will split our dataset into training and test sets.</p>
 
 </div>
 </div>
@@ -11956,20 +11926,41 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : start with 4 clusters</span>
-<span class="n">num_clusters</span> <span class="o">=</span> <span class="err">?</span><span class="o">??</span>
-<span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">()</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="n">num_clusters</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the data into train and test</span>
+<span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">indexed</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1234</span><span class="p">)</span>
 
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training set count : &quot;</span><span class="p">,</span> <span class="n">train</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;testing set count : &quot;</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-5:-Fit-Naive-Bayes-Model">Step 5: Fit Naive Bayes Model<a class="anchor-link" href="#Step-5:-Fit-Naive-Bayes-Model">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create the trainer and set its parameters</span>
+<span class="n">nb</span> <span class="o">=</span> <span class="n">NaiveBayes</span><span class="p">(</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">modelType</span><span class="o">=</span><span class="s2">&quot;multinomial&quot;</span><span class="p">)</span>
+
+<span class="c1"># train the model</span>
 <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<span class="c1">## TODO : fit (featureVector)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
 <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
-<span class="n">wssse</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">computeCost</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
-
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Kmeans : </span><span class="si">{}</span><span class="s2"> clusters computed in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">num_clusters</span><span class="p">,</span>  <span class="p">((</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">)))</span>
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;num_clusters = </span><span class="si">{}</span><span class="s2">,  WSSSE = </span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_clusters</span><span class="p">,</span> <span class="n">wssse</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;trained on </span><span class="si">{:,}</span><span class="s2"> records  in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span>\
+      <span class="nb">format</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -11981,7 +11972,8 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5:-Let's-find-the-best-K---Hyperparameter-tuning">Step 5: Let's find the best K - Hyperparameter tuning<a class="anchor-link" href="#Step-5:-Let's-find-the-best-K---Hyperparameter-tuning">&#182;</a></h2><p>Let's try iterating and plotting over values of k, so we can practice using the elbow method.</p>
+<h2 id="Step-6:-Run-Test-Data">Step 6: Run Test Data<a class="anchor-link" href="#Step-6:-Run-Test-Data">&#182;</a></h2><p>Let's call .transform on our model to do make predictions on our test data. The output should be contained in the "prediction" column, while the correct label will be there in the "label" column.</p>
+<p>We will be able to evaluate our results by comparing the results.</p>
 
 </div>
 </div>
@@ -11991,47 +11983,9 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">kvals</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">wssses</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="c1">## TODO : loop over k values from 2 to 10</span>
-<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="err">???</span><span class="p">,</span> <span class="err">????</span><span class="p">):</span>
-    <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">()</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
-    <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-    <span class="n">wssse</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">computeCost</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;k=</span><span class="si">{}</span><span class="s2">,  wssse=</span><span class="si">{}</span><span class="s2">,  time took </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">wssse</span><span class="p">,</span> <span class="p">((</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">)))</span>
-    <span class="n">kvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-    <span class="n">wssses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wssse</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;k&#39;</span><span class="p">:</span> <span class="n">kvals</span><span class="p">,</span> <span class="s1">&#39;wssse&#39;</span><span class="p">:</span><span class="n">wssses</span><span class="p">})</span>
-<span class="n">df</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kvals</span><span class="p">,</span> <span class="n">wssses</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># select example rows to display.</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="n">predictions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12043,7 +11997,7 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-6-:-Let's-run-K-Means-with-the-best-K-we-have-choosen">Step 6 : Let's run K-Means with the best K we have choosen<a class="anchor-link" href="#Step-6-:-Let's-run-K-Means-with-the-best-K-we-have-choosen">&#182;</a></h2><p>From the graph above, choose a good K value.  We wwill use that below</p>
+<h2 id="Step-6:-Evaluate-Model">Step 6: Evaluate Model<a class="anchor-link" href="#Step-6:-Evaluate-Model">&#182;</a></h2><p>Let's look at how our model performs.  We will do an accuracy measure.</p>
 
 </div>
 </div>
@@ -12053,19 +12007,10 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : pick a K value</span>
-<span class="n">num_clusters</span> <span class="o">=</span> <span class="err">?</span><span class="o">??</span>
-<span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">()</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="n">num_clusters</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
-<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-
-<span class="n">wssse</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">computeCost</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
-
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Kmeans : </span><span class="si">{}</span><span class="s2"> clusters computed in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">num_clusters</span><span class="p">,</span>  <span class="p">((</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">)))</span>
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;num_clusters = </span><span class="si">{}</span><span class="s2">,  WSSSE = </span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_clusters</span><span class="p">,</span> <span class="n">wssse</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span>
+                                              <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test set accuracy = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -12077,77 +12022,7 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Predict">Predict<a class="anchor-link" href="#Predict">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<span class="n">predicted</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
-<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;</span><span class="si">{:,}</span><span class="s2"> records clustered in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">predicted</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">((</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span> <span class="p">))</span>
-
-<span class="n">predicted</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-7-:-Print-Cluster-Center-and-Size">Step 7 : Print Cluster Center and Size<a class="anchor-link" href="#Step-7-:-Print-Cluster-Center-and-Size">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cluster_count</span> <span class="o">=</span> <span class="n">predicted</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">)</span>
-<span class="n">cluster_count</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">clusterCenters</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
-    <span class="n">index</span> <span class="o">=</span> <span class="n">index</span><span class="o">+</span><span class="mi">1</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-8-:-Ploting-time!">Step 8 : Ploting time!<a class="anchor-link" href="#Step-8-:-Ploting-time!">&#182;</a></h2><p>We are going to plot the results now.<br>
-Since we are dealing with GEO co-ordinates, let's use Google Maps!</p>
-<p>Go to the following URL :<br>
-<a href="https://jsfiddle.net/sujee/omypetfu/">https://jsfiddle.net/sujee/omypetfu/</a></p>
-<ul>
-<li>Run the code cell below</li>
-<li>copy paste the output into Javascript section of the JSFiddle Editor (lower left)</li>
-<li>and click 'Run'  (top nav bar)</li>
-<li>Click on 'tidy' (top nav bar)  to cleanup code</li>
-</ul>
-<p>See the following image</p>
-<p><img src="../assets/images/kmeans_uber_trips_map.png" style="border: 5px solid grey ; max-width:100%;" /></p>
-<p>You will be rewarded with a beautiful map of clusters on Google Maps</p>
-<p><img src="../assets/images/Kmeans_uber_trips.png" style="border: 5px solid grey ; max-width:100%;" /></p>
-<p>Optional</p>
-<ul>
-<li>You can 'fork' the snippet and keep tweaking</li>
-</ul>
+<p>Let us do a confusion matrix.</p>
 
 </div>
 </div>
@@ -12157,59 +12032,9 @@ Since we are dealing with GEO co-ordinates, let's use Google Maps!</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">### generate Javascript</span>
-<span class="n">s1</span> <span class="o">=</span> <span class="s2">&quot;var clusters = {&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="n">s2</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
-<span class="n">prediction_count</span> <span class="o">=</span> <span class="n">predicted</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;count&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-<span class="n">total_count</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">cluster_centers</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">clusterCenters</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_clusters</span><span class="p">):</span>
-    <span class="n">count</span> <span class="o">=</span> <span class="n">prediction_count</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;count&quot;</span><span class="p">]</span>
-    <span class="n">lat</span> <span class="o">=</span> <span class="n">cluster_centers</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">lng</span> <span class="o">=</span> <span class="n">cluster_centers</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">total_count</span> <span class="o">=</span> <span class="n">total_count</span> <span class="o">+</span> <span class="n">count</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="n">s2</span> <span class="o">=</span> <span class="n">s2</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
-    <span class="n">s2</span> <span class="o">=</span> <span class="n">s2</span> <span class="o">+</span> <span class="s2">&quot; </span><span class="si">{}</span><span class="s2">: {{ center: {{ lat: </span><span class="si">{}</span><span class="s2">, lng: </span><span class="si">{}</span><span class="s2"> }}, count: </span><span class="si">{}</span><span class="s2"> }}&quot;</span><span class="o">.</span>\
-        <span class="nb">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lng</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
-    <span class="c1">#s2 = s2 + &quot;{}: {{  center: {{ }}, }}&quot;.format(i)</span>
-
-<span class="n">s3</span> <span class="o">=</span> <span class="n">s1</span> <span class="o">+</span> <span class="n">s2</span> <span class="o">+</span> <span class="s2">&quot;};&quot;</span>
-
-<span class="n">s4</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">function initMap() {</span>
-<span class="s2">  // Create the map.</span>
-<span class="s2">  var map = new google.maps.Map(document.getElementById(&#39;map&#39;), {</span>
-<span class="s2">    zoom: 10,</span>
-<span class="s2">    center: {</span>
-<span class="s2">      lat: 40.77274573,</span>
-<span class="s2">      lng: -73.94</span>
-<span class="s2">    },</span>
-<span class="s2">    mapTypeId: &#39;roadmap&#39;</span>
-<span class="s2">  });</span>
-
-<span class="s2">  // Construct the circle for each value in citymap.</span>
-<span class="s2">  // Note: We scale the area of the circle based on the population.</span>
-<span class="s2">  for (var cluster in clusters) {</span>
-<span class="s2">    // Add the circle for this city to the map.</span>
-<span class="s2">    var cityCircle = new google.maps.Circle({</span>
-<span class="s2">      strokeColor: &#39;#FF0000&#39;,</span>
-<span class="s2">      strokeOpacity: 0.8,</span>
-<span class="s2">      strokeWeight: 2,</span>
-<span class="s2">      fillColor: &#39;#FF0000&#39;,</span>
-<span class="s2">      fillOpacity: 0.35,</span>
-<span class="s2">      map: map,</span>
-<span class="s2">      center: clusters[cluster].center,</span>
-<span class="s2">&quot;&quot;&quot;</span>
-
-<span class="n">s5</span> <span class="o">=</span> <span class="s2">&quot;radius: clusters[cluster].count / </span><span class="si">{}</span><span class="s2"> * 100 * 300 }});  }}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total_count</span><span class="p">)</span>
-
-<span class="c1"># final</span>
-<span class="n">s</span> <span class="o">=</span> <span class="n">s3</span> <span class="o">+</span> <span class="n">s4</span> <span class="o">+</span> <span class="n">s5</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="c1">## Can you explain the confusion matrix</span>
 </pre></div>
 
 </div>
@@ -12221,34 +12046,27 @@ Since we are dealing with GEO co-ordinates, let's use Google Maps!</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-9:-Let's-analyze-some-more-data">Step 9: Let's analyze some more data<a class="anchor-link" href="#Step-9:-Let's-analyze-some-more-data">&#182;</a></h2><ul>
-<li>In Step-1 select the data_file to 
-<pre><code>data_file = "/data/uber-nyc/uber-raw-data-apr14.csv.gz"</code></pre>
-</li>
-<li>And select 'Cell --&gt; Run All'  to execute all code blocks</li>
-</ul>
+<h2 id="Step-7:--Your-own-test">Step 7:  Your own test<a class="anchor-link" href="#Step-7:--Your-own-test">&#182;</a></h2><p>Now it's your turn!   Make a new dataframe with some sample test data of your own creation.  Make some "spammy" SMSes and some ordinary ones.  See how our spam filter does.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-10-:-Running-the-script">Step 10 : Running the script<a class="anchor-link" href="#Step-10-:-Running-the-script">&#182;</a></h2><p><strong>Use the dowload script</strong></p>
-<div class="highlight"><pre><span></span><span class="nb">cd</span>   ~/data/uber-nyc
-./download-data.sh
-</pre></div>
-<p>This will download more data.</p>
-<p>As we run on larger dataset, the execution will take longer and Jupyter notebook might time out.  So let's run this in command line / script mode</p>
-<div class="highlight"><pre><span></span>$    <span class="nb">cd</span>   ~/ml-labs-spark-python/clustering
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: make a dataframe with some of your own data.</span>
 
-$    <span class="nb">time</span>  ~/spark/bin/spark-submit    --master local<span class="o">[</span>*<span class="o">]</span>  kmeans-uber.py <span class="m">2</span>&gt; logs
+<span class="n">mydata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;isspam&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;spam&#39;</span><span class="p">,</span> <span class="s1">&#39;ham&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+              <span class="s1">&#39;text&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;My text here&#39;</span><span class="p">,</span> <span class="s1">&#39;My Text Here 2&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+             <span class="p">})</span>
 </pre></div>
-<p>Watch the output</p>
 
 </div>
 </div>
+</div>
+
 </div>
     </div>
   </div>

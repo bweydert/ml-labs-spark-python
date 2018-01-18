@@ -12016,9 +12016,12 @@ div#notebook {
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 <span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
 
-
 <span class="n">intercept</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span>  <span class="c1"># This is the intercept</span>
 <span class="n">slope</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#This is the slope</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;linear model : &quot;</span><span class="p">,</span> <span class="n">lrModel</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;intercept : &quot;</span><span class="p">,</span> <span class="n">intercept</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;slope : &quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12169,6 +12172,9 @@ If <code>tip = a * amount + b</code></p>
 
 <span class="n">intercept</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span>
 <span class="n">slope</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;intercept : &quot;</span><span class="p">,</span> <span class="n">intercept</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;slope : &quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12222,6 +12228,7 @@ If <code>tip = a * amount + b</code></p>
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># coefficient.of.determination (r^2) </span>
 <span class="n">rsquared</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">r2</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rsquared</span><span class="p">)</span>
 <span class="c1"># 0.9067141</span>
 </pre></div>
 

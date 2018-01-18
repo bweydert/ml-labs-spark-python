@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>2-college-admission</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>logistic-1-credit-approval</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,10 +11775,22 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Multiple-Logistic-Regression-in-Spark----College-Admission">Multiple Logistic Regression in Spark  - College Admission<a class="anchor-link" href="#Multiple-Logistic-Regression-in-Spark----College-Admission">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Predict college admission using Multiple Logistic Regression</p>
+<link rel='stylesheet' href='../assets/css/main.css'/>
+
+<p><a href="../README.md">&lt;&lt; back to main index</a></p>
+<h1 id="Logistic-Regression-in-Spark----Credit-Card-Approval-(Demo)">Logistic Regression in Spark  - Credit Card Approval (Demo)<a class="anchor-link" href="#Logistic-Regression-in-Spark----Credit-Card-Approval-(Demo)">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Instructor to demo this on screen.</p>
 <h3 id="Builds-on">Builds on<a class="anchor-link" href="#Builds-on">&#182;</a></h3><p>None</p>
-<h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>approx. 10-20 minutes</p>
-<h3 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h3>
+<h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>approx. 20-30 minutes</p>
+<h3 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h3><p>Spark has a logistic regression function called Logistic Regression.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Load-imports">Load imports<a class="anchor-link" href="#Load-imports">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11793,7 +11805,7 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
+
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
 
@@ -11806,62 +11818,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-1:-College-Admission-Data">Step 1: College Admission Data<a class="anchor-link" href="#Step-1:-College-Admission-Data">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's look at the college admission data.  Here, we have some student test scores, GPA, and Rank, followed by whether the student was admitted or not.</p>
-<table>
-<thead><tr>
-<th>gre</th>
-<th>gpa</th>
-<th>rank</th>
-<th>admitted</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>380</td>
-<td>3.61</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr>
-<td>660</td>
-<td>3.67</td>
-<td>1</td>
-<td>yes</td>
-</tr>
-<tr>
-<td>800</td>
-<td>4.0</td>
-<td>1</td>
-<td>yes</td>
-</tr>
-<tr>
-<td>640</td>
-<td>3.19</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-<tr>
-<td>520</td>
-<td>2.93</td>
-<td>4</td>
-<td>no</td>
-</tr>
-<tr>
-<td>760</td>
-<td>3.0</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-</tbody>
-</table>
+<h2 id="Sigmoid-Curve">Sigmoid Curve<a class="anchor-link" href="#Sigmoid-Curve">&#182;</a></h2><p>In logistic regression, we often use a sigmoid activation function.  Let's generate a sigmoid curve in python!  (no spark required!)</p>
+<p><strong>=&gt;TODO: complete the code to get a sigmoid! </strong></p>
 
 </div>
 </div>
@@ -11871,8 +11829,17 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">admissions</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/college-admissions/admission-data.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">admissions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1"># plot sigmoid curve</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">10.</span><span class="p">,</span><span class="mf">10.</span><span class="p">,</span><span class="mf">1.</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># intercept</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># slope</span>
+<span class="n">sigmoid</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">m</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">b</span> <span class="o">+</span> <span class="n">m</span><span class="o">*</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">b</span> <span class="o">+</span> <span class="n">m</span><span class="o">*</span><span class="n">x</span><span class="p">)))</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">m</span><span class="p">)</span>
+
+<span class="c1">## hint : scatter (x,y)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="err">???</span><span class="p">,</span><span class="err">???</span><span class="p">)</span> 
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Sigmoid (Logistic) Function&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11884,9 +11851,110 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">Step 2: Convert dataframe to Spark and Prepare feature vector<a class="anchor-link" href="#Step-2:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">&#182;</a></h2><p>We need to firstconvert the dataframe to spark, and then prepare the feature vector.</p>
-<p><strong>=&gt; TODO: Select all columns except for "admit" to be in features </strong></p>
-<p><strong>=&gt; TODO: Make a new column called "label" with same value as "admit" </strong></p>
+<h2 id="Step-1:-Credit-Approval-Data">Step 1: Credit Approval Data<a class="anchor-link" href="#Step-1:-Credit-Approval-Data">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here is the sample data we are looking at:</p>
+<table>
+<thead><tr>
+<th>score</th>
+<th>approved</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>550</td>
+<td>0</td>
+</tr>
+<tr>
+<td>750</td>
+<td>1</td>
+</tr>
+<tr>
+<td>680</td>
+<td>1</td>
+</tr>
+<tr>
+<td>650</td>
+<td>0</td>
+</tr>
+<tr>
+<td>450</td>
+<td>0</td>
+</tr>
+<tr>
+<td>800</td>
+<td>1</td>
+</tr>
+<tr>
+<td>775</td>
+<td>1</td>
+</tr>
+<tr>
+<td>525</td>
+<td>0</td>
+</tr>
+<tr>
+<td>620</td>
+<td>0</td>
+</tr>
+<tr>
+<td>705</td>
+<td>0</td>
+</tr>
+<tr>
+<td>830</td>
+<td>1</td>
+</tr>
+<tr>
+<td>610</td>
+<td>1</td>
+</tr>
+<tr>
+<td>690</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-2:-Let's-visualize-the-data">Step 2: Let's visualize the data<a class="anchor-link" href="#Step-2:-Let's-visualize-the-data">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">credit_approval</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;score&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">550.</span><span class="p">,</span> <span class="mf">750.</span><span class="p">,</span> <span class="mf">680.</span><span class="p">,</span> <span class="mf">650.</span><span class="p">,</span> <span class="mf">450.</span><span class="p">,</span> <span class="mf">800.</span><span class="p">,</span> <span class="mf">775.</span><span class="p">,</span> <span class="mf">525.</span><span class="p">,</span> <span class="mf">620.</span><span class="p">,</span> <span class="mf">705.</span><span class="p">,</span> <span class="mf">830.</span><span class="p">,</span> <span class="mf">610.</span><span class="p">,</span> <span class="mf">690.</span><span class="p">],</span>
+              <span class="s1">&#39;approved&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+             <span class="p">})</span>
+
+<span class="n">credit_approval</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Let-us-plot-and-visualize-the-sample-data.">Let us plot and visualize the sample data.<a class="anchor-link" href="#Let-us-plot-and-visualize-the-sample-data.">&#182;</a></h2><p><strong>=&gt; Run a scatterplot with score on the X axis and approved on the y axis </strong></p>
 
 </div>
 </div>
@@ -11896,11 +11964,40 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Hint : select columns &#39;gpa&#39;, &#39;gre&#39;, &#39;rank&#39;</span>
-<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">,</span><span class="s2">&quot;???&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
-<span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">admissions</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Hint x = credit_approval.score,   y = credit_approval.approved</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">credit_approval</span><span class="o">.</span><span class="err">???</span><span class="p">,</span><span class="n">credit_approval</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;approved&#39;</span><span class="p">)</span>
+</pre></div>
 
-<span class="c1">## Hint : featureVector is &#39;admit&#39;</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-3:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">Step 3: Convert dataframe to Spark and Prepare feature vector<a class="anchor-link" href="#Step-3:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">&#182;</a></h2><p>We need to first convert the pandas dataframe to a spark dataframe, and then prepare the feature vector. To create the feature vector, we use the VectorAssembler.</p>
+<p><strong>=&gt; Run VectorAssembler by using input column as "score </strong></p>
+<p>We will need a numeric column called "label" in our dataset because our model by default will look for a column by that name.  So, we'll just add it.</p>
+<p><strong>=&gt; Rename columnn "approved" as "label" </strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">credit_approval</span><span class="p">)</span>
+<span class="c1">## Hint : inputCols = [&quot;score&quot;]</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1">## Hint : featureVector[&quot;approved&quot;]</span>
 <span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span><span class="n">featureVector</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">])</span>
 <span class="n">featureVector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -11914,44 +12011,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-Split-Data-into-training-and-Test">Step 3: Split Data into training and Test<a class="anchor-link" href="#Step-3:-Split-Data-into-training-and-Test">&#182;</a></h2><p>We will split our data into training and test so we can see how it performs.</p>
-<p><strong>=&gt; TODO: Use training / test split of 70%/30% </strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Split the data into train and test</span>
-<span class="c1">## Hint : </span>
-<span class="c1">##     - training split is 70%  --&gt; 0.7</span>
-<span class="c1">##     - testing split  is 30%  --&gt; 0.3</span>
-<span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="err">??</span><span class="n">training_split</span><span class="err">??</span><span class="p">,</span>  <span class="err">??</span><span class="n">testing</span> <span class="n">split</span><span class="err">??</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1">## print out record count</span>
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;train dataset count : &quot;</span> <span class="p">,</span> <span class="n">train</span><span class="o">.</span><span class="err">???</span><span class="p">())</span>
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;test dataset count : &quot;</span> <span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="err">???</span><span class="p">())</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training data set&quot;</span><span class="p">)</span>
-<span class="n">train</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test data set&quot;</span><span class="p">)</span>
-<span class="n">test</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Run-logistic-regression">Step 4: Run logistic regression<a class="anchor-link" href="#Step-4:-Run-logistic-regression">&#182;</a></h2><p><strong>=&gt; TODO: Run with 50 iteraitons </strong></p>
+<h2 id="Step-3:-Fit-logistic-regression">Step 3: Fit logistic regression<a class="anchor-link" href="#Step-3:-Fit-logistic-regression">&#182;</a></h2><p>Now it's time to fit our logistic regression model.  This is a linear model, so we will be getting the coefficients and intercept.</p>
+<p><strong>=&gt; Run Logistic Regression with 50 iterations. </strong></p>
 
 </div>
 </div>
@@ -11964,9 +12025,10 @@ div#notebook {
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 
 <span class="c1"># Fit the model</span>
-<span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+<span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
 
 <span class="c1"># Print the coefficients and intercept for logistic regression</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;inputs : gre, gpa, rank&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficients: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Intercept: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span><span class="p">))</span>
 </pre></div>
@@ -11976,41 +12038,12 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5:-Inspect-Learning">Step 5: Inspect Learning<a class="anchor-link" href="#Step-5:-Inspect-Learning">&#182;</a></h2>
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## show predictions in training data</span>
-<span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="c1">## sample based on data</span>
-<span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">sampleBy</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">fractions</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## How many data points where label != prediction</span>
-<span class="n">missed</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;label != prediction&quot;</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;missed &quot;</span><span class="p">,</span> <span class="n">missed</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
-<span class="n">missed</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12022,7 +12055,17 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-6:-Evaluate-Model">Step 6: Evaluate Model<a class="anchor-link" href="#Step-6:-Evaluate-Model">&#182;</a></h2><h3 id="6.1---ROC-Curve-&amp;-AUC">6.1 - ROC Curve &amp; AUC<a class="anchor-link" href="#6.1---ROC-Curve-&amp;-AUC">&#182;</a></h3>
+<p>The output lists approval &amp; estimated probabilities</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="ROC-Curve-and-AUC-(Area-Under-Curve)">ROC Curve and AUC (Area Under Curve)<a class="anchor-link" href="#ROC-Curve-and-AUC-(Area-Under-Curve)">&#182;</a></h2><p><strong>=&gt; TODO: What is the meaning of the ROC curve?  How is the AUC calculated? </strong></p>
+
 </div>
 </div>
 </div>
@@ -12031,12 +12074,12 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trainingSummary</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Extract the summary from the returned LogisticRegressionModel instance trained</span>
+<span class="c1"># in the earlier example</span>
+<span class="n">trainingSummary</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span>
 
-<span class="c1"># Area Under Curve is part of training summary</span>
-<span class="c1"># use TAB completion :  trainingSummary.TAB</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;areaUnderROC: &quot;</span> <span class="p">,</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
+<span class="c1"># Obtain the receiver-operating characteristic as a dataframe and areaUnderROC.</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;areaUnderROC: &quot;</span> <span class="p">,</span>  <span class="n">trainingSummary</span><span class="o">.</span><span class="n">areaUnderROC</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12052,6 +12095,7 @@ div#notebook {
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># ROC</span>
 
 <span class="n">roc_df</span> <span class="o">=</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">roc</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">roc_df</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">roc_df</span><span class="p">[</span><span class="s1">&#39;FPR&#39;</span><span class="p">],</span> <span class="n">roc_df</span><span class="p">[</span><span class="s1">&#39;TPR&#39;</span><span class="p">])</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;FPR&quot;</span><span class="p">)</span>
@@ -12069,11 +12113,9 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="6.2---Iterations-and-Objective-History">6.2 - Iterations and Objective History<a class="anchor-link" href="#6.2---Iterations-and-Objective-History">&#182;</a></h3><p><strong> Q : how many iterations did we do?</strong></p>
-<ul>
-<li>What does that tell you?</li>
-<li>Increase the total number of iterations from 50 to 100, Does it change the results?</li>
-</ul>
+<p><strong>How many iterations did it take?
+Did the model converge before our specified MAX itertions?
+What can we learn from this?</strong></p>
 
 </div>
 </div>
@@ -12083,14 +12125,30 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## trainingSummary has an attribute called &#39;totalIterations&#39;  </span>
-<span class="c1">## Hint : use the TAB completion</span>
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;total iterations &quot;</span><span class="p">,</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trainingSummary</span><span class="o">.</span><span class="n">totalIterations</span>
+</pre></div>
 
-<span class="c1">## you can uncomment this and see how the error is diminishing in each iteration</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Some experimentations</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;total iterations &quot;</span><span class="p">,</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">totalIterations</span><span class="p">)</span>
+
+<span class="c1">## Obtain the objective per iteration</span>
+<span class="n">objectiveHistory</span> <span class="o">=</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">objectiveHistory</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;objectiveHistory:&quot;</span><span class="p">)</span>
-<span class="c1">#for objective in trainingSummary.objectiveHistory:</span>
-<span class="c1">#    print(objective)</span>
+<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">objective</span> <span class="ow">in</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">:</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot; : &quot;</span><span class="p">,</span>  <span class="n">objective</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12102,7 +12160,17 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-7:-Run-on-the-test-data">Step 7: Run on the test data<a class="anchor-link" href="#Step-7:-Run-on-the-test-data">&#182;</a></h2><p><strong>=&gt;TODO: transform the test data </strong></p>
+<p><strong> Q : increase the maxIterations to 100 (in step 3) and re-run again</strong><br>
+Does the accuracy improve?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-4:-Visualize-data-and-logit-model">Step 4: Visualize data and logit model<a class="anchor-link" href="#Step-4:-Visualize-data-and-logit-model">&#182;</a></h2><p>Let's visualize the data and our model.</p>
 
 </div>
 </div>
@@ -12112,12 +12180,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## what is the name of test dataframe?</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-<span class="n">predictions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="c1">## sample</span>
-<span class="n">predictions</span><span class="o">.</span><span class="n">sampleBy</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">fractions</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">credit_approval</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="n">credit_approval</span><span class="o">.</span><span class="n">approved</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;score&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;approved&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12129,8 +12194,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-8:-Calcuate-Accuracy-on-Test-Data">Step 8: Calcuate Accuracy on Test Data<a class="anchor-link" href="#Step-8:-Calcuate-Accuracy-on-Test-Data">&#182;</a></h2><p><strong>=&gt;TODO: evaluate the predictions </strong></p>
-
+<h2 id="Step-6:-Let's-create-some-new-test-data-and-make-predictions">Step 6: Let's create some new test data and make predictions<a class="anchor-link" href="#Step-6:-Let's-create-some-new-test-data-and-make-predictions">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12139,46 +12203,35 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span>
-                                              <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
-<span class="n">accuracy</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test set accuracy = &quot;</span> <span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-8:-Run-some-predictions-on-new-data">Step 8: Run some predictions on new data<a class="anchor-link" href="#Step-8:-Run-some-predictions-on-new-data">&#182;</a></h2><p>Let's take some new data, and run predictions on that.</p>
-<p><strong>=&gt;TODO: create spark dataframe from pandas dataframe </strong></p>
-<p><strong>=&gt;TODO: transform the new data in order to get feature vectors </strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">newdata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;gre&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">600</span><span class="p">,</span> <span class="mi">700</span><span class="p">,</span> <span class="mi">800</span><span class="p">],</span> 
-                        <span class="s1">&#39;gpa&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">],</span>
-                        <span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span>   <span class="mi">2</span><span class="p">,</span>   <span class="mi">3</span><span class="p">]}</span>
-             <span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">newdata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;score&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">600.</span><span class="p">,</span> <span class="mf">700.</span><span class="p">,</span> <span class="mf">810.</span><span class="p">]</span>
+             <span class="p">})</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">newdata</span><span class="p">)</span>
 
-<span class="c1">## Hint : input is &#39;newdata&#39;</span>
-<span class="n">spark_newdata</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-
-<span class="c1">## Hint : spark_newdata</span>
-<span class="n">newfeatures</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-
+<span class="n">spark_newdata</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">newdata</span><span class="p">)</span>
+<span class="n">newfeatures</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">spark_newdata</span><span class="p">)</span>
 <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">newfeatures</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>=&gt; TODO: Try adding your own test data  </strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Enter your test data here and re=run.</span>
 </pre></div>
 
 </div>

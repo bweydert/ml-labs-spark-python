@@ -11809,9 +11809,10 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">admissions</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/college-admissions/admission-data-dirty.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">admissions</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/college-admissions/admission-data-dirty.csv&quot;</span><span class="p">,</span> \
+                            <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;count &quot;</span><span class="p">,</span> <span class="n">admissions</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 <span class="n">admissions</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
-<span class="n">admissions</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11841,6 +11842,35 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Describe one column</span>
+<span class="n">admissions</span><span class="o">.</span><span class="n">describe</span><span class="p">([</span><span class="s1">&#39;gre&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Describe more than one column : gre and gpa</span>
+<span class="c1">## Hint : add &#39;gpa&#39; column</span>
+<span class="n">admissions</span><span class="o">.</span><span class="n">describe</span><span class="p">([</span><span class="s1">&#39;gre&#39;</span><span class="p">,</span> <span class="s1">&#39;???&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -11854,14 +11884,27 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dropped_na</span> <span class="o">=</span> <span class="n">admissions</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">drop</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;raw data count &quot;</span><span class="p">,</span> <span class="n">admissions</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+<span class="n">dropped_na</span> <span class="o">=</span> <span class="n">admissions</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">drop</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;after drop count &quot;</span><span class="p">,</span> <span class="n">dropped_na</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 <span class="n">dropped_na</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">dropped_na</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
 
-<span class="c1"># only drop nulls from admit &amp; gre column</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># only drop nulls from admit &amp; gre column</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;raw data count &quot;</span><span class="p">,</span> <span class="n">admissions</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 <span class="n">dropped2</span> <span class="o">=</span> <span class="n">admissions</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;admit&#39;</span><span class="p">,</span> <span class="s1">&#39;gre&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;after drop count &quot;</span><span class="p">,</span> <span class="n">dropped2</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 <span class="n">dropped2</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">dropped2</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 </pre></div>
 
 </div>
@@ -11883,10 +11926,25 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># fill every thing with zero</span>
-<span class="n">admissions</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">zero_fill</span> <span class="o">=</span> <span class="n">admissions</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">zero_fill</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
 
-<span class="c1"># or we can specify per column default value</span>
-<span class="n">admissions</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">({</span><span class="s1">&#39;admit&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;gre&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">100</span> <span class="p">,</span> <span class="s1">&#39;gpa&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;rank&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">})</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># or we can specify per column default value</span>
+<span class="c1">## TODO : specify different default values per column</span>
+<span class="c1">##        default value for gre = -100</span>
+<span class="n">fill2</span> <span class="o">=</span> <span class="n">admissions</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">({</span><span class="s1">&#39;admit&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;gre&#39;</span><span class="p">:</span> <span class="err">???</span> <span class="p">,</span> <span class="s1">&#39;gpa&#39;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;rank&#39;</span><span class="p">:</span><span class="mi">10</span><span class="p">})</span>
+<span class="n">fill2</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11909,8 +11967,19 @@ div#notebook {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># replace all 800 gre into 1000</span>
 <span class="n">admissions</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;gre&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
 
-<span class="c1"># replace all rank 4 into rank 5</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># replace all rank 4 into rank 5</span>
 <span class="n">admissions</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="c1"># why is this not working?</span>
@@ -11935,17 +12004,11 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">admissions</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
-
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;raw data count &quot;</span><span class="p">,</span> <span class="n">admissions</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 <span class="n">a</span> <span class="o">=</span> <span class="n">admissions</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">admissions</span><span class="o">.</span><span class="n">rank</span><span class="o">.</span><span class="n">isNotNull</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cleaned count &quot;</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 <span class="n">a</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
-
-<span class="n">b</span> <span class="o">=</span> <span class="n">admissions</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">admissions</span><span class="o">.</span><span class="n">rank</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]))</span>
-<span class="n">b</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
-
-<span class="c1">#c = admissions.where(admissions.rank.is_integer())</span>
 </pre></div>
 
 </div>
@@ -11958,7 +12021,10 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;raw data count &quot;</span><span class="p">,</span> <span class="n">admissions</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">admissions</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">admissions</span><span class="o">.</span><span class="n">rank</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;clean count  &quot;</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+<span class="n">b</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>

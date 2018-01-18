@@ -11775,7 +11775,12 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Visualizing-Data">Visualizing Data<a class="anchor-link" href="#Visualizing-Data">&#182;</a></h1>
+<h1 id="Visualizing-Data">Visualizing Data<a class="anchor-link" href="#Visualizing-Data">&#182;</a></h1><p>Here we will use two libraries</p>
+<ul>
+<li>matplotlib : a very capable python graph library</li>
+<li>Seaborn : a high level library built on top of matplotlib.  Seaborn aims to give 'pretty' graphs right out of the box </li>
+</ul>
+
 </div>
 </div>
 </div>
@@ -11815,8 +11820,19 @@ div#notebook {
 <span class="c1">## TODO : do a boxplot of salaries</span>
 <span class="c1">## Hint : plot.boxplot(data)</span>
 <span class="n">plt</span><span class="o">.</span><span class="err">???</span><span class="p">(</span><span class="n">salaries</span><span class="p">)</span>
+</pre></div>
 
-<span class="c1">## seaborn plot</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## seaborn plot</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="err">???</span><span class="p">)</span>
 </pre></div>
 
@@ -11843,8 +11859,19 @@ div#notebook {
 <span class="c1">## TODO : histogram</span>
 <span class="c1">## HINT : plt.hist</span>
 <span class="n">plt</span><span class="o">.</span><span class="err">???</span><span class="p">(</span><span class="n">salaries</span><span class="p">,</span> <span class="n">rwidth</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+</pre></div>
 
-<span class="c1">## seaborn</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## seaborn</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">salaries</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rug</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
 </pre></div>
 
