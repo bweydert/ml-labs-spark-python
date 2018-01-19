@@ -11817,7 +11817,7 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## small file, start with this</span>
-<span class="n">datafile</span> <span class="o">=</span> <span class="s2">&quot;/data/prosper-loan/prosper-loan-data-simplified.csv&quot;</span>
+<span class="n">datafile</span> <span class="o">=</span> <span class="s2">&quot;/data/prosper-loan/prosper-loan-data-sample.csv&quot;</span>
 <span class="c1">## this is a large file</span>
 <span class="c1">#datafile = &quot;/data/prosper-loan/prosper-loan-data.csv.gz&quot;</span>
 
@@ -11948,7 +11948,7 @@ Here let's convert <strong>EmploymentStatus</strong> column</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Create a StringIndexer with inputCol=&#39;EmploymentStatus&#39;  and outputCol = &#39;Emplndex&#39;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Create a StringIndexer with inputCol=&#39;EmploymentStatus&#39;  and outputCol = &#39;EmpIndex&#39;</span>
 <span class="n">strIndexer_employment</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
 <span class="n">prosper_indexed</span> <span class="o">=</span> <span class="n">strIndexer_employment</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span>
 

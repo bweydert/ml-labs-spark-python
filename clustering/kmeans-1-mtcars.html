@@ -11775,7 +11775,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Spark-MLLilb-Example:-Clustering">Spark MLLilb Example: Clustering<a class="anchor-link" href="#Spark-MLLilb-Example:-Clustering">&#182;</a></h1><p>Let's look at a clustering example in Spark MLLib.</p>
+<h1 id="K-Means-Clustering-:-Cars-Data">K-Means Clustering : Cars Data<a class="anchor-link" href="#K-Means-Clustering-:-Cars-Data">&#182;</a></h1><p>Let's look at a clustering example in Spark MLLib.</p>
 <p>Here, we are going to load the mtcars dataset. This has some stats on different models of cars.  Here, we will load the CSV file as a spark dataframe, and view it.</p>
 <p>And here is a <a href="WSSSE-versus-k.xlsx">spreadsheet</a> for you record K and WSSSE.</p>
 
@@ -11844,7 +11844,6 @@ div#notebook {
 <li>Number of cylinders.</li>
 </ol>
 <p>What we'll do, is we'll use the VectorAssembler class to create a new column by the name of features. This will be a Vector.</p>
-<p><strong>=&gt; TODO: create an mpg_cyl dataframe with just <code>model, mpg, and cyl</code></strong></p>
 
 </div>
 </div>
@@ -11854,7 +11853,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># First let&#39;s xtract the two columns of interest</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: create an mpg_cyl dataframe with just &#39;model&#39;, &#39;mpg&#39;, and &#39;cyl&#39;</span>
 
 <span class="n">mpg_cyl</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">)</span>
 <span class="n">mpg_cyl</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span>
@@ -11869,8 +11868,6 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO: create vectorassembler by extracting "mpg" and "cyl" to output column "features"</strong><br>
-<strong>=&gt; TODO: transform dataframe in order to create new column with feature vector</strong></p>
 
 </div>
 </div>
@@ -11880,11 +11877,14 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># input : mpg, cyl</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: create vectorassembler by extracting &quot;mpg&quot; and &quot;cyl&quot; to output column &quot;features&quot;**  </span>
+<span class="c1"># input : mpg, cyl</span>
 <span class="c1"># output : features</span>
 <span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
 
-<span class="c1"># assembler.transform(mpg_cyl)</span>
+
+<span class="c1">## TODO: transform dataframe in order to create new column with feature vector</span>
+<span class="c1">## Hint : assembler.transform(mpg_cyl)</span>
 <span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="err">???</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
 </pre></div>
 
@@ -11912,9 +11912,6 @@ div#notebook {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Step-3:-Running-Kmeans">Step 3: Running Kmeans<a class="anchor-link" href="#Step-3:-Running-Kmeans">&#182;</a></h2><p>Now it's time to run kmeans on the resultant dataframe.  We don't know what value of k to use, so let's just start with k=2.  This means we will cluster into two groups.</p>
 <p>We will fit a model to the data, and then train it.</p>
-<p><strong>=&gt; TODO: Instantiate K-means model with value k</strong>
-<strong>=&gt; TODO: fit dataset with kmeans model</strong>
-<strong>=&gt; TODO: calculate WSSSE by calling computeCost on dataframe </strong></p>
 
 </div>
 </div>
@@ -11924,10 +11921,17 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mi">2</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: Instantiate K-means model with value k</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">()</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="err">???</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1">## TODO: fit featureVector with kmeans model</span>
+<span class="c1">## Hint : featureVector</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-<span class="n">wssse</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="err">???</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+
+<span class="c1">## TODO: calculate WSSSE by calling computeCost on dataframe</span>
+<span class="c1">## Hint : model.computeCost(featureVector)</span>
+<span class="n">wssse</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">computeCost</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">wssse</span><span class="p">)</span>
 </pre></div>
@@ -11943,7 +11947,6 @@ div#notebook {
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The WSSSE for this is not particularly good.  We will probably need to change k.</p>
 <p>Let's take a look at the transformed dataset.  Notice the new column "prediction."</p>
-<p><strong>=&gt; TODO: transform the dataset from the model</strong></p>
 
 </div>
 </div>
@@ -11953,8 +11956,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># model.transform</span>
-<span class="n">model</span><span class="o">.</span><span class="err">???</span><span class="p">(</span><span class="err">???</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## transform the dataset from the model</span>
+<span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12064,7 +12067,6 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO: plot the values of k as the X axis versus the costs (WSSSE) as the y axis </strong></p>
 
 </div>
 </div>
@@ -12074,7 +12076,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO : x=kvals,  y=wssses</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: plot the values of k as the X axis versus the costs (WSSSE) as the y axis</span>
+<span class="c1">## Hint  : x=kvals,  y=wssses</span>
 <span class="n">pyplot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="err">???</span><span class="p">,</span> <span class="err">???</span><span class="p">)</span>
 </pre></div>
 
