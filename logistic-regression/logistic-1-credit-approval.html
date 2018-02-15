@@ -11790,7 +11790,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Load-imports">Load imports<a class="anchor-link" href="#Load-imports">&#182;</a></h2>
+<h2 id="Step-1-:-Load-imports">Step 1 : Load imports<a class="anchor-link" href="#Step-1-:-Load-imports">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11818,7 +11818,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Sigmoid-Curve">Sigmoid Curve<a class="anchor-link" href="#Sigmoid-Curve">&#182;</a></h2><p>In logistic regression, we often use a sigmoid activation function.  Let's generate a sigmoid curve in python!  (no spark required!)</p>
+<h2 id="Step-2-:-Sigmoid-Curve">Step 2 : Sigmoid Curve<a class="anchor-link" href="#Step-2-:-Sigmoid-Curve">&#182;</a></h2><p>In logistic regression, we often use a sigmoid activation function.  Let's generate a sigmoid curve in python!  (no spark required!)</p>
 <p><strong>=&gt;TODO: complete the code to get a sigmoid! </strong></p>
 
 </div>
@@ -11851,7 +11851,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-1:-Credit-Approval-Data">Step 1: Credit Approval Data<a class="anchor-link" href="#Step-1:-Credit-Approval-Data">&#182;</a></h2>
+<h2 id="Step-3:-Credit-Approval-Data">Step 3: Credit Approval Data<a class="anchor-link" href="#Step-3:-Credit-Approval-Data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11929,7 +11929,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2:-Let's-visualize-the-data">Step 2: Let's visualize the data<a class="anchor-link" href="#Step-2:-Let's-visualize-the-data">&#182;</a></h2>
+<h2 id="Step-4:-Let's-visualize-the-data">Step 4: Let's visualize the data<a class="anchor-link" href="#Step-4:-Let's-visualize-the-data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11954,7 +11954,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Let-us-plot-and-visualize-the-sample-data.">Let us plot and visualize the sample data.<a class="anchor-link" href="#Let-us-plot-and-visualize-the-sample-data.">&#182;</a></h2><p><strong>=&gt; Run a scatterplot with score on the X axis and approved on the y axis </strong></p>
+<h2 id="Step-5:-Let-us-plot-and-visualize-the-sample-data.">Step 5: Let us plot and visualize the sample data.<a class="anchor-link" href="#Step-5:-Let-us-plot-and-visualize-the-sample-data.">&#182;</a></h2><p><strong>=&gt; Run a scatterplot with score on the X axis and approved on the y axis </strong></p>
 
 </div>
 </div>
@@ -11979,7 +11979,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">Step 3: Convert dataframe to Spark and Prepare feature vector<a class="anchor-link" href="#Step-3:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">&#182;</a></h2><p>We need to first convert the pandas dataframe to a spark dataframe, and then prepare the feature vector. To create the feature vector, we use the VectorAssembler.</p>
+<h2 id="Step-6:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">Step 6: Convert dataframe to Spark and Prepare feature vector<a class="anchor-link" href="#Step-6:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">&#182;</a></h2><p>We need to first convert the pandas dataframe to a spark dataframe, and then prepare the feature vector. To create the feature vector, we use the VectorAssembler.</p>
 <p><strong>=&gt; Run VectorAssembler by using input column as "score </strong></p>
 <p>We will need a numeric column called "label" in our dataset because our model by default will look for a column by that name.  So, we'll just add it.</p>
 <p><strong>=&gt; Rename columnn "approved" as "label" </strong></p>
@@ -12011,7 +12011,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-Fit-logistic-regression">Step 3: Fit logistic regression<a class="anchor-link" href="#Step-3:-Fit-logistic-regression">&#182;</a></h2><p>Now it's time to fit our logistic regression model.  This is a linear model, so we will be getting the coefficients and intercept.</p>
+<h2 id="Step-7:-Fit-logistic-regression">Step 7: Fit logistic regression<a class="anchor-link" href="#Step-7:-Fit-logistic-regression">&#182;</a></h2><p>Now it's time to fit our logistic regression model.  This is a linear model, so we will be getting the coefficients and intercept.</p>
 <p><strong>=&gt; Run Logistic Regression with 50 iterations. </strong></p>
 
 </div>
@@ -12064,7 +12064,37 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="ROC-Curve-and-AUC-(Area-Under-Curve)">ROC Curve and AUC (Area Under Curve)<a class="anchor-link" href="#ROC-Curve-and-AUC-(Area-Under-Curve)">&#182;</a></h2><p><strong>=&gt; TODO: What is the meaning of the ROC curve?  How is the AUC calculated? </strong></p>
+<h2 id="Step-8-:-Evaluate-The-Model">Step 8 : Evaluate The Model<a class="anchor-link" href="#Step-8-:-Evaluate-The-Model">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="8.1-Confusion-Matrix">8.1 Confusion Matrix<a class="anchor-link" href="#8.1-Confusion-Matrix">&#182;</a></h3><p><strong>=&gt; TODO : Can you interpret the confusion matrix?</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;approved&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;approved&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="8.2-:-ROC-curve-and-AUC-(Area-Under-Curve)">8.2 : ROC curve and AUC (Area Under Curve)<a class="anchor-link" href="#8.2-:-ROC-curve-and-AUC-(Area-Under-Curve)">&#182;</a></h3><p><strong>=&gt; TODO: What is the meaning of the ROC curve?  How is the AUC calculated? </strong></p>
 
 </div>
 </div>
@@ -12170,7 +12200,7 @@ Does the accuracy improve?</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Visualize-data-and-logit-model">Step 4: Visualize data and logit model<a class="anchor-link" href="#Step-4:-Visualize-data-and-logit-model">&#182;</a></h2><p>Let's visualize the data and our model.</p>
+<h2 id="Step-9:-Visualize-data-and-logit-model">Step 9: Visualize data and logit model<a class="anchor-link" href="#Step-9:-Visualize-data-and-logit-model">&#182;</a></h2><p>Let's visualize the data and our model.</p>
 
 </div>
 </div>
@@ -12194,7 +12224,7 @@ Does the accuracy improve?</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-6:-Let's-create-some-new-test-data-and-make-predictions">Step 6: Let's create some new test data and make predictions<a class="anchor-link" href="#Step-6:-Let's-create-some-new-test-data-and-make-predictions">&#182;</a></h2>
+<h2 id="Step-10:-Let's-create-some-new-test-data-and-make-predictions">Step 10: Let's create some new test data and make predictions<a class="anchor-link" href="#Step-10:-Let's-create-some-new-test-data-and-make-predictions">&#182;</a></h2>
 </div>
 </div>
 </div>
