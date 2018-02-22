@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>naive-bayes-1-spam</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>naive-bayes-2-income-classifier</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,13 +11775,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<link rel='stylesheet' href='../assets/css/main.css'/>
-
-<p><a href="../README.md">&lt;&lt; back to main index</a></p>
-<h1 id="Naive-Bayes-Spam-Filtering">Naive Bayes Spam Filtering<a class="anchor-link" href="#Naive-Bayes-Spam-Filtering">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>We all hate spam, so developing a classifier to classify email as spam or not spam is useful.</p>
-<h3 id="Builds-on">Builds on<a class="anchor-link" href="#Builds-on">&#182;</a></h3><p>None</p>
-<h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>approx. 20-30 minutes</p>
-<h3 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h3><p>PySpark has a class called Linear Regression that can be used to do simple linear regression models.</p>
+<h1 id="Naive-Bayes-Income-Classifier">Naive Bayes Income Classifier<a class="anchor-link" href="#Naive-Bayes-Income-Classifier">&#182;</a></h1><p>We are going to use data from US Census to predict income</p>
 
 </div>
 </div>
@@ -11797,12 +11791,13 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">LinearRegression</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">HashingTF</span><span class="p">,</span> <span class="n">IDF</span><span class="p">,</span> <span class="n">Tokenizer</span><span class="p">,</span> <span class="n">VectorAssembler</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">NaiveBayes</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -11814,8 +11809,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-1:-Let's-load-the-dataframe">Step 1: Let's load the dataframe<a class="anchor-link" href="#Step-1:-Let's-load-the-dataframe">&#182;</a></h2><p>We will load the dataframe into spark.  Since the outcome label is "ham" or "spam", we'll just call it label.</p>
-
+<h2 id="Step-1-:-Load-Data">Step 1 : Load Data<a class="anchor-link" href="#Step-1-:-Load-Data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11828,9 +11822,8 @@ div#notebook {
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span><span class="o">.</span>\
           <span class="n">option</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">,</span><span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span>\
-          <span class="n">option</span><span class="p">(</span><span class="s1">&#39;delimiter&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span>\
           <span class="n">option</span><span class="p">(</span><span class="s1">&#39;inferSchema&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span>\
-          <span class="n">load</span><span class="p">(</span><span class="s2">&quot;/data/spam/SMSSpamCollection.txt&quot;</span><span class="p">)</span>
+          <span class="n">load</span><span class="p">(</span><span class="s2">&quot;/data/census-income/income-cleaned.csv&quot;</span><span class="p">)</span>
 
 <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> 
 
@@ -11845,13 +11838,22 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-2-:-Basic-Analytics">Step 2 : Basic Analytics<a class="anchor-link" href="#Step-2-:-Basic-Analytics">&#182;</a></h2><p>0 is income &lt;=50k
+1 is income &gt; 50k</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Count spam/ham</span>
-<span class="n">dataset</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;isspam&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;income-over-50k&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11863,9 +11865,15 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2:-Vectorize-using-tf/idf">Step 2: Vectorize using tf/idf<a class="anchor-link" href="#Step-2:-Vectorize-using-tf/idf">&#182;</a></h2><p>Let's use tf/idf for vecorization at first.  TF/IDF will take and count the instances of each term, and then divide by the total frequecy of that term in the entire dataset.</p>
-<p>This leads to very highly dimensional data, because every word in the document will lead to a dimension in the data.</p>
-
+<h2 id="Step-3-:-Create-Feature-Vector">Step 3 : Create Feature Vector<a class="anchor-link" href="#Step-3-:-Create-Feature-Vector">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="3.1-Index-all-categorical-columns">3.1 Index all categorical columns<a class="anchor-link" href="#3.1-Index-all-categorical-columns">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -11874,17 +11882,36 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;words&quot;</span><span class="p">)</span>
-<span class="n">wordsData</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : add numerical columns.</span>
+<span class="c1">##   examine the data and add numerical columns</span>
+<span class="c1">##   Hint : start with &#39;age&#39;, &#39;education-num&#39;, &#39;hours-per-week&#39;</span>
+<span class="n">numeric_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;???&#39;</span><span class="p">,</span> <span class="s1">&#39;???&#39;</span> <span class="p">]</span>
 
-<span class="n">hashingTF</span> <span class="o">=</span> <span class="n">HashingTF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;words&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;rawFeatures&quot;</span><span class="p">,</span> <span class="n">numFeatures</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
-<span class="n">featurizedData</span> <span class="o">=</span> <span class="n">hashingTF</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">wordsData</span><span class="p">)</span>
+<span class="n">categorical_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;employment&#39;</span><span class="p">,</span> <span class="s1">&#39;education&#39;</span><span class="p">,</span> <span class="s1">&#39;marital-status&#39;</span><span class="p">,</span> <span class="s1">&#39;occupation&#39;</span><span class="p">,</span> <span class="s1">&#39;race&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;native-country&#39;</span><span class="p">]</span>
+<span class="n">categorical_index</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;employment_index&#39;</span><span class="p">,</span> <span class="s1">&#39;education_index&#39;</span><span class="p">,</span> <span class="s1">&#39;marital-status_index&#39;</span><span class="p">,</span> <span class="s1">&#39;occupation_index&#39;</span><span class="p">,</span> 
+                     <span class="s2">&quot;race_index&quot;</span><span class="p">,</span> <span class="s1">&#39;sex_index&#39;</span><span class="p">,</span> <span class="s1">&#39;native-country_index&#39;</span><span class="p">]</span>
+<span class="n">input_cols</span> <span class="o">=</span> <span class="n">numeric_columns</span> <span class="o">+</span> <span class="n">categorical_index</span>
 
-<span class="n">idf</span> <span class="o">=</span> <span class="n">IDF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;rawFeatures&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
-<span class="n">idfModel</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featurizedData</span><span class="p">)</span>
-<span class="n">rescaledData</span> <span class="o">=</span> <span class="n">idfModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">featurizedData</span><span class="p">)</span>
 
-<span class="n">rescaledData</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;isspam&quot;</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">indexers</span> <span class="o">=</span> <span class="p">[</span><span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="n">column</span><span class="o">+</span><span class="s2">&quot;_index&quot;</span><span class="p">,</span> <span class="n">handleInvalid</span><span class="o">=</span><span class="s2">&quot;keep&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>\
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">categorical_columns</span> <span class="p">]</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="n">indexers</span><span class="p">)</span>
+
+<span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="n">dataset_indexed</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="n">dataset_indexed</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;indexed </span><span class="si">{:,}</span><span class="s2"> records in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
+
+<span class="c1">## Save as CSV for easy viewing in Excel</span>
+<span class="n">dataset_indexed</span><span class="o">.</span><span class="n">write</span><span class="o">.</span>\
+        <span class="n">option</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span>\
+        <span class="n">mode</span><span class="p">(</span><span class="s1">&#39;overwrite&#39;</span><span class="p">)</span><span class="o">.</span>\
+        <span class="n">csv</span><span class="p">(</span><span class="s1">&#39;out-indexed&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saved indexed vector to &#39;out-indexed&#39; directory&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11896,7 +11923,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-Create-a-numeric-label-out-of-the-string-column-&quot;isspam.&quot;">Step 3: Create a numeric label out of the string column "isspam."<a class="anchor-link" href="#Step-3:-Create-a-numeric-label-out-of-the-string-column-&quot;isspam.&quot;">&#182;</a></h2>
+<h3 id="3.2---Create-feature-Vector">3.2 - Create feature Vector<a class="anchor-link" href="#3.2---Create-feature-Vector">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -11905,9 +11932,11 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;isspam&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
-<span class="n">indexed</span> <span class="o">=</span> <span class="n">indexer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">rescaledData</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">rescaledData</span><span class="p">)</span>
-<span class="n">indexed</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : set inputCols = input_cols</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset_indexed</span><span class="p">)</span>
+<span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span><span class="n">featureVector</span><span class="p">[</span><span class="s2">&quot;income-over-50k&quot;</span><span class="p">])</span>
+<span class="n">featureVector</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;features&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11919,8 +11948,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Split-into-Training-and-Test">Step 4: Split into Training and Test<a class="anchor-link" href="#Step-4:-Split-into-Training-and-Test">&#182;</a></h2><p>We will split our dataset into training and test sets.</p>
-
+<h2 id="Step-4-:-Train-/-Test-set">Step 4 : Train / Test set<a class="anchor-link" href="#Step-4-:-Train-/-Test-set">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11929,8 +11957,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the data into train and test</span>
-<span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">indexed</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1234</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1234</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training set count : &quot;</span><span class="p">,</span> <span class="n">train</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;testing set count : &quot;</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
@@ -11945,7 +11972,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5:-Fit-Naive-Bayes-Model">Step 5: Fit Naive Bayes Model<a class="anchor-link" href="#Step-5:-Fit-Naive-Bayes-Model">&#182;</a></h2>
+<h2 id="Step-5-:-Create-Naive-Bayes-Model">Step 5 : Create Naive Bayes Model<a class="anchor-link" href="#Step-5-:-Create-Naive-Bayes-Model">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11954,13 +11981,14 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># create the trainer and set its parameters</span>
-<span class="n">nb</span> <span class="o">=</span> <span class="n">NaiveBayes</span><span class="p">(</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">modelType</span><span class="o">=</span><span class="s2">&quot;multinomial&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Create a NB model with these parameters</span>
+<span class="c1">##     smoothing = 1.0</span>
+<span class="c1">##     modelType = &#39;multinomial&#39;</span>
+<span class="n">nb</span> <span class="o">=</span> <span class="n">NaiveBayes</span><span class="p">(</span><span class="n">smoothing</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">modelType</span><span class="o">=</span><span class="s1">&#39;???&#39;</span><span class="p">)</span>
 
 <span class="c1"># train the model</span>
 <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<span class="c1">## TODO : fit on training data (hint : train)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
 <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;trained on </span><span class="si">{:,}</span><span class="s2"> records  in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span>\
@@ -11988,9 +12016,13 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># select example rows to display.</span>
-<span class="c1">## TODO : transform on test data (hint : test)</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-<span class="n">predictions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="n">predictions</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">])</span><span class="o">.</span>\
+            <span class="n">sampleBy</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s1">&#39;prediction&#39;</span><span class="p">,</span> <span class="n">fractions</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span><span class="o">.</span>\
+            <span class="n">show</span><span class="p">()</span>
+
+
+<span class="n">predictions</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12002,8 +12034,15 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-6:-Evaluate-Model">Step 6: Evaluate Model<a class="anchor-link" href="#Step-6:-Evaluate-Model">&#182;</a></h2><p>Let's look at how our model performs.  We will do an accuracy measure.</p>
-
+<h2 id="Step-7-:-Evaluate-Model">Step 7 : Evaluate Model<a class="anchor-link" href="#Step-7-:-Evaluate-Model">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="7.1-Test-Accuracy">7.1 Test Accuracy<a class="anchor-link" href="#7.1-Test-Accuracy">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12027,8 +12066,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Let us do a confusion matrix.</p>
-
+<h3 id="7.2-Confusion-Matrix">7.2 Confusion Matrix<a class="anchor-link" href="#7.2-Confusion-Matrix">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12037,9 +12075,11 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="c1">## Can you explain the confusion matrix</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span><span class="o">.</span>\
+            <span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span>\
+            <span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span>\
+            <span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">)</span><span class="o">.</span>\
+            <span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12051,27 +12091,14 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-7:--Your-own-test">Step 7:  Your own test<a class="anchor-link" href="#Step-7:--Your-own-test">&#182;</a></h2><p>Now it's your turn!   Make a new dataframe with some sample test data of your own creation.  Make some "spammy" SMSes and some ordinary ones.  See how our spam filter does.</p>
+<h2 id="Step-8-:-Discuss-Model-Accuracy">Step 8 : Discuss Model Accuracy<a class="anchor-link" href="#Step-8-:-Discuss-Model-Accuracy">&#182;</a></h2><p>Discuss how to improve model accuracy?  Here are some points to consider.</p>
+<ul>
+<li>can you add any more input variables?</li>
+<li>why is the model bad at predicting &gt;50k income category?  Check the original data for skew?</li>
+</ul>
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: make a dataframe with some of your own data.</span>
-
-<span class="n">mydata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;isspam&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;spam&#39;</span><span class="p">,</span> <span class="s1">&#39;ham&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
-              <span class="s1">&#39;text&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;My text here&#39;</span><span class="p">,</span> <span class="s1">&#39;My Text Here 2&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-             <span class="p">})</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
 </div>
     </div>
   </div>
