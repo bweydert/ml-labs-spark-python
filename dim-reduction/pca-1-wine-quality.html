@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>visualizing</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>pca-1-wine-quality</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,10 +11775,17 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Visualizing-Data">Visualizing Data<a class="anchor-link" href="#Visualizing-Data">&#182;</a></h1><p>Here we will use two libraries</p>
+<h1 id="PCA-on-wine-quality-data">PCA on wine quality data<a class="anchor-link" href="#PCA-on-wine-quality-data">&#182;</a></h1><p>We like this data, because it is all numeric data.
+It looks like this</p>
+
+<pre><code>"fixed acidity";"volatile acidity";"citric acid";"residual sugar";"chlorides";"free sulfur dioxide";"total sulfur dioxide";"density";"pH";"sulphates";"alcohol";"quality"
+7.4;0.7;0;1.9;0.076;11;34;0.9978;3.51;0.56;9.4;5
+7.8;0.88;0;2.6;0.098;25;67;0.9968;3.2;0.68;9.8;5
+7.8;0.76;0.04;2.3;0.092;15;54;0.997;3.26;0.65;9.8;5</code></pre>
+<p>Check data in <em>datasets/wine-quality</em></p>
 <ul>
-<li>matplotlib : a very capable python graph library</li>
-<li>Seaborn : a high level library built on top of matplotlib.  Seaborn aims to give 'pretty' graphs right out of the box </li>
+<li>winequality-red.csv</li>
+<li>winequality-white.csv</li>
 </ul>
 
 </div>
@@ -11789,12 +11796,18 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># imports</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span> <span class="c1">#seaborn produces pretty nice graphs!</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StandardScaler</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.stat</span> <span class="k">import</span> <span class="n">Correlation</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">PCA</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -11806,7 +11819,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Boxplot">Boxplot<a class="anchor-link" href="#Boxplot">&#182;</a></h2>
+<h2 id="Step-1-:-Load-Data">Step 1 : Load Data<a class="anchor-link" href="#Step-1-:-Load-Data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11815,64 +11828,27 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">salaries</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">22</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">70</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## read data</span>
+<span class="c1">## TODO : try red and white wine data</span>
+<span class="n">data_file</span><span class="o">=</span> <span class="s1">&#39;/data/wine-quality/winequality-red.csv&#39;</span>
+<span class="c1">#data_file= &#39;/data/wine-quality/winequality-white.csv&#39;</span>
+<span class="n">column_to_remove</span> <span class="o">=</span> <span class="s1">&#39;quality&#39;</span>
 
-<span class="c1">## TODO : do a boxplot of salaries</span>
-<span class="c1">## Hint : plot.boxplot(data)</span>
-<span class="n">plt</span><span class="o">.</span><span class="err">???</span><span class="p">(</span><span class="n">salaries</span><span class="p">)</span>
-</pre></div>
 
-</div>
-</div>
-</div>
+<span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## seaborn plot</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="err">???</span><span class="p">)</span>
-</pre></div>
+<span class="n">data</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span>\
+          <span class="n">option</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span>\
+          <span class="n">option</span><span class="p">(</span><span class="s1">&#39;inferSchema&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span>\
+          <span class="n">option</span><span class="p">(</span><span class="s1">&#39;delimiter&#39;</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">)</span><span class="o">.</span>\
+          <span class="n">csv</span><span class="p">(</span><span class="n">data_file</span><span class="p">)</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;read </span><span class="si">{:,}</span><span class="s2"> records in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
 
-</div>
-</div>
-</div>
+<span class="n">data_clean</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">drop</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;raw data count </span><span class="si">{}</span><span class="s2">,  cleaned data count </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="n">data_clean</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Histograms">Histograms<a class="anchor-link" href="#Histograms">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">salaries</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">22</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">70</span><span class="p">])</span>
-
-<span class="c1">## TODO : histogram</span>
-<span class="c1">## HINT : plt.hist</span>
-<span class="n">plt</span><span class="o">.</span><span class="err">???</span><span class="p">(</span><span class="n">salaries</span><span class="p">,</span> <span class="n">rwidth</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## seaborn</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">salaries</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">kde</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rug</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
+<span class="n">data_clean</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11884,7 +11860,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Scatter">Scatter<a class="anchor-link" href="#Scatter">&#182;</a></h2>
+<h2 id="Step-2-:-Basic-data-analysis">Step 2 : Basic data analysis<a class="anchor-link" href="#Step-2-:-Basic-data-analysis">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11893,8 +11869,13 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bills</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">50</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">60</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">65</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">35</span><span class="p">])</span>
-<span class="n">tips</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">12</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## remove columns we don&#39;t need</span>
+<span class="n">columns</span> <span class="o">=</span> <span class="n">data_clean</span><span class="o">.</span><span class="n">columns</span>
+<span class="n">columns</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">column_to_remove</span><span class="p">)</span>  <span class="c1"># this is the target , so remove</span>
+<span class="n">data2</span> <span class="o">=</span> <span class="n">data_clean</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;original data columns  &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data2</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+<span class="n">data2</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11907,10 +11888,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : plot bill vs. tips</span>
-<span class="c1">## Hint : plot.scatter (x axis data,   y axis data)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="err">???</span><span class="p">(</span><span class="n">bills</span><span class="p">,</span> <span class="n">tips</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : use &#39;describe&#39; to do basic data analytics</span>
+<span class="n">data2</span><span class="o">.</span><span class="err">???</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11918,18 +11897,22 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-3-:-Create-feature-vector">Step 3 : Create feature vector<a class="anchor-link" href="#Step-3-:-Create-feature-vector">&#182;</a></h2>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : add labels</span>
-<span class="c1">##   X-axis :  bill</span>
-<span class="c1">##   Y-axis : tip</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;bill amount&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;tip&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="err">???</span><span class="p">(</span><span class="n">bills</span><span class="p">,</span> <span class="n">tips</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">feature_vector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data2</span><span class="p">)</span>
+<span class="n">feature_vector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;features&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11937,13 +11920,199 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-4-:-Correlation-Matrix-of-original-data">Step 4 : Correlation Matrix of original data<a class="anchor-link" href="#Step-4-:-Correlation-Matrix-of-original-data">&#182;</a></h2><p>Do see any correlation?</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Seaborn </span>
-<span class="n">sns</span><span class="o">.</span><span class="n">stripplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">bills</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">tips</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Identify components that are highly correlated</span>
+
+<span class="n">corr1</span> <span class="o">=</span> <span class="n">Correlation</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">feature_vector</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">pearson_corr</span> <span class="o">=</span> <span class="n">corr1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1">#print(&quot;Pearson correlation matrix:\n&quot; + str(pearson_corr))</span>
+
+<span class="c1">## convert to numpy for pretty print</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pearson correlation matrix&quot;</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="n">linewidth</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">pearson_corr_nparr</span> <span class="o">=</span> <span class="n">pearson_corr</span><span class="o">.</span><span class="n">toArray</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pearson_corr_nparr</span><span class="p">)</span>
+
+<span class="c1">## convert to pandas for even prettier print :-)</span>
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;fixed acidity&quot;</span><span class="p">,</span> <span class="s2">&quot;volatile acidity&quot;</span><span class="p">,</span> <span class="s2">&quot;citric acid&quot;</span><span class="p">,</span> <span class="s2">&quot;residual sugar&quot;</span><span class="p">,</span> <span class="s2">&quot;chlorides&quot;</span><span class="p">,</span>\
+         <span class="s2">&quot;free sulfur dioxide&quot;</span><span class="p">,</span><span class="s2">&quot;total sulfur dioxide&quot;</span><span class="p">,</span><span class="s2">&quot;density&quot;</span><span class="p">,</span><span class="s2">&quot;pH&quot;</span><span class="p">,</span> <span class="s2">&quot;sulphates&quot;</span><span class="p">,</span><span class="s2">&quot;alcohol&quot;</span><span class="p">]</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pearson_corr_nparr</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-5-:-Scale-Data">Step 5 : Scale Data<a class="anchor-link" href="#Step-5-:-Scale-Data">&#182;</a></h2><p>We need to scale data before PCA</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : create a scaler</span>
+<span class="c1">##   Hint : inputCol = &#39;features&#39;</span>
+<span class="c1">##   Hint : outputCol  = &#39;scaledFeatures&#39;</span>
+
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">,</span>
+                        <span class="n">withStd</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">withMean</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Compute summary statistics by fitting the StandardScaler</span>
+<span class="n">scaler_model</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">feature_vector</span><span class="p">)</span>
+
+<span class="c1"># Normalize each feature to have unit standard deviation.</span>
+<span class="n">fv_scaled</span> <span class="o">=</span> <span class="n">scaler_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">feature_vector</span><span class="p">)</span>
+<span class="n">fv_scaled</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;features&#39;</span><span class="p">,</span> <span class="s1">&#39;scaledFeatures&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-6-:-Do-PCA">Step 6 : Do PCA<a class="anchor-link" href="#Step-6-:-Do-PCA">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : create 5 Principal Components</span>
+<span class="n">num_pc</span> <span class="o">=</span> <span class="err">?</span><span class="o">??</span>
+
+<span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">num_pc</span><span class="p">,</span> <span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;scaledFeatures&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;pcaFeatures&quot;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fv_scaled</span><span class="p">)</span>
+<span class="n">pca_features</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">fv_scaled</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;pcaFeatures&quot;</span><span class="p">)</span>
+<span class="n">pca_features</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;pcaFeatures&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-7-:-Correlation-Matrix-for-Principal-Components">Step 7 : Correlation Matrix for Principal Components<a class="anchor-link" href="#Step-7-:-Correlation-Matrix-for-Principal-Components">&#182;</a></h2><p>These should be very small (close to zero!)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## correlation matrix for PC</span>
+<span class="c1">## should be very close to zero</span>
+<span class="n">corr_pc</span> <span class="o">=</span> <span class="n">Correlation</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">pca_features</span><span class="p">,</span> <span class="s2">&quot;pcaFeatures&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">corr_pc_nparr</span> <span class="o">=</span> <span class="n">corr_pc</span><span class="o">.</span><span class="n">toArray</span><span class="p">()</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Correlation Matrtix for Principal Components&quot;</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">corr_pc_nparr</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Correlation Matrtix for Principal Components&quot;</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">corr_pc_nparr</span><span class="p">)</span>
+
+<span class="c1">## TODO : Inspect at correlations for PC</span>
+<span class="c1">##      Are they highly correlated?  Not? can you explain?</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-8-:-Calculate-PC-Variance">Step 8 : Calculate PC Variance<a class="anchor-link" href="#Step-8-:-Calculate-PC-Variance">&#182;</a></h2><p>We started with 5 PCs.<br>
+How much coverage (variance) are we getting?</p>
+<p>Play with <strong>num_pc</strong> in Step-6 to get 90% coverage</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## variance</span>
+<span class="n">variance</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">explainedVariance</span><span class="o">.</span><span class="n">toArray</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">variance</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Original data had </span><span class="si">{}</span><span class="s2"> features,  principal components </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data2</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="n">num_pc</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cumulative Explained Variance: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">variance</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-9-:-Screeplot">Step 9 : Screeplot<a class="anchor-link" href="#Step-9-:-Screeplot">&#182;</a></h2><p>Screeplot goes from 0.0  to 1.0</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">variance</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">explainedVariance</span><span class="o">.</span><span class="n">toArray</span><span class="p">()</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">sing_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_pc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_pc</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">variance</span><span class="p">),</span> <span class="s1">&#39;ro-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Scree Plot&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Principal Component&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Explained Variance&#39;</span><span class="p">)</span>
+
+
+<span class="n">leg</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;Explained Variance&#39;</span><span class="p">],</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">,</span> <span class="n">borderpad</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> 
+                 <span class="n">shadow</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">font_manager</span><span class="o">.</span><span class="n">FontProperties</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="s1">&#39;small&#39;</span><span class="p">),</span>
+                 <span class="n">markerscale</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+
+<span class="c1">## TODO : Explain the screeplot</span>
 </pre></div>
 
 </div>
