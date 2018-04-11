@@ -11800,12 +11800,36 @@ Type the following code into the cell.</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Multiple-Code-Cells">Multiple Code Cells<a class="anchor-link" href="#Multiple-Code-Cells">&#182;</a></h2><p>Go ahead and create mutiple code cells below.<br>
 And add the code below in each cell.</p>
+<p>cell 1</p>
 <div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
+<p>cell 2</p>
 <div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
+<p>cell 3</p>
 <div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># code cell</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Re-order</strong> code cells, so it prints<br>
 2<br>
 3<br>
@@ -11819,7 +11843,7 @@ Hint : Use 'up' / 'down' buttons in toolbar</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Code-Completion-Using-TAB-key">Code Completion Using TAB key<a class="anchor-link" href="#Code-Completion-Using-TAB-key">&#182;</a></h2><p>Jupyter does code completion using TAB key.  Try this</p>
+<h2 id="Tab-Completion">Tab Completion<a class="anchor-link" href="#Tab-Completion">&#182;</a></h2><p>Tab completion is a wonderful feature</p>
 
 </div>
 </div>
@@ -11842,12 +11866,98 @@ Hint : Use 'up' / 'down' buttons in toolbar</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## after executing the code blog</span>
-<span class="c1">## type a. and hit the TAB key</span>
-<span class="c1">#a.TAB KEY</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Execute the above cell </span>
+<span class="c1"># now let&#39;s find all the methods in A</span>
+<span class="n">a</span><span class="o">.</span><span class="p">[</span><span class="n">TAB</span><span class="p">]</span>
 
-<span class="c1">## Find the method for lowercase in tab completion</span>
-<span class="n">a</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="c1">## find the  method to lowercase the string and print it</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Use Shift Tab to find the variable type</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># a[SHIFT][TAB]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Getting-Help">Getting Help<a class="anchor-link" href="#Getting-Help">&#182;</a></h2><p>Use '?' to get help</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="s2">&quot;Hello world&quot;</span>
+a<span class="o">?</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># To find all functions</span>
+a.*<span class="o">?</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># to find functions starting with &#39;l&#39;</span>
+a.l*<span class="o">?</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># To get more info on a function</span>
+a.lstrip<span class="o">?</span>
 </pre></div>
 
 </div>
