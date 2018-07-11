@@ -21,7 +21,7 @@ mv -f a.html  README.html
 
 zip_file_name=$(basename `pwd`)
 rm -f *.zip
-zip -x '*.DS_Store*'  -x '*.git*'  -x '*zip*'  -x '*metastore_db*' -x '*out' -x '*.ipynb_checkpoints*' -x '*not-using*' -r ml-labs-spark-python.zip .
+zip -x '*.DS_Store*'  -x "*.log" -x '*.git*'  -x '*zip*'  -x '*metastore_db*' -x '*out' -x '*.ipynb_checkpoints*' -x '*not-using*' -r "$zip_file_name" .
 
 ## old zip methods
 #rm -f ../$zip_file_name.zip
