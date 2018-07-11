@@ -11781,7 +11781,7 @@ div#notebook {
 <h1 id="Naive-Bayes-Spam-Filtering">Naive Bayes Spam Filtering<a class="anchor-link" href="#Naive-Bayes-Spam-Filtering">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>We all hate spam, so developing a classifier to classify email as spam or not spam is useful.</p>
 <h3 id="Builds-on">Builds on<a class="anchor-link" href="#Builds-on">&#182;</a></h3><p>None</p>
 <h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>approx. 20-30 minutes</p>
-<h3 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h3><p>PySpark has a class called Linear Regression that can be used to do simple linear regression models.</p>
+<h3 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h3><p>PySpark has a class called NaiveBayes that can be used to do Naive Bayes classification.</p>
 
 </div>
 </div>
@@ -11797,7 +11797,6 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">LinearRegression</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">HashingTF</span><span class="p">,</span> <span class="n">IDF</span><span class="p">,</span> <span class="n">Tokenizer</span><span class="p">,</span> <span class="n">VectorAssembler</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">NaiveBayes</span>
@@ -11919,7 +11918,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Split-into-Training-and-Test">Step 4: Split into Training and Test<a class="anchor-link" href="#Step-4:-Split-into-Training-and-Test">&#182;</a></h2><p>We will split our dataset into training and test sets.</p>
+<h2 id="Step-4:-Split-into-training-and-test">Step 4: Split into training and test<a class="anchor-link" href="#Step-4:-Split-into-training-and-test">&#182;</a></h2><p>We will split our dataset into training and test sets.</p>
 
 </div>
 </div>
@@ -11945,7 +11944,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5:-Fit-Naive-Bayes-Model">Step 5: Fit Naive Bayes Model<a class="anchor-link" href="#Step-5:-Fit-Naive-Bayes-Model">&#182;</a></h2>
+<h2 id="Step-5:-Fit-Naive-Bayes-model">Step 5: Fit Naive Bayes model<a class="anchor-link" href="#Step-5:-Fit-Naive-Bayes-model">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11959,7 +11958,7 @@ div#notebook {
 
 <span class="c1"># train the model</span>
 <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<span class="c1">## TODO : fit on training data (hint : train)</span>
+<span class="c1">## TODO : fit on training data (hint: train)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
 <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
@@ -11976,7 +11975,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-6:-Run-Test-Data">Step 6: Run Test Data<a class="anchor-link" href="#Step-6:-Run-Test-Data">&#182;</a></h2><p>Let's call .transform on our model to do make predictions on our test data. The output should be contained in the "prediction" column, while the correct label will be there in the "label" column.</p>
+<h2 id="Step-6:-Run-test-data">Step 6: Run test data<a class="anchor-link" href="#Step-6:-Run-test-data">&#182;</a></h2><p>Let's call .transform on our model to do make predictions on our test data. The output should be contained in the "prediction" column, while the correct label will be there in the "label" column.</p>
 <p>We will be able to evaluate our results by comparing the results.</p>
 
 </div>
@@ -12002,7 +12001,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-6:-Evaluate-Model">Step 6: Evaluate Model<a class="anchor-link" href="#Step-6:-Evaluate-Model">&#182;</a></h2><p>Let's look at how our model performs.  We will do an accuracy measure.</p>
+<h2 id="Step-7:-Evaluate-the-model">Step 7: Evaluate the model<a class="anchor-link" href="#Step-7:-Evaluate-the-model">&#182;</a></h2><p>Let's look at how our model performs.  We will do an accuracy measure.</p>
 
 </div>
 </div>
@@ -12051,7 +12050,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-7:--Your-own-test">Step 7:  Your own test<a class="anchor-link" href="#Step-7:--Your-own-test">&#182;</a></h2><p>Now it's your turn!   Make a new dataframe with some sample test data of your own creation.  Make some "spammy" SMSes and some ordinary ones.  See how our spam filter does.</p>
+<h2 id="Step-8:--Run-your-own-test">Step 8:  Run your own test<a class="anchor-link" href="#Step-8:--Run-your-own-test">&#182;</a></h2><p>Now it's your turn!   Make a new dataframe with some sample test data of your own creation.  Make some "spammy" SMSes and some ordinary ones.  See how our spam filter does.</p>
 
 </div>
 </div>
@@ -12072,6 +12071,25 @@ div#notebook {
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Step-9:-Improve-prediction-results">Step 9: Improve prediction results<a class="anchor-link" href="#Step-9:-Improve-prediction-results">&#182;</a></h1><p>We used too few features above, and got bad accuracy. Increase the number of features for HashingTF</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="BONUS:-Word2Vec-Instead-of-TF/IDF">BONUS: Word2Vec Instead of TF/IDF<a class="anchor-link" href="#BONUS:-Word2Vec-Instead-of-TF/IDF">&#182;</a></h1><p>We used the TF/IDF encoding. We might get better resu</p>
+<p>lts if we use Word2Vec instead. Run with word2vec and see if you get a better accuracy rate.</p>
+
+</div>
+</div>
 </div>
     </div>
   </div>
