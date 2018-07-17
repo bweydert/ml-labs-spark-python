@@ -11786,6 +11786,7 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">when</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">trim</span><span class="p">,</span> <span class="n">countDistinct</span><span class="p">,</span> <span class="nb">abs</span> 
 <span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="k">import</span> <span class="n">IntegerType</span>
 <span class="kn">import</span> <span class="nn">pyspark.sql.functions</span>
@@ -11822,10 +11823,26 @@ Here we have a sample of 10k for 2016 contributions.</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Load presidential contrib data</span>
-<span class="n">contribs</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/presidential_election_contribs/2016/2016-100k.csv.gz&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
+t1 = time.perf_counter()
+#Load presidential contrib data
+contribs = spark.read.csv(&quot;/data/presidential_election_contribs/2016/2016-100k.csv.gz&quot;,\
+                          header=True, inferSchema=True)
+t2 = time.perf_counter()
+print(&quot;read {:,} records in {:,.2f} ms&quot;.format(contribs.count(), (t2-t1)*1000))
+</pre></div>
 
-<span class="c1">## TODO: printSchema</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: printSchema</span>
 <span class="n">contribs</span><span class="o">.</span><span class="err">?</span><span class="o">??</span>
 
 <span class="c1">## TODO : how many records do we have?</span>

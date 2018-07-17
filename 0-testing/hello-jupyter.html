@@ -11776,6 +11776,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Hello-Jupyter">Hello Jupyter<a class="anchor-link" href="#Hello-Jupyter">&#182;</a></h1><h3 id="Goal">Goal<a class="anchor-link" href="#Goal">&#182;</a></h3><p>Get familiar with Jupyter Notebook</p>
+<p><img src="../assets/images/jupyter.png"/></p>
 
 </div>
 </div>
@@ -11969,7 +11970,51 @@ a.lstrip<span class="o">?</span>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Execute-All-Cells">Execute All Cells<a class="anchor-link" href="#Execute-All-Cells">&#182;</a></h2><p>Click on 'Cell --&gt; Execute All'  to run all code cells</p>
+<h2 id="Profile:-Measure-time-taken">Profile: Measure time taken<a class="anchor-link" href="#Profile:-Measure-time-taken">&#182;</a></h2><p>Use <strong>%%time</strong> construct</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
+
+for i in range(1,10000000):
+    pass
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>CPU times: user 344 ms, sys: 4.07 ms, total: 348 ms
+Wall time: 347 ms
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Execute-All-Cells">Execute All Cells<a class="anchor-link" href="#Execute-All-Cells">&#182;</a></h2><p>Click on <strong>'Cell --&gt; Execute All'</strong>  to run all code cells</p>
 
 </div>
 </div>
@@ -11978,7 +12023,17 @@ a.lstrip<span class="o">?</span>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Clean-Halt-the-Notebook">Clean Halt the Notebook<a class="anchor-link" href="#Clean-Halt-the-Notebook">&#182;</a></h2><p>Go to 'File' menu and choose 'Close and Halt'</p>
+<h2 id="Restart-the-Kernel">Restart the Kernel<a class="anchor-link" href="#Restart-the-Kernel">&#182;</a></h2><p>If your kernel is not initialized properly, or you want a clean run of your notebook<br>
+Go to <strong>'Kernel --&gt; Restart'</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Clean-Halt-the-Notebook">Clean Halt the Notebook<a class="anchor-link" href="#Clean-Halt-the-Notebook">&#182;</a></h2><p>Go to <strong>'File --&gt; Close and Halt'</strong></p>
 
 </div>
 </div>

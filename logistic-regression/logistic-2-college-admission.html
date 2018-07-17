@@ -11929,7 +11929,8 @@ div#notebook {
 <span class="c1">## Hint : </span>
 <span class="c1">##     - training split is 70%  --&gt; 0.7</span>
 <span class="c1">##     - testing split  is 30%  --&gt; 0.3</span>
-<span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="err">??</span><span class="n">training_split</span><span class="err">??</span><span class="p">,</span>  <span class="err">??</span><span class="n">testing</span> <span class="n">split</span><span class="err">??</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="err">??</span><span class="n">training_split</span><span class="err">??</span><span class="p">,</span>  <span class="err">??</span><span class="n">testing</span> <span class="n">split</span><span class="err">??</span><span class="p">])</span>
+<span class="c1">#(train, test) = featureVector.randomSplit([??training_split??,  ??testing split??], seed=1)</span>
 
 <span class="c1">## print out record count</span>
 <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;train dataset count : &quot;</span> <span class="p">,</span> <span class="n">train</span><span class="o">.</span><span class="err">???</span><span class="p">())</span>
@@ -12236,7 +12237,7 @@ div#notebook {
 
 <span class="c1">## option1 : use Spark write function</span>
 <span class="c1">## this works for big data (writes are distributed across cluster)</span>
-<span class="n">output_path1</span><span class="o">=</span><span class="s2">&quot;college-admissions-predictions-out1&quot;</span>
+<span class="n">output_path1</span><span class="o">=</span><span class="s2">&quot;college-admissions-predictions.out1&quot;</span>
 <span class="n">predictions2</span><span class="o">.</span><span class="n">write</span><span class="o">.</span>\
     <span class="n">option</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span>\
     <span class="n">mode</span><span class="p">(</span><span class="s1">&#39;overwrite&#39;</span><span class="p">)</span><span class="o">.</span>\
@@ -12246,9 +12247,38 @@ div#notebook {
 
 <span class="c1">## Option 2 : convert to Pandas dataframe and save</span>
 <span class="c1">## This is good for small amount of data</span>
-<span class="n">output_path2</span><span class="o">=</span> <span class="s1">&#39;college-admissions-predictions-out2.csv&#39;</span>
+<span class="n">output_path2</span><span class="o">=</span> <span class="s1">&#39;college-admissions-predictions.out2.csv&#39;</span>
 <span class="n">predictions2</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">output_path2</span> <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;save 2 (pandas) to : &quot;</span><span class="p">,</span> <span class="n">output_path2</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-11:-Do-a-few-runs-and-see-the-accuracy">Step 11: Do a few runs and see the accuracy<a class="anchor-link" href="#Step-11:-Do-a-few-runs-and-see-the-accuracy">&#182;</a></h2><p>Why do you think the accuracy varies for each run?</p>
+<p>Try this, at Step-3, supply a seed parameter (can be any number) and do the run again.<br>
+Do you see the accuracy varying now?<br>
+Can you explain the behaviour?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trainingSummary</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span>
+<span class="c1"># Area Under Curve</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;areaUnderROC: &quot;</span> <span class="p">,</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">areaUnderROC</span><span class="p">)</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span> 
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test set accuracy = &quot;</span> <span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
 </pre></div>
 
 </div>
