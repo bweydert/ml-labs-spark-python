@@ -11906,7 +11906,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2:-Examine-the-contents-of-the-categorical-columns.">Step 2: Examine the contents of the categorical columns.<a class="anchor-link" href="#Step-2:-Examine-the-contents-of-the-categorical-columns.">&#182;</a></h2><p>Let's look at the contents of our categorical columns.</p>
+<h2 id="Step-3:-Examine-the-contents-of-the-categorical-columns.">Step 3: Examine the contents of the categorical columns.<a class="anchor-link" href="#Step-3:-Examine-the-contents-of-the-categorical-columns.">&#182;</a></h2><p>Let's look at the contents of our categorical columns.</p>
 <p><strong>=&gt; TODO: Group by categorical columns LoanStatus BorrowerState, EmploymentStatus, ListingCategory</strong>and see the breakdowns by count**</p>
 
 </div>
@@ -11941,7 +11941,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-Converting-Categorical-columns">Step 3: Converting Categorical columns<a class="anchor-link" href="#Step-3:-Converting-Categorical-columns">&#182;</a></h2><p>We need to convert categorical columns to numerics.  Remember, remember, Spark ML can <em>only</em> handle numeric columns.  There's a tool called StringIndexer that will help us here.</p>
+<h2 id="Step-4:-Converting-Categorical-columns">Step 4: Converting Categorical columns<a class="anchor-link" href="#Step-4:-Converting-Categorical-columns">&#182;</a></h2><p>We need to convert categorical columns to numerics.  Remember, remember, Spark ML can <em>only</em> handle numeric columns.  There's a tool called StringIndexer that will help us here.</p>
 <p>Because there are a lot of indexers, we build a pipeline to help us out here.</p>
 <p><strong>=&gt; TODO: enter in the list with all of our indexers into the pipeline</strong>
 HINT: take each column, and then output the column + "_index"</p>

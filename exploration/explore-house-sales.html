@@ -11801,7 +11801,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Read-and-Display-data">Read and Display data<a class="anchor-link" href="#Read-and-Display-data">&#182;</a></h2>
+<h2 id="Step-1:-Read-and-Display-data">Step 1: Read and Display data<a class="anchor-link" href="#Step-1:-Read-and-Display-data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11826,7 +11826,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="See-schema-and-data">See schema and data<a class="anchor-link" href="#See-schema-and-data">&#182;</a></h2>
+<h2 id="Step-2:-See-schema-and-data">Step 2: See schema and data<a class="anchor-link" href="#Step-2:-See-schema-and-data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11848,7 +11848,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="'Summary'-of-data">'Summary' of data<a class="anchor-link" href="#'Summary'-of-data">&#182;</a></h2>
+<h2 id="Step-3:-'Summary'-of-data">Step 3: 'Summary' of data<a class="anchor-link" href="#Step-3:-'Summary'-of-data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11870,7 +11870,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Get-an-idea-of-one-attribute">Get an idea of one attribute<a class="anchor-link" href="#Get-an-idea-of-one-attribute">&#182;</a></h2>
+<h2 id="Step-4:-Get-an-idea-of-one-or-more-attribute(s)">Step 4: Get an idea of one or more attribute(s)<a class="anchor-link" href="#Step-4:-Get-an-idea-of-one-or-more-attribute(s)">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11887,11 +11887,24 @@ div#notebook {
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">house_prices</span><span class="o">.</span><span class="n">describe</span><span class="p">([</span><span class="s2">&quot;SalePrice&quot;</span><span class="p">,</span> <span class="s1">&#39;Bedrooms&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Report-on-Bedrooms-vs-Sales">Report on Bedrooms vs Sales<a class="anchor-link" href="#Report-on-Bedrooms-vs-Sales">&#182;</a></h2><p>Let's calculte sales per bedrooms</p>
+<h2 id="Step-5:-Report-on-Bedrooms-vs-Sales">Step 5: Report on Bedrooms vs Sales<a class="anchor-link" href="#Step-5:-Report-on-Bedrooms-vs-Sales">&#182;</a></h2><p>Let's calculte sales per bedrooms</p>
 
 </div>
 </div>
@@ -11943,7 +11956,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Calculate-some-percentiles">Calculate some percentiles<a class="anchor-link" href="#Calculate-some-percentiles">&#182;</a></h2>
+<h2 id="Step-6:-Calculate-some-percentiles">Step 6: Calculate some percentiles<a class="anchor-link" href="#Step-6:-Calculate-some-percentiles">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11972,7 +11985,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Explore-Stat-object-in-dataframe">Explore Stat object in dataframe<a class="anchor-link" href="#Explore-Stat-object-in-dataframe">&#182;</a></h2><p><a href="http://spark.apache.org/docs/latest/api/python/pyspark.sql.html?highlight=dataframe#pyspark.sql.DataFrameStatFunctions">API for pyspark.sql.DataFrameStatFunctions</a></p>
+<h2 id="Step-7:-Explore-Stat-object-in-dataframe">Step 7: Explore Stat object in dataframe<a class="anchor-link" href="#Step-7:-Explore-Stat-object-in-dataframe">&#182;</a></h2><p><a href="http://spark.apache.org/docs/latest/api/python/pyspark.sql.html?highlight=dataframe#pyspark.sql.DataFrameStatFunctions">API for pyspark.sql.DataFrameStatFunctions</a></p>
 
 </div>
 </div>
@@ -11995,7 +12008,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Covariance-&amp;-Correlation">Covariance &amp; Correlation<a class="anchor-link" href="#Covariance-&amp;-Correlation">&#182;</a></h2><p>Q1 : Calculate Covariance between "SalePrice"  and "Bedrooms"</p>
+<h2 id="Step-8:-Covariance-&amp;-Correlation">Step 8: Covariance &amp; Correlation<a class="anchor-link" href="#Step-8:-Covariance-&amp;-Correlation">&#182;</a></h2><p>Q1 : Calculate Covariance between "SalePrice"  and "Bedrooms"</p>
 <p>Q1 : Which attributes influences sale price more?</p>
 <ul>
 <li>Number of Bedrooms ("Bedrooms")</li>

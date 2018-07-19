@@ -12013,7 +12013,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: set number of iterations to 10</span>
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="err">???</span><span class="p">)</span>
 <span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
 
 <span class="n">intercept</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span>  <span class="c1"># This is the intercept</span>
@@ -12086,7 +12087,10 @@ div#notebook {
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;objectiveHistory: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">trainingSummary</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">))</span>
 <span class="n">trainingSummary</span><span class="o">.</span><span class="n">residuals</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RMSE: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">rootMeanSquaredError</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r2: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+
+<span class="c1">## TODO : print &#39;r2&#39; from training summary</span>
+<span class="c1">## Hint : Use TAB completion</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r2: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12393,7 +12397,7 @@ If <code>tip = a * amount + b</code></p>
 
 <span class="c1"># Run Linear Regression</span>
 
-<span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
 
 
