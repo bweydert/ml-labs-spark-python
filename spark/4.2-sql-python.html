@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>README</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>4.2-sql-python</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,11 +11775,260 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Getting-the-Data">Getting the Data<a class="anchor-link" href="#Getting-the-Data">&#182;</a></h2><p>The dataset is located <a href="https://s3.amazonaws.com/elephantscale-public/data/datasets.zip">here</a></p>
-<p>Option 1: Click on the above link to download</p>
-<p>Option 2: Using command line client like wget</p>
-<div class="highlight"><pre><span></span>$    wget <span class="s1">&#39;https://s3.amazonaws.com/elephantscale-public/data/datasets.zip&#39;</span>
+<link rel='stylesheet' href='../assets/css/main.css'/>
+
+<p><a href="../README.md">&lt;&lt; back to main index</a></p>
+<h1 id="Lab-4.2-:-Spark-SQL">Lab 4.2 : Spark SQL<a class="anchor-link" href="#Lab-4.2-:-Spark-SQL">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Using SQL statements with Spark SQL.</p>
+<h3 id="Depends-On">Depends On<a class="anchor-link" href="#Depends-On">&#182;</a></h3><p>None</p>
+<h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>20-30 mins</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="STEP-1:-Load-Clickstream-data">STEP 1: Load Clickstream data<a class="anchor-link" href="#STEP-1:-Load-Clickstream-data">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">clickstreamDF</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="s2">&quot;/data/click-stream/clickstream.json&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clickstreamDF</span><span class="p">)</span>
+<span class="n">clickstreamDF</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>==&gt; Register dataframe as a table</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">clickstreamDF</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s2">&quot;clickstream&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;created clickstream temp table&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="STEP-2:-Querying-using-SQL">STEP 2: Querying using SQL<a class="anchor-link" href="#STEP-2:-Querying-using-SQL">&#182;</a></h2><p><strong>==&gt; Select all logs</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">logs</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;select * from clickstream&quot;</span><span class="p">)</span>
+<span class="c1">#&#39;logs&#39; is a dataframe</span>
+
+<span class="c1"># display the logs, hint : show</span>
+<span class="n">logs</span><span class="o">.</span><span class="err">???</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>==&gt; Find records with only clicks</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Find Records with only clicks</span>
+<span class="c1"># TODO: fix the  table name?</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;select * from ???table_name??? where action = &#39;???&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>==&gt; Count records from each domain, sort the output by most to least</strong></p>
+<p>Sample output:</p>
+
+<pre><code>+-----------------+-----+
+|           domain|total|
++-----------------+-----+
+|      nytimes.com|    1|
+|     facebook.com|    1|
+|       google.com|    2|
+|       amazon.com|    2|
+|    wikipedia.org|    3|
++-----------------+-----+</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Try this query here:</span>
+
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;select domain, COUNT(*) as total from clickstream group by ???  order by ??? &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="STEP-3:-Joining-Datasets">STEP 3: Joining Datasets<a class="anchor-link" href="#STEP-3:-Joining-Datasets">&#182;</a></h2><p><strong>==&gt; Load <code>domains</code> dataset and register it to table <code>domains</code></strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">domainsDF</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="s2">&quot;/data/click-stream/domain-info.json&quot;</span><span class="p">)</span>
+<span class="n">domainsDF</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">domainsDF</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s2">&quot;domains&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>==&gt; Join <code>clickstreams</code> and <code>domains</code></strong><br>
+Hint : Join query syntax for joining two tables A, B on A.x and A.y is</p>
+
+<pre><code>spark.sql("select A.*, B.* from A  join B  ON (A.x = B.y)")</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Write sql query for joining clickstreams and domains</span>
+<span class="c1"># TODO : fill in the common attribute for  clickstream &amp; domain table</span>
+<span class="c1"># Hint : domain</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">SELECT clickstream.*, domains.*  </span>
+<span class="s2">from clickstream join domains </span>
+<span class="s2">ON (clickstream.???= domains.???)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>==&gt; Count traffic per domain category (news, social ..etc)</strong><br>
+Hint : query the joined datasets</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Count traffic per domained category</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">SELECT  domains.category, ???  </span>
+<span class="s2">from clickstream join domains </span>
+<span class="s2">ON (clickstream.???= domains.???)</span>
+<span class="s2">group by ???</span>
+<span class="s2">order by ??? </span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="STEP-4:-Explore-UI">STEP 4: Explore UI<a class="anchor-link" href="#STEP-4:-Explore-UI">&#182;</a></h2><p>(Your DAG visualization may be slightly different from what we show here)</p>
+<p><img src="../assets/images/5.2c.png" style="border: 5px solid grey; max-width:100%;"/></p>
+<p><img src="../assets/images/5.2d.png" style="border: 5px solid grey; max-width:100%;"/></p>
+<p><img src="../assets/images/5.2e.png" style="border: 5px solid grey; max-width:100%;"/></p>
 
 </div>
 </div>
@@ -11788,109 +12037,36 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="How-to-run-the-labs">How to run the labs<a class="anchor-link" href="#How-to-run-the-labs">&#182;</a></h2><p>The labs are in Jupyter notebook format (.html).<br>
-We have provided a handy script to run the labs</p>
-<div class="highlight"><pre><span></span>$   <span class="nb">cd</span>  ~/ml-labs-spark-python
-
-   $   nohup ./run-jupyter.sh <span class="p">&amp;</span>
-</pre></div>
-<hr>
+<h2 id="Step-5-:-Understand-Query-Execution">Step 5 : Understand Query Execution<a class="anchor-link" href="#Step-5-:-Understand-Query-Execution">&#182;</a></h2><p>We will use <strong>explain</strong></p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Labs">Labs<a class="anchor-link" href="#Labs">&#182;</a></h2><h3 id="Setup">Setup<a class="anchor-link" href="#Setup">&#182;</a></h3><p>Follow <a href="0-setup.html">0-setup.html</a> to set up Spark and environment</p>
-<h3 id="1---Hello-world-&amp;-Testing">1 - Hello world &amp; Testing<a class="anchor-link" href="#1---Hello-world-&amp;-Testing">&#182;</a></h3><ul>
-<li>1.1 - <a href="0-testing/hello-jupyter.html">Hello Jupyter</a></li>
-<li>1.2 - <a href="0-testing/testing-123.html">Test the setup</a></li>
-</ul>
-<h3 id="[Optional]-Spark-Primer">[Optional] Spark Primer<a class="anchor-link" href="#[Optional]-Spark-Primer">&#182;</a></h3><ul>
-<li><a href="spark/2.1-install-spark-python.html">Spark install</a></li>
-<li><a href="spark/2.2-shell-python.html">Spark shell</a></li>
-<li><a href="spark/3.6-caching-python.html">Spark caching</a></li>
-<li><a href="spark/4.1-dataframe-python.html">Spark SQL 1</a></li>
-<li><a href="spark/4.2-sql-python.html">Spark SQL 2</a></li>
-</ul>
-<h3 id="2---[Optional]-Exploring-Numpy-and-Pandas">2 - [Optional] Exploring Numpy and Pandas<a class="anchor-link" href="#2---[Optional]-Exploring-Numpy-and-Pandas">&#182;</a></h3><p>quick labs to get familiar with Numpy and Pandas</p>
-<ul>
-<li>2.1 - <a href="python-analysis/numpy.html">Numpy</a></li>
-<li>2.2 - <a href="python-analysis/pandas.html">Pandas</a></li>
-<li>2.3 - Optional <a href="python-analysis/exploring-pandas.html">Pandas 2 (adv)</a> </li>
-</ul>
-<h3 id="3--Basics-&amp;-Exploration-&amp;-Visualization">3- Basics &amp; Exploration &amp; Visualization<a class="anchor-link" href="#3--Basics-&amp;-Exploration-&amp;-Visualization">&#182;</a></h3><ul>
-<li>3.1 - <a href="basics/stats-basics.html">Basic Stats</a></li>
-<li>3.2 - <a href="basics/visualizing.html">Basic graphs</a></li>
-<li>3.3 - <a href="exploration/data-cleanup.html">Data Cleanup</a></li>
-<li>3.4 - <a href="exploration/explore-house-sales.html">House Sales Exploration</a></li>
-<li>3.5 - <a href="exploration/visualize-house-sales.html">House Sales Visualization</a></li>
-</ul>
-<h4 id="Bonus/Advacned-Labs:">Bonus/Advacned Labs:<a class="anchor-link" href="#Bonus/Advacned-Labs:">&#182;</a></h4><ul>
-<li>3.6 - <a href="exploration/1-explore-prosper.html">Prosper Loan Exploration</a></li>
-<li>3.7 - <a href="exploration/2-explore-walmart.html">Walmart Triptype Exploration</a></li>
-</ul>
-<h3 id="4---Feature-Engineering">4 - Feature Engineering<a class="anchor-link" href="#4---Feature-Engineering">&#182;</a></h3><ul>
-<li>4.1 - <a href="feature-engineering/election.html">Presidential Election Contribution Data</a></li>
-</ul>
-<h3 id="5---Spark-ML-Basics">5 - Spark ML Basics<a class="anchor-link" href="#5---Spark-ML-Basics">&#182;</a></h3><ul>
-<li>5.1 - <a href="spark-ml/spark-ml-basics.html">ML Basics</a></li>
-<li>5.2 - <a href="spark-ml/pipeline-1-basics-prosper.html">ML pipelines</a></li>
-<li>5.3 - BONUS : <a href="spark-ml/pipeline-2-adv-prosper.html">ML pipelines adv</a></li>
-</ul>
-<h3 id="6---Linear-Regression">6 - Linear Regression<a class="anchor-link" href="#6---Linear-Regression">&#182;</a></h3><ul>
-<li>6.1 - <a href="linear-regression/1-lr-tips.html">Linear Regression Intro : Tips data</a></li>
-<li>6.2 - <a href="linear-regression/2-mlr-house-prices.html">Multiple Linear Regresssion: House Prices</a></li>
-<li>6.3 - BONUS : <a href="linear-regression/3-mlr-AIC-house-prices.html">Multiple Linear Regresssion: AIC House Prices</a></li>
-</ul>
-<h3 id="7---Logistic-Regression">7 - Logistic Regression<a class="anchor-link" href="#7---Logistic-Regression">&#182;</a></h3><ul>
-<li>7.1 - <a href="logistic-regression/logistic-1-credit-approval.html">Logistic Regression: (Single) Credit card intro</a></li>
-<li>7.2 - <a href="logistic-regression/logistic-2-college-admission.html">Logistic Regression: (Multi) College Admission</a></li>
-</ul>
-<h3 id="8----Classification-:-SVM">8 -  Classification : SVM<a class="anchor-link" href="#8----Classification-:-SVM">&#182;</a></h3><ul>
-<li>8.1 -  <a href="svm/svm-1-college.html">SVM -  College admissions</a></li>
-<li>8.2 -  <a href="svm/svm-2-churn.html">SVM - Customer chrun analysis</a></li>
-</ul>
-<h3 id="9.-Classification:-Decision-Trees-/-Random-Forests">9. Classification: Decision Trees / Random Forests<a class="anchor-link" href="#9.-Classification:-Decision-Trees-/-Random-Forests">&#182;</a></h3><h4 id="Decision-Trees">Decision Trees<a class="anchor-link" href="#Decision-Trees">&#182;</a></h4><ul>
-<li>9.1 - <a href="decision-trees/decision-tree-1-college-admission.html">Decision Trees : College Admission</a></li>
-<li>9.2 - <a href="decision-trees/decision-tree-2-prosper.html">Decision Trees : Prosper Loan Data 1</a></li>
-<li>9.3 - <strong>BONUS</strong> <a href="decision-trees/decision-tree-3-prosper2-pipeline.html">Decision Trees : Prosper Loan Data 2 (advanced - uses pipelines)</a> </li>
-</ul>
-<h4 id="Random-Forests">Random Forests<a class="anchor-link" href="#Random-Forests">&#182;</a></h4><ul>
-<li>9.4 - <a href="decision-trees/random-forest-1-prosper.html">Random Forests: Prosper Loan Data</a></li>
-<li>9.5 - <a href="decision-trees/random-forest-2-election-classification.html">Random Forests: Election Data Classification</a></li>
-<li>9.6 - <strong>BONUS</strong> <a href="decision-trees/random-forest-3-election-regression.html">Random Forests: Eleciton Data  Regresssion</a></li>
-</ul>
-<h3 id="10---Classification-:-Naive-Bayes">10 - Classification : Naive Bayes<a class="anchor-link" href="#10---Classification-:-Naive-Bayes">&#182;</a></h3><ul>
-<li>10.1 -  <a href="naive-bayes/naive-bayes-1-spam.html">Naive Bayes Spam classification</a></li>
-<li>10.2 -  <a href="naive-bayes/naive-bayes-2-income-classifier.html">Naive Bayes Income classification</a></li>
-</ul>
-<h3 id="11---Clustering">11 - Clustering<a class="anchor-link" href="#11---Clustering">&#182;</a></h3><ul>
-<li>11.1 -  <a href="clustering/kmeans-1-mtcars.html">K-means intro - MTCars</a></li>
-<li>11.2 -  <a href="clustering/kmeans-2-uber-pickups.html">KMeans Clustering Uber trips</a>  </li>
-<li>11.3 -  <strong>Bonus</strong> : <a href="clustering/kmeans-3-walmart.html">KMeans Clustering Walmart trip types</a></li>
-</ul>
-<h3 id="12---Dimensionality-Reduction">12 - Dimensionality Reduction<a class="anchor-link" href="#12---Dimensionality-Reduction">&#182;</a></h3><ul>
-<li>12.1 -  <a href="dim-reduction/pca-1-wine-quality.html">PCA - wine quality data</a></li>
-</ul>
-<h3 id="13---Recommendations">13 - Recommendations<a class="anchor-link" href="#13---Recommendations">&#182;</a></h3><ul>
-<li>13.2 -  <a href="recommendations/movielens.html">Movie recommendations using Movie Lens data</a></li>
-<li>13.1 -  <a href="recommendations/1-recommender.html">Music recommendation with Audio scrobbler data</a></li>
-</ul>
-<h3 id="14---Workshops">14 - Workshops<a class="anchor-link" href="#14---Workshops">&#182;</a></h3><p>These are designed to be team projects.<br>
-Choose one of the following dataset to analyze.<br>
-Run your analysys, discuss your finding with the class.</p>
-<p><strong>Datasets</strong></p>
-<ul>
-<li>San Francisco Crime Data (911 call data)</li>
-<li>Netflix prize data</li>
-</ul>
-<p><a href="final-project/README.html">Read more here</a></p>
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;select * from clickstream where cost &gt; 100&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="n">extended</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
 
 </div>
 </div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;join query here&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="n">extended</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div>
     </div>
   </div>

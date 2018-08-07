@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>README</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>2.1-install-spark-python</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,119 +11775,100 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Getting-the-Data">Getting the Data<a class="anchor-link" href="#Getting-the-Data">&#182;</a></h2><p>The dataset is located <a href="https://s3.amazonaws.com/elephantscale-public/data/datasets.zip">here</a></p>
-<p>Option 1: Click on the above link to download</p>
-<p>Option 2: Using command line client like wget</p>
-<div class="highlight"><pre><span></span>$    wget <span class="s1">&#39;https://s3.amazonaws.com/elephantscale-public/data/datasets.zip&#39;</span>
+<link rel='stylesheet' href='../assets/css/main.css'/>
+
+<p><a href="../README.md">&lt;&lt; back to main index</a></p>
+<h1 id="Lab-2.1-:-Up-and-Running-With-Spark">Lab 2.1 : Up and Running With Spark<a class="anchor-link" href="#Lab-2.1-:-Up-and-Running-With-Spark">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>We will be running Spark in a single node mode.</p>
+<h3 id="Depends-On">Depends On<a class="anchor-link" href="#Depends-On">&#182;</a></h3><p>None</p>
+<h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>20 mins</p>
+<h2 id="STEP-0:-To-Instructor">STEP 0: To Instructor<a class="anchor-link" href="#STEP-0:-To-Instructor">&#182;</a></h2><p>Please go through this lab on 'screen' first.</p>
+<h2 id="STEP-1:-Login-to-your-Spark-node">STEP 1: Login to your Spark node<a class="anchor-link" href="#STEP-1:-Login-to-your-Spark-node">&#182;</a></h2><p>Instructor will provide details</p>
+<h2 id="STEP-2:-Installing-Spark">STEP 2: Installing Spark<a class="anchor-link" href="#STEP-2:-Installing-Spark">&#182;</a></h2><p><strong>Skip this step, if you had already installed Spark</strong></p>
+<p>There is no 'install'.  Just unzip/untar and run :-)<br>
+(copy paste the following commands on terminal,  do not include $ in your commands)</p>
+<div class="highlight"><pre><span></span>$   <span class="nb">cd</span>
+$   rm -rf  spark   <span class="c1"># cleanup existing spark installation (if any)</span>
+$   tar xvf files/spark-2.3.0-bin-hadoop2.7.tgz
+$   mv  spark-2.3.0-bin-hadoop2.7    spark
 </pre></div>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="How-to-run-the-labs">How to run the labs<a class="anchor-link" href="#How-to-run-the-labs">&#182;</a></h2><p>The labs are in Jupyter notebook format (.html).<br>
-We have provided a handy script to run the labs</p>
-<div class="highlight"><pre><span></span>$   <span class="nb">cd</span>  ~/ml-labs-spark-python
-
-   $   nohup ./run-jupyter.sh <span class="p">&amp;</span>
+<p>Now we have spark installed in  <code>~/spark</code>  directory</p>
+<h2 id="STEP-3:-Running-Spark">STEP 3: Running Spark<a class="anchor-link" href="#STEP-3:-Running-Spark">&#182;</a></h2><div class="highlight"><pre><span></span>$   ~/spark/sbin/start-all.sh
 </pre></div>
-<hr>
+<p>Verify Spark is running by 'jps' command</p>
+<div class="highlight"><pre><span></span>$  jps
+</pre></div>
+<p>Your output may look like this..</p>
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Labs">Labs<a class="anchor-link" href="#Labs">&#182;</a></h2><h3 id="Setup">Setup<a class="anchor-link" href="#Setup">&#182;</a></h3><p>Follow <a href="0-setup.html">0-setup.html</a> to set up Spark and environment</p>
-<h3 id="1---Hello-world-&amp;-Testing">1 - Hello world &amp; Testing<a class="anchor-link" href="#1---Hello-world-&amp;-Testing">&#182;</a></h3><ul>
-<li>1.1 - <a href="0-testing/hello-jupyter.html">Hello Jupyter</a></li>
-<li>1.2 - <a href="0-testing/testing-123.html">Test the setup</a></li>
-</ul>
-<h3 id="[Optional]-Spark-Primer">[Optional] Spark Primer<a class="anchor-link" href="#[Optional]-Spark-Primer">&#182;</a></h3><ul>
-<li><a href="spark/2.1-install-spark-python.html">Spark install</a></li>
-<li><a href="spark/2.2-shell-python.html">Spark shell</a></li>
-<li><a href="spark/3.6-caching-python.html">Spark caching</a></li>
-<li><a href="spark/4.1-dataframe-python.html">Spark SQL 1</a></li>
-<li><a href="spark/4.2-sql-python.html">Spark SQL 2</a></li>
-</ul>
-<h3 id="2---[Optional]-Exploring-Numpy-and-Pandas">2 - [Optional] Exploring Numpy and Pandas<a class="anchor-link" href="#2---[Optional]-Exploring-Numpy-and-Pandas">&#182;</a></h3><p>quick labs to get familiar with Numpy and Pandas</p>
+<pre><code>  30624 Jps
+  30431 Master
+  30565 Worker</code></pre>
+<p>you will see <strong>Master</strong> and <strong>Worker</strong>  processes running.<br>
+(you probably will get different values for process ids - first column )</p>
+<p>Spark UI will be at port 8080 of the host.<br>
+In browser go to<br>
+  <a href="http://your_spark_host_address:8080">http://your_spark_host_address:8080</a><br>
+(be sure to use the 'public' ip address)</p>
+<p>bingo!  Now we have spark running.</p>
+<h2 id="STEP-4:-Exploring-Spark-UI">STEP 4: Exploring Spark UI<a class="anchor-link" href="#STEP-4:-Exploring-Spark-UI">&#182;</a></h2><p>You will see a similar screen shot like this</p>
+<p><img src="../assets/images/1a.png" style="border: 5px solid grey ; max-width:100%;" /></p>
+<p>To explore:</p>
 <ul>
-<li>2.1 - <a href="python-analysis/numpy.html">Numpy</a></li>
-<li>2.2 - <a href="python-analysis/pandas.html">Pandas</a></li>
-<li>2.3 - Optional <a href="python-analysis/exploring-pandas.html">Pandas 2 (adv)</a> </li>
+<li><p>Is Master and Worker running on the same node?</p>
+</li>
+<li><p>Inspect memory &amp; CPU available for Spark worker</p>
+</li>
+<li><p>Note the Spark master URI, it will be something like</p>
+
+<pre><code>spark://host_name:7077
+</code></pre>
+<p>We will need this for later labs</p>
+</li>
 </ul>
-<h3 id="3--Basics-&amp;-Exploration-&amp;-Visualization">3- Basics &amp; Exploration &amp; Visualization<a class="anchor-link" href="#3--Basics-&amp;-Exploration-&amp;-Visualization">&#182;</a></h3><ul>
-<li>3.1 - <a href="basics/stats-basics.html">Basic Stats</a></li>
-<li>3.2 - <a href="basics/visualizing.html">Basic graphs</a></li>
-<li>3.3 - <a href="exploration/data-cleanup.html">Data Cleanup</a></li>
-<li>3.4 - <a href="exploration/explore-house-sales.html">House Sales Exploration</a></li>
-<li>3.5 - <a href="exploration/visualize-house-sales.html">House Sales Visualization</a></li>
-</ul>
-<h4 id="Bonus/Advacned-Labs:">Bonus/Advacned Labs:<a class="anchor-link" href="#Bonus/Advacned-Labs:">&#182;</a></h4><ul>
-<li>3.6 - <a href="exploration/1-explore-prosper.html">Prosper Loan Exploration</a></li>
-<li>3.7 - <a href="exploration/2-explore-walmart.html">Walmart Triptype Exploration</a></li>
-</ul>
-<h3 id="4---Feature-Engineering">4 - Feature Engineering<a class="anchor-link" href="#4---Feature-Engineering">&#182;</a></h3><ul>
-<li>4.1 - <a href="feature-engineering/election.html">Presidential Election Contribution Data</a></li>
-</ul>
-<h3 id="5---Spark-ML-Basics">5 - Spark ML Basics<a class="anchor-link" href="#5---Spark-ML-Basics">&#182;</a></h3><ul>
-<li>5.1 - <a href="spark-ml/spark-ml-basics.html">ML Basics</a></li>
-<li>5.2 - <a href="spark-ml/pipeline-1-basics-prosper.html">ML pipelines</a></li>
-<li>5.3 - BONUS : <a href="spark-ml/pipeline-2-adv-prosper.html">ML pipelines adv</a></li>
-</ul>
-<h3 id="6---Linear-Regression">6 - Linear Regression<a class="anchor-link" href="#6---Linear-Regression">&#182;</a></h3><ul>
-<li>6.1 - <a href="linear-regression/1-lr-tips.html">Linear Regression Intro : Tips data</a></li>
-<li>6.2 - <a href="linear-regression/2-mlr-house-prices.html">Multiple Linear Regresssion: House Prices</a></li>
-<li>6.3 - BONUS : <a href="linear-regression/3-mlr-AIC-house-prices.html">Multiple Linear Regresssion: AIC House Prices</a></li>
-</ul>
-<h3 id="7---Logistic-Regression">7 - Logistic Regression<a class="anchor-link" href="#7---Logistic-Regression">&#182;</a></h3><ul>
-<li>7.1 - <a href="logistic-regression/logistic-1-credit-approval.html">Logistic Regression: (Single) Credit card intro</a></li>
-<li>7.2 - <a href="logistic-regression/logistic-2-college-admission.html">Logistic Regression: (Multi) College Admission</a></li>
-</ul>
-<h3 id="8----Classification-:-SVM">8 -  Classification : SVM<a class="anchor-link" href="#8----Classification-:-SVM">&#182;</a></h3><ul>
-<li>8.1 -  <a href="svm/svm-1-college.html">SVM -  College admissions</a></li>
-<li>8.2 -  <a href="svm/svm-2-churn.html">SVM - Customer chrun analysis</a></li>
-</ul>
-<h3 id="9.-Classification:-Decision-Trees-/-Random-Forests">9. Classification: Decision Trees / Random Forests<a class="anchor-link" href="#9.-Classification:-Decision-Trees-/-Random-Forests">&#182;</a></h3><h4 id="Decision-Trees">Decision Trees<a class="anchor-link" href="#Decision-Trees">&#182;</a></h4><ul>
-<li>9.1 - <a href="decision-trees/decision-tree-1-college-admission.html">Decision Trees : College Admission</a></li>
-<li>9.2 - <a href="decision-trees/decision-tree-2-prosper.html">Decision Trees : Prosper Loan Data 1</a></li>
-<li>9.3 - <strong>BONUS</strong> <a href="decision-trees/decision-tree-3-prosper2-pipeline.html">Decision Trees : Prosper Loan Data 2 (advanced - uses pipelines)</a> </li>
-</ul>
-<h4 id="Random-Forests">Random Forests<a class="anchor-link" href="#Random-Forests">&#182;</a></h4><ul>
-<li>9.4 - <a href="decision-trees/random-forest-1-prosper.html">Random Forests: Prosper Loan Data</a></li>
-<li>9.5 - <a href="decision-trees/random-forest-2-election-classification.html">Random Forests: Election Data Classification</a></li>
-<li>9.6 - <strong>BONUS</strong> <a href="decision-trees/random-forest-3-election-regression.html">Random Forests: Eleciton Data  Regresssion</a></li>
-</ul>
-<h3 id="10---Classification-:-Naive-Bayes">10 - Classification : Naive Bayes<a class="anchor-link" href="#10---Classification-:-Naive-Bayes">&#182;</a></h3><ul>
-<li>10.1 -  <a href="naive-bayes/naive-bayes-1-spam.html">Naive Bayes Spam classification</a></li>
-<li>10.2 -  <a href="naive-bayes/naive-bayes-2-income-classifier.html">Naive Bayes Income classification</a></li>
-</ul>
-<h3 id="11---Clustering">11 - Clustering<a class="anchor-link" href="#11---Clustering">&#182;</a></h3><ul>
-<li>11.1 -  <a href="clustering/kmeans-1-mtcars.html">K-means intro - MTCars</a></li>
-<li>11.2 -  <a href="clustering/kmeans-2-uber-pickups.html">KMeans Clustering Uber trips</a>  </li>
-<li>11.3 -  <strong>Bonus</strong> : <a href="clustering/kmeans-3-walmart.html">KMeans Clustering Walmart trip types</a></li>
-</ul>
-<h3 id="12---Dimensionality-Reduction">12 - Dimensionality Reduction<a class="anchor-link" href="#12---Dimensionality-Reduction">&#182;</a></h3><ul>
-<li>12.1 -  <a href="dim-reduction/pca-1-wine-quality.html">PCA - wine quality data</a></li>
-</ul>
-<h3 id="13---Recommendations">13 - Recommendations<a class="anchor-link" href="#13---Recommendations">&#182;</a></h3><ul>
-<li>13.2 -  <a href="recommendations/movielens.html">Movie recommendations using Movie Lens data</a></li>
-<li>13.1 -  <a href="recommendations/1-recommender.html">Music recommendation with Audio scrobbler data</a></li>
-</ul>
-<h3 id="14---Workshops">14 - Workshops<a class="anchor-link" href="#14---Workshops">&#182;</a></h3><p>These are designed to be team projects.<br>
-Choose one of the following dataset to analyze.<br>
-Run your analysys, discuss your finding with the class.</p>
-<p><strong>Datasets</strong></p>
+<h2 id="STEP-5:-Download-Spark-labs-and-Data">STEP 5: Download Spark labs and Data<a class="anchor-link" href="#STEP-5:-Download-Spark-labs-and-Data">&#182;</a></h2><h3 id="Labs">Labs<a class="anchor-link" href="#Labs">&#182;</a></h3><div class="highlight"><pre><span></span>$   <span class="nb">cd</span>
+$   git clone   git@github.com:elephantscale/spark-labs.git
+
+<span class="c1"># for v2 - latest</span>
+<span class="c1"># $  cd  ~/spark-labs</span>
+<span class="c1"># $  git checkout master</span>
+
+<span class="c1"># for 1.6 (old)</span>
+<span class="c1"># $  cd ~/spark-labs</span>
+<span class="c1"># $  git checkout v1.6</span>
+</pre></div>
+<p>This will create a <code>spark-labs</code> directory that has all the labs.</p>
+<h3 id="Data">Data<a class="anchor-link" href="#Data">&#182;</a></h3><p>Download the dataset</p>
+<div class="highlight"><pre><span></span><span class="c1"># if  ~/data dir is missing, do the following</span>
+    <span class="c1"># $   git clone --depth 1  git@github.com:elephantscale/datasets.git</span>
+
+    $   <span class="nb">cd</span> ~/data
+    $   git pull
+</pre></div>
+<p><a href="https://s3.amazonaws.com/elephantscale-public/data/datasets.zip">Link to Full Dataset</a>
+(Note: Large download, ~200 Meg)</p>
 <ul>
-<li>San Francisco Crime Data (911 call data)</li>
-<li>Netflix prize data</li>
+<li>Click the above link to download or</li>
+<li>use <code>wget</code> from command line
+<pre><code>  $    wget   "https://s3.amazonaws.com/elephantscale-public/data/datasets.zip"</code></pre>
+</li>
 </ul>
-<p><a href="final-project/README.html">Read more here</a></p>
+<h2 id="Optional:-Spark-Sandbox">Optional: Spark Sandbox<a class="anchor-link" href="#Optional:-Spark-Sandbox">&#182;</a></h2><p>To run Spark on your laptop, we recommend the sandbox.  This Sandbox can run on Mac / Windows / Linux.</p>
+<ul>
+<li><a href="https://github.com/elephantscale/sandbox">Download Sandbox</a></li>
+<li><a href="https://github.com/elephantscale/sandbox">Tutorials</a></li>
+</ul>
+<h2 id="Optional-2:-Running-Spark-on-Windows">Optional 2: Running Spark on Windows<a class="anchor-link" href="#Optional-2:-Running-Spark-on-Windows">&#182;</a></h2><p>If one has to do a Windows install, here is the magic</p>
+<p><a href="http://nishutayaltech.blogspot.com/2015/04/how-to-run-apache-spark-on-windows7-in.html">http://nishutayaltech.blogspot.com/2015/04/how-to-run-apache-spark-on-windows7-in.html</a></p>
+<p>set winutils as described</p>
+<p>For example</p>
+
+<pre><code>   \projects
+   \projects\spark-labs
+   \projects\spark-1.4.1-bin-hadoop2.4
+   \projects\winutils\bin\winutils</code></pre>
+<p>System env variable</p>
+
+<pre><code>   HADOOP_HOME=\projects\winutils</code></pre>
+<p>With this download spark-1.4.1-bin-hadoop2.4</p>
 
 </div>
 </div>
