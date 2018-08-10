@@ -11899,7 +11899,7 @@ div#notebook {
 <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;traind on </span><span class="si">{:,}</span><span class="s2"> records in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span>\
-      <span class="nb">format</span><span class="p">(</span><span class="n">featureVector</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
+      <span class="nb">format</span><span class="p">(</span><span class="n">training</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
 
 <span class="c1"># Print the coefficients and intercept for linearsSVC</span>
 <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;inputs : gre, gpa, rank&quot;</span><span class="p">)</span>
@@ -12014,6 +12014,16 @@ Set <strong>maxIter=50</strong>  and try again</p>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Increase-'maxIterations'-and-try-again">Increase 'maxIterations' and try again<a class="anchor-link" href="#Increase-'maxIterations'-and-try-again">&#182;</a></h3><p>In Step-4 increase 'maxIter' to 50 and run again.<br>
+Does the accuracy go up?</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
