@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>2-mlr-house-prices</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>diabetes-prediction</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,13 +11775,23 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<link rel='stylesheet' href='../assets/css/main.css'/>
+<h2 id="Predict-Diabetes">Predict Diabetes<a class="anchor-link" href="#Predict-Diabetes">&#182;</a></h2><p><a href="/data/diabetes/">data is here</a>.  (From UCI repository)</p>
+<p>Sample Data:</p>
 
-<p><a href="../README.md">&lt;&lt; back to main index</a></p>
-<h1 id="Multiple-Linear-Regression-Lab-:-House-Prices">Multiple Linear Regression Lab : House Prices<a class="anchor-link" href="#Multiple-Linear-Regression-Lab-:-House-Prices">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Estimate house prices using MLR</p>
-<h3 id="Builds-on">Builds on<a class="anchor-link" href="#Builds-on">&#182;</a></h3><p>None</p>
-<h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>approx. 20 minutes</p>
-<h3 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h3>
+<pre><code>a,b,c,d,e,f,g,h,outcome
+6,148,72,35,0,33.6,0.627,50,1
+1,85,66,29,0,26.6,0.351,31,0
+8,183,64,0,0,23.3,0.672,32,1
+1,89,66,23,94,28.1,0.167,21,0</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Read-Data">Read Data<a class="anchor-link" href="#Read-Data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11790,14 +11800,11 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">LinearRegression</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Reading data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/diabetes/pima-indians-diabetes-data.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;record count &quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+<span class="n">data</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+<span class="n">data</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11809,47 +11816,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-1-:-House-data">Step 1 : House data<a class="anchor-link" href="#Step-1-:-House-data">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
-
-housePrices = spark.read.csv(&quot;/data/house-prices/house-sales-full.csv&quot;, \
-                             header=True, inferSchema=True)
-print(&quot;read {:,} records&quot;.format(housePrices.count()))
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">housePrices</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
-<span class="n">housePrices</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Wow! That's a lot of columns.  Maybe we should foucs on just a few of them.</p>
-<p><strong>=&gt; Select only "SalePrice", "Bedrooms", "Bathrooms", "SqFtTotLiving", "SqFtLot" </strong></p>
+<h2 id="Perform-some-data-exploration">Perform some data exploration<a class="anchor-link" href="#Perform-some-data-exploration">&#182;</a></h2><p>slice and dice data and see how the data is formed.<br>
+For example, try to print the distribution of 'outcome'</p>
 
 </div>
 </div>
@@ -11859,153 +11827,7 @@ print(&quot;read {:,} records&quot;.format(housePrices.count()))
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: select only &quot;SalePrice&quot;, &quot;Bedrooms&quot;, &quot;Bathrooms&quot;, &quot;SqFtTotLiving&quot;, &quot;SqFtLot&quot;</span>
-<span class="n">housePrices_small</span> <span class="o">=</span> <span class="n">housePrices</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">)</span>
-<span class="n">housePrices_small</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2:-Create-Features-and-Label-Column-in-Dataframe">Step 2: Create Features and Label Column in Dataframe<a class="anchor-link" href="#Step-2:-Create-Features-and-Label-Column-in-Dataframe">&#182;</a></h2><p>We will create our "features" column, which is of type vector, and our label column, for which we can just reuse the SquareFootage column.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Build features with  &quot;Bedrooms&quot;, &quot;Bathrooms&quot;, &quot;SqFtTotLiving&quot;, &quot;SqFtLot&quot;</span>
-<span class="c1">## Hint : inputCols = [&#39;Bedrooms&#39;, &#39;Bathrooms&#39;, ??? , ??? ]</span>
-
-<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="err">???</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
-<span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">housePrices_small</span><span class="p">)</span>
-
-<span class="c1">## TODO : Rename &#39;SalePrice&#39; as &quot;label&quot;</span>
-<span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s2">&quot;SalePrice&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">)</span>
-<span class="n">featureVector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-Run-the-Linear-Regression-Model">Step 3: Run the Linear Regression Model<a class="anchor-link" href="#Step-3:-Run-the-Linear-Regression-Model">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Hint : Run model with max iterations as 10</span>
-<span class="c1">#lr = LinearRegression(maxIter=???)</span>
-<span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
-<span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficents:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Intercept: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span><span class="p">))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; What is the meaning of coefficients and intercept? </strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;numIterations: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">totalIterations</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;objectiveHistory: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">))</span>
-<span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">residuals</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RMSE: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">rootMeanSquaredError</span><span class="p">)</span>
-
-<span class="c1">## TODO : print &#39;r2&#39; from training summary</span>
-<span class="c1">## Hint : Use TAB completion</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r2: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Observe the summary output</strong></p>
-<h2 id="Step-3:--Predict-some-home-prices">Step 3:  Predict some home prices<a class="anchor-link" href="#Step-3:--Predict-some-home-prices">&#182;</a></h2><p>Create a new data frame with the following data</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Make a Pandas dataframe</span>
-<span class="n">new_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Bedrooms&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>
-                         <span class="s1">&#39;Bathrooms&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">1.5</span><span class="p">],</span>
-                         <span class="s1">&#39;SqFtTotLiving&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">4400</span><span class="p">,</span> <span class="mi">1800</span><span class="p">,</span> <span class="mi">1550</span><span class="p">],</span>
-                         <span class="s1">&#39;SqFtLot&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">,</span> <span class="mi">4000</span><span class="p">]</span>
-             <span class="p">})</span>
-
-<span class="n">new_data_spark</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
-<span class="n">new_featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">new_data_spark</span><span class="p">)</span>  <span class="c1">#run VectorAssembler again to create features.</span>
-<span class="n">new_featureVector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Run-on-some-prediction-data">Step 4: Run on some prediction data<a class="anchor-link" href="#Step-4:-Run-on-some-prediction-data">&#182;</a></h2><p>Lets see the predicted output.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: transform dataframe with new feature vector to get predictions</span>
-<span class="c1">## Hint : new_featureVector</span>
-
-<span class="n">predicted_prices</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-<span class="n">predicted_prices</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO</span>
 </pre></div>
 
 </div>
