@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>2.2-shell-python</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>sql-python</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11778,62 +11778,9 @@ div#notebook {
 <link rel='stylesheet' href='../assets/css/main.css'/>
 
 <p><a href="../README.md">&lt;&lt; back to main index</a></p>
-<h1 id="Lab-:-Spark-Shell">Lab : Spark Shell<a class="anchor-link" href="#Lab-:-Spark-Shell">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Get familiar with Spark shell</p>
-<h2 id="Step-1:-Spark-classes-(sc-&amp;-spark)">Step 1: Spark classes (sc &amp; spark)<a class="anchor-link" href="#Step-1:-Spark-classes-(sc-&amp;-spark)">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># older version spark context</span>
-<span class="n">sc</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># newwer Spark Session</span>
-<span class="n">spark</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the name of application name**</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">appName</span><span class="p">)</span>
-
-<span class="c1"># Find the &#39;Spark master&#39; for the shell</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">master</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="STEP-2:-Exploring-Spark-shell-UI">STEP 2: Exploring Spark shell UI<a class="anchor-link" href="#STEP-2:-Exploring-Spark-shell-UI">&#182;</a></h2><p>Spark shell UI is available on port 4040+</p>
-<p>The following code will print out the port number of Spark Shell UI</p>
+<h1 id="Lab-:-Spark-SQL">Lab : Spark SQL<a class="anchor-link" href="#Lab-:-Spark-SQL">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Using SQL statements with Spark SQL.</p>
+<h3 id="Depends-On">Depends On<a class="anchor-link" href="#Depends-On">&#182;</a></h3><p>None</p>
+<h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>20-30 mins</p>
 
 </div>
 </div>
@@ -11855,24 +11802,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In browser go to :   <a href="http://your_machine_address:port_number">http://your_machine_address:port_number</a>
-(use 'public' ip of machine)</p>
-<p>Here is a sample screen shot:</p>
-<p><img src="../assets/images/2a.png" style="border: 5px solid grey ; max-width:100%;" /></p>
-<p><strong>==&gt; Explore stage, storage, environment and executor tabs</strong></p>
-<p><strong>==&gt; Take note of 'Event Timeline', we will use this for monitoring our jobs later</strong></p>
-<p><strong>==&gt; Check spark master on port 8080,  Do you the Spark shell application connected?  Why (not)?</strong></p>
-<h2 id="STEP-3:-Load-a-file">STEP 3: Load a file<a class="anchor-link" href="#STEP-3:-Load-a-file">&#182;</a></h2><p>We have data files under <code>spark-labs/data</code>.<br>
-Use test file :  <code>data/twinkle/sample.txt</code> .<br>
-The file has a favorite nursery rhyme</p>
-
-<pre><code>   twinkle twinkle little star
-   how I wonder what you are
-   up above the world so high
-   like a diamond in the sky
-   twinkle twinkle little star</code></pre>
-<p>Let's load the file:</p>
-
+<h2 id="STEP-1:-Load-Clickstream-data">STEP 1: Load Clickstream data<a class="anchor-link" href="#STEP-1:-Load-Clickstream-data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11881,8 +11811,9 @@ The file has a favorite nursery rhyme</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;/data/text/twinkle/sample.txt&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;loaded file as &quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">clickstreamDF</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="s2">&quot;/data/click-stream/clickstream.json&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clickstreamDF</span><span class="p">)</span>
+<span class="n">clickstreamDF</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11894,7 +11825,7 @@ The file has a favorite nursery rhyme</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="answer-the-following-questions:">answer the following questions:<a class="anchor-link" href="#answer-the-following-questions:">&#182;</a></h4><p><strong>==&gt; Inspect Spark Shell UI on port 4040, do you see any processing done?  Why (not)?</strong></p>
+<p><strong>==&gt; Register dataframe as a table</strong></p>
 
 </div>
 </div>
@@ -11904,80 +11835,8 @@ The file has a favorite nursery rhyme</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## display the dataframe</span>
-<span class="n">f</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## display 10 lines, with truncate=False</span>
-<span class="n">f</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## COunt of number of lines</span>
-<span class="n">f</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Print the first line / record from RDD</span>
-<span class="c1">## hint : f.first()</span>
-<span class="n">f</span><span class="o">.</span><span class="err">???</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Print first 3 lines</span>
-<span class="n">f</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Print all the content from the file</span>
-<span class="c1">## hint : collect</span>
-<span class="n">f</span><span class="o">.</span><span class="err">???</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">clickstreamDF</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s2">&quot;clickstream&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;created clickstream temp table&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11989,68 +11848,7 @@ The file has a favorite nursery rhyme</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Check-out-Jobs-Page">Step 4: Check out Jobs Page<a class="anchor-link" href="#Step-4:-Check-out-Jobs-Page">&#182;</a></h2><p><strong>==&gt; Inspect the 'Jobs' section in Shell UI (in browser)</strong><br>
-Also inspect the event time line</p>
-<p><img src="../assets/images/2b.png" style="border: 5px solid grey; max-width:100%;" /></p>
-<p><strong>==&gt; Inspect the 'Executor' section in Shell UI (in browser)</strong></p>
-<p><img src="../assets/images/2c.png" style="border: 5px solid grey; max-width:100%;" /></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5-:-Running-pyspark-shell">Step 5 : Running pyspark shell<a class="anchor-link" href="#Step-5-:-Running-pyspark-shell">&#182;</a></h2><p>In a terminal start PySpark shell as follows:</p>
-<div class="highlight"><pre><span></span>$  <span class="nv">PYSPARK_PYTHON</span><span class="o">=</span>python3  <span class="nv">PYSPARK_DRIVER_PYTHON</span><span class="o">=</span><span class="s2">&quot;python&quot;</span>  ~/spark/bin/pyspark
-</pre></div>
-<p>And try the following commands in pyspark shell</p>
-<div class="highlight"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;/data/text/twinkle/sample.txt&quot;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
-<span class="n">f</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="STEP-6:--Connecting-Shell-and--Spark-server">STEP 6:  Connecting Shell and  Spark server<a class="anchor-link" href="#STEP-6:--Connecting-Shell-and--Spark-server">&#182;</a></h2><p>For this lab, we are going use command line pyspark</p>
-<h3 id="6.1-Start-Spark-Server">6.1 Start Spark Server<a class="anchor-link" href="#6.1-Start-Spark-Server">&#182;</a></h3><p>If Spark server is not running, start it as</p>
-<div class="highlight"><pre><span></span>$ ~/spark/sbin/start-all.sh
-</pre></div>
-<p>Use <code>jps</code> command to inspect the java process.  Your output might look like this.</p>
-
-<pre><code>    731 Master
-    902 Jps
-    831 Worker</code></pre>
-<p>Spark master UI is available on port 8080.
-In browser go to :   <a href="http://your_machine_address:8080">http://your_machine_address:8080</a>
-(use 'public' ip of machine)</p>
-<p>Here is a sample screen shot:</p>
-<p><img src="../assets/images/2d.png" style="border: 5px solid grey; max-width:100%;" /></p>
-<h3 id="6.2-Now-start-pyspark-shell">6.2 Now start pyspark shell<a class="anchor-link" href="#6.2-Now-start-pyspark-shell">&#182;</a></h3><div class="highlight"><pre><span></span>$ <span class="nv">PYSPARK_PYTHON</span><span class="o">=</span>python3  <span class="nv">PYSPARK_DRIVER_PYTHON</span><span class="o">=</span><span class="s2">&quot;python&quot;</span>   ~/spark/bin/pyspark
-</pre></div>
-<p>Once the shell starts, check the <em>server</em> UI on port 8080.</p>
-<p><strong>==&gt; Do you see the shell connected as an application?  why (not) ?</strong></p>
-<h3 id="6.3-Connect-Spark-shell-with-the-Spark-server.">6.3 Connect Spark shell with the Spark server.<a class="anchor-link" href="#6.3-Connect-Spark-shell-with-the-Spark-server.">&#182;</a></h3><p>Make a note of Spark server uri (e.g  <code>spark://host_name:7077</code>)</p>
-<p><strong>==&gt; Restart spark shell as follows</strong></p>
-<div class="highlight"><pre><span></span>$   <span class="nv">PYSPARK_PYTHON</span><span class="o">=</span>python3  <span class="nv">PYSPARK_DRIVER_PYTHON</span><span class="o">=</span><span class="s2">&quot;python&quot;</span>   ~/spark/bin/pyspark   --master  spark-server-uri
-                                            ^^^^^^^^^^^^^^^^
-                                        update this to match your spark server
-
-  $   <span class="nv">PYSPARK_PYTHON</span><span class="o">=</span>python3  <span class="nv">PYSPARK_DRIVER_PYTHON</span><span class="o">=</span><span class="s2">&quot;python&quot;</span>   ~/spark/bin/pyspark   --master  spark://localhost:7077
-</pre></div>
-<p>On an Amazon server you may have to use the internal ip for the spark server, such as</p>
-<div class="highlight"><pre><span></span>$  <span class="nv">PYSPARK_PYTHON</span><span class="o">=</span>python3  <span class="nv">PYSPARK_DRIVER_PYTHON</span><span class="o">=</span><span class="s2">&quot;python&quot;</span>     ~/spark/bin/pyspark  --master spark://your_host_name:7077
-</pre></div>
-<p>On the ES VM you may have to use the localhost.localdomain. In all cases, follow what the spark master UI tells you.</p>
-<p><strong>==&gt; Once the shell started, check both UIs</strong></p>
-<h4 id="spark-server-UI-at-port-8080">spark server UI at port 8080<a class="anchor-link" href="#spark-server-UI-at-port-8080">&#182;</a></h4><h2 id=""><img src="../assets/images/2e.png" style="border: 5px solid grey; max-width:100%;" /><a class="anchor-link" href="#">&#182;</a></h2><h4 id="spark-shell-UI-at--port-4040">spark shell UI at  port 4040<a class="anchor-link" href="#spark-shell-UI-at--port-4040">&#182;</a></h4><p><img src="../assets/images/2f.png" style="border: 5px solid grey; max-width:100%;" /></p>
-<h2 id="Tip-:-Dealing-With-Logs">Tip : Dealing With Logs<a class="anchor-link" href="#Tip-:-Dealing-With-Logs">&#182;</a></h2><p>Spark Shell by default prints logs at warning (WARN) level.  If you want to change the logging level, do this at the pyspark shell</p>
+<h2 id="STEP-2:-Querying-using-SQL">STEP 2: Querying using SQL<a class="anchor-link" href="#STEP-2:-Querying-using-SQL">&#182;</a></h2><p><strong>==&gt; Select all logs</strong></p>
 
 </div>
 </div>
@@ -12060,7 +11858,11 @@ In browser go to :   <a href="http://your_machine_address:8080">http://your_mach
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">logs</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;select * from clickstream&quot;</span><span class="p">)</span>
+<span class="c1">#&#39;logs&#39; is a dataframe</span>
+
+<span class="c1"># display the logs, hint : show</span>
+<span class="n">logs</span><span class="o">.</span><span class="err">???</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12072,9 +11874,161 @@ In browser go to :   <a href="http://your_machine_address:8080">http://your_mach
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>If you don't want to see any logs, you can start Spark shell as follows.  All the logs will be sent to 'logs' file.</p>
-<div class="highlight"><pre><span></span>$  <span class="nv">PYSPARK_PYTHON</span><span class="o">=</span>python3  <span class="nv">PYSPARK_DRIVER_PYTHON</span><span class="o">=</span><span class="s2">&quot;python&quot;</span>   ~/spark/bin/pyspark  <span class="m">2</span>&gt; logs
+<p><strong>==&gt; Find records with only clicks</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Find Records with only clicks</span>
+<span class="c1"># TODO: fix the  table name?</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;select * from ???table_name??? where action = &#39;???&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>==&gt; Count records from each domain, sort the output by most to least</strong></p>
+<p>Sample output:</p>
+
+<pre><code>+-----------------+-----+
+|           domain|total|
++-----------------+-----+
+|      nytimes.com|    1|
+|     facebook.com|    1|
+|       google.com|    2|
+|       amazon.com|    2|
+|    wikipedia.org|    3|
++-----------------+-----+</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Try this query here:</span>
+
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;select domain, COUNT(*) as total from clickstream group by ???  order by ??? &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="STEP-3:-Joining-Datasets">STEP 3: Joining Datasets<a class="anchor-link" href="#STEP-3:-Joining-Datasets">&#182;</a></h2><p><strong>==&gt; Load <code>domains</code> dataset and register it to table <code>domains</code></strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">domainsDF</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="s2">&quot;/data/click-stream/domain-info.json&quot;</span><span class="p">)</span>
+<span class="n">domainsDF</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">domainsDF</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s2">&quot;domains&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>==&gt; Join <code>clickstreams</code> and <code>domains</code></strong><br>
+Hint : Join query syntax for joining two tables A, B on A.x and A.y is</p>
+
+<pre><code>spark.sql("select A.*, B.* from A  join B  ON (A.x = B.y)")</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Write sql query for joining clickstreams and domains</span>
+<span class="c1"># TODO : fill in the common attribute for  clickstream &amp; domain table</span>
+<span class="c1"># Hint : domain</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">SELECT clickstream.*, domains.*  </span>
+<span class="s2">from clickstream join domains </span>
+<span class="s2">ON (clickstream.???= domains.???)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>==&gt; Count traffic per domain category (news, social ..etc)</strong><br>
+Hint : query the joined datasets</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Count traffic per domained category</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">SELECT  domains.category, ???  </span>
+<span class="s2">from clickstream join domains </span>
+<span class="s2">ON (clickstream.???= domains.???)</span>
+<span class="s2">group by ???</span>
+<span class="s2">order by ??? </span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="STEP-4:-Explore-UI">STEP 4: Explore UI<a class="anchor-link" href="#STEP-4:-Explore-UI">&#182;</a></h2><p>(Your DAG visualization may be slightly different from what we show here)</p>
+<p><img src="../assets/images/5.2c.png" style="border: 5px solid grey; max-width:100%;"/></p>
+<p><img src="../assets/images/5.2d.png" style="border: 5px solid grey; max-width:100%;"/></p>
+<p><img src="../assets/images/5.2e.png" style="border: 5px solid grey; max-width:100%;"/></p>
 
 </div>
 </div>
@@ -12083,15 +12037,36 @@ In browser go to :   <a href="http://your_machine_address:8080">http://your_mach
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="BONUS-Lab-1-:-Start-multiple-Shells">BONUS Lab 1 : Start multiple Shells<a class="anchor-link" href="#BONUS-Lab-1-:-Start-multiple-Shells">&#182;</a></h2><ul>
-<li>Using one terminal, start a shell and connect to master  using <strong>Step 5.3</strong></li>
-<li>Using second terminal (open one if you need to), start another shell connecting to the same master</li>
-<li>Check the master UI (port 8080).  You would see some thing like this, can you explain the behavior?</li>
-</ul>
-<p><img src="../assets/images/2g.png" style="border: 5px solid grey ; max-width:100%;" /></p>
+<h2 id="Step-5-:-Understand-Query-Execution">Step 5 : Understand Query Execution<a class="anchor-link" href="#Step-5-:-Understand-Query-Execution">&#182;</a></h2><p>We will use <strong>explain</strong></p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;select * from clickstream where cost &gt; 100&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="n">extended</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;join query here&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="n">extended</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div>
     </div>
   </div>

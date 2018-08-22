@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>4.1-dataframe-python</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>caching-python</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11778,9 +11778,15 @@ div#notebook {
 <link rel='stylesheet' href='../assets/css/main.css'/>
 
 <p><a href="../README.md">&lt;&lt; back to main index</a></p>
-<h1 id="Lab-4.1-:-Spark-Dataframes">Lab 4.1 : Spark Dataframes<a class="anchor-link" href="#Lab-4.1-:-Spark-Dataframes">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>First look at Spark Dataframes</p>
+<h1 id="Lab-:--Caching">Lab :  Caching<a class="anchor-link" href="#Lab-:--Caching">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Understanding Spark caching</p>
 <h3 id="Depends-On">Depends On<a class="anchor-link" href="#Depends-On">&#182;</a></h3><p>None</p>
-<h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>20-30 mins</p>
+<h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>15-20 mins</p>
+<h3 id="STEP-1:-'Large'-data-set">STEP 1: 'Large' data set<a class="anchor-link" href="#STEP-1:-'Large'-data-set">&#182;</a></h3><p>Under <code>/data/text/twinkle</code> directory we have created some large data files for you.</p>
+<p><img src="../assets/images/3.1a.png" style="border: 5px solid grey; max-width:100%;"/></p>
+<h4 id="Optional-Step">Optional Step<a class="anchor-link" href="#Optional-Step">&#182;</a></h4><p>You can generate more data if you'd like.</p>
+<div class="highlight"><pre><span></span>$    <span class="nb">cd</span> /data/text/twinkle
+    $    ./create-data-files.sh
+</pre></div>
 
 </div>
 </div>
@@ -11790,7 +11796,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Identify Spark UI port</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -11802,7 +11809,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="STEP-1:-Load-Clickstream-data">STEP 1: Load Clickstream data<a class="anchor-link" href="#STEP-1:-Load-Clickstream-data">&#182;</a></h2>
+<h2 id="Step-2:-Log-Level">Step 2: Log Level<a class="anchor-link" href="#Step-2:-Log-Level">&#182;</a></h2><p>Also set the logging level to INFO (so Spark will print out job execution times on console)</p>
+
 </div>
 </div>
 </div>
@@ -11811,8 +11819,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">clickstreamDF</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="s2">&quot;/data/click-stream/clickstream.json&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">clickstreamDF</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sc</span><span class="o">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;set log level to INFO&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11824,11 +11832,10 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>==&gt; Monitor Spark shell UI on port 4040</strong><br>
-You may see something like this:</p>
-<p><strong>==&gt; Q : Why is Spark not lazy loading the JASON files? </strong></p>
-<p><img src="../assets/images/5.1a.png" style="border: 5px solid grey; max-width:100%;" /></p>
-<h2 id="STEP-2-:-Inspecting-The-Dataframe">STEP 2 : Inspecting The Dataframe<a class="anchor-link" href="#STEP-2-:-Inspecting-The-Dataframe">&#182;</a></h2><p><strong>==&gt; Print the schema of data frame</strong></p>
+<h2 id="STEP-3:-Recording-Caching-times">STEP 3: Recording Caching times<a class="anchor-link" href="#STEP-3:-Recording-Caching-times">&#182;</a></h2><h3 id="Download-and-inspect-the-Excel-worksheet-:-caching-worksheet.">Download and inspect the Excel worksheet : <a href="caching-worksheet.xlsx">caching-worksheet</a>.<a class="anchor-link" href="#Download-and-inspect-the-Excel-worksheet-:-caching-worksheet.">&#182;</a></h3><p>We are going to fill in the values here to understand how caching performs.</p>
+<p>It looks like this:
+<img src="../assets/images/3.6a.png" style="border: 5px solid grey; max-width:100%;"/></p>
+<h2 id="STEP-4:-Load-Data">STEP 4: Load Data<a class="anchor-link" href="#STEP-4:-Load-Data">&#182;</a></h2><p>Load a big file (e.g 500M.data)</p>
 
 </div>
 </div>
@@ -11838,10 +11845,8 @@ You may see something like this:</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Print the schema</span>
-<span class="c1"># Hint : `printSchema()`</span>
-
-<span class="n">clickstreamDF</span><span class="o">.</span><span class="err">????</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;/data/text/twinkle/500M.data&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;read file &quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11853,18 +11858,7 @@ You may see something like this:</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Your output may look like this:</p>
-
-<pre><code>    root
-     |-- action: string (nullable = true)
-     |-- campaign: string (nullable = true)
-     |-- cost: long (nullable = true)
-     |-- domain: string (nullable = true)
-     |-- ip: string (nullable = true)
-     |-- session: string (nullable = true)
-     |-- timestamp: long (nullable = true)
-     |-- user: string (nullable = true)</code></pre>
-<p><strong>==&gt; Print / Dump the data contained within dataframe</strong></p>
+<p><strong>=&gt; Count the number of lines in this file</strong></p>
 
 </div>
 </div>
@@ -11874,9 +11868,10 @@ You may see something like this:</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Print/Dump the data</span>
-<span class="c1"># Hint : show()</span>
-<span class="n">clickstreamDF</span><span class="o">.</span><span class="err">???</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+
+<span class="c1"># output might look like</span>
+<span class="c1"># Job 1 finished: count at &lt;console&gt;:30, took __3.792822__ s</span>
 </pre></div>
 
 </div>
@@ -11888,37 +11883,10 @@ You may see something like this:</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Your output may look like this:</p>
-
-<pre><code>+-------+-----------+----+-----------------+----+----------+-------------+------+
-| action|   campaign|cost|           domain|  ip|   session|    timestamp|  user|
-+-------+-----------+----+-----------------+----+----------+-------------+------+
-|clicked|campaign_19| 118|      youtube.com|ip_4|session_36|1420070400000|user_9|
-|blocked|campaign_12|   5|     facebook.com|ip_3|session_96|1420070400864|user_5|
-|clicked| campaign_3|  54|sf.craigslist.org|ip_9|session_61|1420070401728|user_8|
-...</code></pre>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>==&gt; Explore methods available in Dataframe</strong><br>
-1) Here is the Dataframe API : 
-<a href="http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.DataFrame">Scala</a>  /
-<a href="http://spark.apache.org/docs/latest/api/java/org/apache/spark/sql/DataFrame.html">Java</a> / 
-<a href="http://spark.apache.org/docs/latest/api/python/pyspark.sql.html?highlight=dataframe#pyspark.sql.DataFrame">Python</a></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="STEP-3-:-Querying-Dataframe">STEP 3 : Querying Dataframe<a class="anchor-link" href="#STEP-3-:-Querying-Dataframe">&#182;</a></h2><p><strong>==&gt; Show only click logs where the cost &gt; 100</strong></p>
+<p><strong>=&gt; Observe time taken on Spark UI</strong><br>
+<strong>=&gt; Record the time in spread sheet</strong><br>
+<strong>=&gt; Run 'count' below a couple of times and observe the time</strong><br>
+<strong>=&gt; Can you explain the behavior of count() execution time ?</strong></p>
 
 </div>
 </div>
@@ -11928,7 +11896,31 @@ You may see something like this:</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">clickstreamDF</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;cost &gt; ???&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="STEP-5:--Cache">STEP 5:  Cache<a class="anchor-link" href="#STEP-5:--Cache">&#182;</a></h2><p><strong>=&gt; Cache the file using  <code>cache()</code> action.</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;done caching&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11941,48 +11933,7 @@ You may see something like this:</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Same thing</span>
-<span class="n">clickstreamDF</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">clickstreamDF</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="err">???</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Sample output</p>
-
-<pre><code>    +-------+-----------+----+-----------------+----+----------+-------------+------+
-    | action|   campaign|cost|           domain|  ip|   session|    timestamp|  user|
-    +-------+-----------+----+-----------------+----+----------+-------------+------+
-    |clicked|campaign_19| 118|      youtube.com|ip_4|session_36|1420070400000|user_9|
-    |blocked|campaign_18| 110|    wikipedia.org|ip_5|session_55|1420070402592|user_6|
-    |blocked| campaign_9| 139|          cnn.com|ip_8|session_13|1420070404320|user_7|</code></pre>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>==&gt; Show the logs where action = clicked</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: show the logs where action = clicked</span>
-<span class="c1"># Hint : clickstreamDF.filter(&quot;action == &#39;???&#39;&quot;)</span>
-<span class="n">clickstreamDF</span><span class="o">.</span><span class="n">filter</span> <span class="p">(</span><span class="s2">&quot;??? == &#39;???&#39;&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">**=&gt;</span> <span class="n">Run</span> <span class="n">the</span> <span class="err">`</span><span class="n">count</span><span class="p">()</span><span class="err">`</span> <span class="n">again</span><span class="o">.</span> <span class="n">Notice</span> <span class="n">the</span> <span class="n">time</span><span class="o">.</span>   <span class="n">Can</span> <span class="n">you</span> <span class="n">explain</span> <span class="n">this</span> <span class="n">behavior</span> <span class="err">?</span>  <span class="p">:</span><span class="o">-</span><span class="p">)</span><span class="o">**</span> 
 </pre></div>
 
 </div>
@@ -11995,8 +11946,7 @@ You may see something like this:</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO Another approach</span>
-<span class="n">clickstreamDF</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">clickstreamDF</span><span class="p">[</span><span class="s1">&#39;column_name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;???&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 </pre></div>
 
 </div>
@@ -12008,213 +11958,150 @@ You may see something like this:</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5-:-Count-the-number-of-visits-from-each-domain">Step 5 : Count the number of visits from each domain<a class="anchor-link" href="#Step-5-:-Count-the-number-of-visits-from-each-domain">&#182;</a></h2><p>Hint : <code>g = clickstreamDF.groupBy("column_name")</code></p>
+<p><strong>=&gt; Run count() a few more times and note the execution times.</strong><br>
+<strong>=&gt; Record the time in spreadsheet.</strong><br>
+<strong>=&gt; Do the timings make sense?</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+<span class="nb">print</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="STEP-6:--Understanding-Cache-storage">STEP 6:  Understanding Cache storage<a class="anchor-link" href="#STEP-6:--Understanding-Cache-storage">&#182;</a></h2><p>Go to spark shell UI @ port 4040<br>
+<strong>=&gt; Inspect 'storage' tab</strong></p>
+<p><img src="../assets/images/3.6b.png" style="border: 5px solid grey; max-width:100%;"/></p>
+<p><strong>=&gt; Can you see the cached data?  What is the memory size?</strong><br>
+<strong>=&gt; What are the implications?</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-8-:-Caching-RDD-vs.-Dataframe">Step 8 : Caching RDD vs. Dataframe<a class="anchor-link" href="#Step-8-:-Caching-RDD-vs.-Dataframe">&#182;</a></h2><p>We will load the same data using RDD API and Dataframe API will compare cache performance.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Create some random data</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;creating 100M random data&quot;</span><span class="p">)</span>
+<span class="o">!</span>dd <span class="k">if</span><span class="o">=</span>/dev/urandom <span class="nv">of</span><span class="o">=</span>/data/100M-rand  <span class="nv">bs</span><span class="o">=</span>1M <span class="nv">count</span><span class="o">=</span><span class="m">100</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#RDD</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/data/100M-rand&quot;</span><span class="p">)</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rdd count &quot;</span> <span class="p">,</span> <span class="n">rdd</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>  <span class="c1"># force caching</span>
+
+<span class="n">df</span>  <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;/data/100M-rand&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;df count &quot;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now check the 'Storage' tab in Spark Shell UI (port 4040).</p>
+<p>Here is a sample output.</p>
+<p><img src="../assets/images/3.6c-rdd-ds-cache.png" style="border: 5px solid grey; max-width:100%;"/></p>
+<p><strong> ==&gt; Discuss your findings </strong></p>
+<h3 id="Step-9-:-Reducing-memory-footprint">Step 9 : Reducing memory footprint<a class="anchor-link" href="#Step-9-:-Reducing-memory-footprint">&#182;</a></h3><p>There are various levels of memory caching.  Here are a couple:</p>
 <ul>
-<li>Inspect methods on <code>g</code>  (use tab completion)  </li>
-<li>Then do <code>count</code> on <code>g</code>  </li>
-<li>Then do a show  </li>
-<li>So <code>clickstreamDF.groupby().count.show</code>  </li>
+<li>Raw caching (<code>data.persist(org.apache.spark.storage.StorageLevel.MEMORY_ONLY)</code>)  </li>
+<li>Serialized Caching (<code>data.persist(org.apache.spark.storage.StorageLevel.MEMORY_ONLY_SER)</code>)</li>
+</ul>
+<p><strong>=&gt; Try both options <code>f.persist(....)</code> .  Monitor memory consumption in storage tab</strong></p>
+<p><strong>NOte: Caching level can not be changed after an RDD cached.  You have to 'uncache / unpersist' the RDD and then cache it again</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pyspark</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s2">&quot;/data/text/twinkle/500M.data&quot;</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">persist</span><span class="p">(</span><span class="n">pyspark</span><span class="o">.</span><span class="n">StorageLevel</span><span class="o">.</span><span class="n">MEMORY_ONLY</span><span class="p">)</span> <span class="c1"># same as data.cache()</span>
+<span class="c1">## TODO :  measure the storage footprint using &#39;storage&#39; tab</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">unpersist</span><span class="p">()</span>
+<span class="n">data</span><span class="o">.</span><span class="n">persist</span><span class="p">(</span><span class="n">pyspark</span><span class="o">.</span><span class="n">StorageLevel</span><span class="o">.</span><span class="n">MEMORY_ONLY_SER</span><span class="p">)</span>
+<span class="c1">## TODO :  measure the storage footprint using &#39;storage&#39; tab</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Group-discussion">Group discussion<a class="anchor-link" href="#Group-discussion">&#182;</a></h3><ul>
+<li>mechanics of caching</li>
+<li>implications of caching vs memory</li>
+</ul>
+<h3 id="Further-Reading">Further Reading<a class="anchor-link" href="#Further-Reading">&#182;</a></h3><ul>
+<li><a href="http://sujee.net/2015/01/22/understanding-spark-caching/">Understanding Spark Caching by Sujee Maniyam</a></li>
 </ul>
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: </span>
-<span class="n">g</span> <span class="o">=</span> <span class="n">clickstreamDF</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
-
-<span class="c1">## TODO: do the count</span>
-<span class="c1"># g.???()</span>
-
-<span class="c1">## And finally show</span>
-<span class="c1"># g.???().show()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="STEP-6-:-Joining-Dataframes">STEP 6 : Joining Dataframes<a class="anchor-link" href="#STEP-6-:-Joining-Dataframes">&#182;</a></h2><p>Let's load another data set <code>domain info</code><br>
-The data is in   <code>/data/click-stream/domain-info.json</code><br>
-The data looks like this:</p>
-<div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;domain&quot;</span><span class="p">:</span><span class="s2">&quot;amazon.com&quot;</span><span class="p">,</span><span class="nt">&quot;category&quot;</span><span class="p">:</span><span class="s2">&quot;SHOPPING&quot;</span><span class="p">}</span>
-    <span class="p">{</span><span class="nt">&quot;domain&quot;</span><span class="p">:</span><span class="s2">&quot;bbc.co.uk&quot;</span><span class="p">,</span><span class="nt">&quot;category&quot;</span><span class="p">:</span><span class="s2">&quot;NEWS&quot;</span><span class="p">}</span>
-    <span class="p">{</span><span class="nt">&quot;domain&quot;</span><span class="p">:</span><span class="s2">&quot;facebook.com&quot;</span><span class="p">,</span><span class="nt">&quot;category&quot;</span><span class="p">:</span><span class="s2">&quot;SOCIAL&quot;</span><span class="p">}</span>
-    <span class="err">...</span>
-</pre></div>
-<p><strong>==&gt; Load the dataframe</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">domainsDF</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="s2">&quot;/data/click-stream/domain-info.json&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">domainsDF</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO display domains data</span>
-<span class="c1">## Hint : show()</span>
-<span class="n">domainsDF</span><span class="o">.</span><span class="err">???</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>==&gt; Join both dataframes</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">joined</span> <span class="o">=</span> <span class="n">clickstreamDF</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">domainsDF</span><span class="p">,</span>  <span class="n">clickstreamDF</span><span class="p">[</span><span class="s2">&quot;domain&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">domainsDF</span><span class="p">[</span><span class="s2">&quot;domain&quot;</span><span class="p">])</span>
-    
-<span class="c1">#see the results</span>
-<span class="n">joined</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>==&gt; Inspect the results, here is a sample</strong></p>
-
-<pre><code>    +-------+-----------+----+-----------------+----+----------+-------------+------+-----------+-----------------+
-    | action|   campaign|cost|           domain|  ip|   session|    timestamp|  user|   category|           domain|
-    +-------+-----------+----+-----------------+----+----------+-------------+------+-----------+-----------------+
-    |clicked|campaign_19| 118|      youtube.com|ip_4|session_36|1420070400000|user_9|      VIDEO|      youtube.com|
-    |blocked| campaign_2|   7|      youtube.com|ip_2|session_93|1420070412960|user_1|      VIDEO|      youtube.com|
-    |blocked|campaign_17|  20|       amazon.com|ip_4|session_13|1420070406048|user_1|   SHOPPING|       amazon.com|</code></pre>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>==&gt; Note some rows are missing.  Which ones?  Why?</strong></p>
-<p><strong>==&gt; Do an outer join</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">joinedOuter</span> <span class="o">=</span> <span class="n">clickstreamDF</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">domainsDF</span><span class="p">,</span>  <span class="n">clickstreamDF</span><span class="p">[</span><span class="s2">&quot;domain&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">domainsDF</span><span class="p">[</span><span class="s2">&quot;domain&quot;</span><span class="p">],</span> <span class="s2">&quot;outer&quot;</span><span class="p">)</span>
-<span class="n">joinedOuter</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>==&gt; Inspect the output, might look like this</strong><br>
-<strong>==&gt; Can you explain the null values?</strong></p>
-<p>Output:</p>
-
-<pre><code>    +-------+-----------+----+-----------------+----+----------+-------------+------+-----------+-----------------+
-    | action|   campaign|cost|           domain|  ip|   session|    timestamp|  user|   category|           domain|
-    +-------+-----------+----+-----------------+----+----------+-------------+------+-----------+-----------------+
-    |blocked| campaign_9| 139|          cnn.com|ip_8|session_13|1420070404320|user_7|       null|             null|
-    |   null|       null|null|             null|null|      null|         null|  null|     SOCIAL|      twitter.com|
-    |clicked| campaign_6|  15|comedycentral.com|ip_9|session_49|1420070403456|user_4|       null|             null|</code></pre>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-7:-Understanding-Query-Execution">Step 7: Understanding Query Execution<a class="anchor-link" href="#Step-7:-Understanding-Query-Execution">&#182;</a></h2><p>We will use <strong>explain</strong> keyword</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">clickstreamDF</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;cost &gt; 100&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="n">extended</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">joined</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="n">extended</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">joinedOuter</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="n">extended</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
 </div>
     </div>
   </div>
