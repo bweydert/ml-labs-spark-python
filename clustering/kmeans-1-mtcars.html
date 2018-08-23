@@ -11949,7 +11949,7 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## transform the dataset from the model</span>
-<span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">([</span><span class="s1">&#39;prediction&#39;</span><span class="p">,</span> <span class="s1">&#39;mpg&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11999,7 +11999,7 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># look at transformed data again for k=3</span>
-<span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">([</span><span class="s1">&#39;prediction&#39;</span><span class="p">,</span> <span class="s1">&#39;mpg&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
 </pre></div>
 
 </div>

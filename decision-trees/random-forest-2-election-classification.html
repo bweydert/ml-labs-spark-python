@@ -12244,16 +12244,9 @@ RandomForestClassificationModel (uid=RandomForestClassifier_4a21987b15aedb7355e5
 <li>State</li>
 </ol>
 <p>Other fields not significant</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>=&gt; TODO Compare the relative weight of the feature importances? </strong></p>
 <p>Why do you think that the lat/long and other fields did not contribute?</p>
+<p><strong>=&gt; BONUS: Do a Pearson Correlation Matrix of the variables to the outcome, to see correlation </strong></p>
 
 </div>
 </div>
@@ -12262,7 +12255,17 @@ RandomForestClassificationModel (uid=RandomForestClassifier_4a21987b15aedb7355e5
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; BONUS: Do a Pearson Correlation Matrix of the variables to the outcome, to see correlation </strong></p>
+<h2 id="BONUS-:-Running-on-full-dataset">BONUS : Running on full dataset<a class="anchor-link" href="#BONUS-:-Running-on-full-dataset">&#182;</a></h2><p><strong>Use the dowload script</strong></p>
+<div class="highlight"><pre><span></span>$ <span class="nb">cd</span>   ~/data/presidential_election_contribs
+$ ./download-data.sh
+</pre></div>
+<p>This will download full dataset.</p>
+<p>As we run on larger dataset, the execution will take longer and Jupyter notebook might time out.  So let's run this in command line / script mode</p>
+<p>Download the Jupyter notebook as Python file (File --&gt; Download as --&gt; Python)</p>
+<div class="highlight"><pre><span></span><span class="c1"># run the downloaded python script as follows</span>
+$    <span class="nb">time</span>  ~/spark/bin/spark-submit    --master local<span class="o">[</span>*<span class="o">]</span>  random-forest-2-election-classification.py <span class="m">2</span>&gt; logs
+</pre></div>
+<p>Watch the output</p>
 
 </div>
 </div>
