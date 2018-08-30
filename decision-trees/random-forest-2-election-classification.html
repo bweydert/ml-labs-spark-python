@@ -11797,47 +11797,16 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StandardScaler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span><span class="p">,</span> <span class="n">VectorIndexer</span><span class="p">,</span> <span class="n">IndexToString</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
-<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">when</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">trim</span><span class="p">,</span> <span class="n">countDistinct</span><span class="p">,</span> <span class="nb">abs</span> 
-<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">RandomForestRegressor</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorIndexer</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">RegressionEvaluator</span>
-<span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="k">import</span> <span class="n">IntegerType</span>
-
-<span class="kn">import</span> <span class="nn">pyspark.sql.functions</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Spark UI running on http://YOURIPADDRESS:4041
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -11852,7 +11821,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
@@ -11870,7 +11839,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">prediction_column</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CAND_NM&#39;</span><span class="p">]</span>
@@ -11897,7 +11866,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : print out per candidate breakdown</span>
@@ -11935,10 +11904,13 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">indexers</span> <span class="o">=</span> <span class="p">[</span><span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="n">column</span><span class="o">+</span><span class="s2">&quot;_index&quot;</span><span class="p">,</span> <span class="n">handleInvalid</span><span class="o">=</span><span class="s2">&quot;keep&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">categorical_columns</span> <span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
+
+<span class="n">indexers</span> <span class="o">=</span> <span class="p">[</span><span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="n">column</span><span class="o">+</span><span class="s2">&quot;_index&quot;</span><span class="p">,</span> <span class="n">handleInvalid</span><span class="o">=</span><span class="s2">&quot;keep&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">categorical_columns</span> <span class="p">]</span>
 <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">stages</span><span class="o">=</span><span class="n">indexers</span><span class="p">)</span>
 <span class="n">df_r2</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 </pre></div>
@@ -11950,10 +11922,12 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">assembler2</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">numeric_columns</span> <span class="o">+</span> <span class="n">categorical_index</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+
+<span class="n">assembler2</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">numeric_columns</span> <span class="o">+</span> <span class="n">categorical_index</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 <span class="n">fv2</span> <span class="o">=</span> <span class="n">assembler2</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_r2</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">drop</span><span class="p">())</span>
 </pre></div>
 
@@ -11964,10 +11938,13 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Index labels, adding metadata to the label column.</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorIndexer</span>
+
+<span class="c1"># Index labels, adding metadata to the label column.</span>
 <span class="c1"># Fit on whole dataset to include all labels in index.</span>
 <span class="n">labelIndexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;CAND_NM&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;indexedLabel&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fv2</span><span class="p">)</span>
 
@@ -11993,10 +11970,12 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Create a RandomForest Model with  numTrees=20 and  maxBins=10000</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span>
+
+<span class="c1">## TODO : Create a RandomForest Model with  numTrees=20 and  maxBins=10000</span>
 <span class="n">rf2</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;indexedLabel&quot;</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;indexedFeatures&quot;</span><span class="p">,</span> <span class="n">numTrees</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">maxBins</span><span class="o">=</span><span class="err">???</span><span class="p">)</span>
 
 <span class="c1"># Chain indexer and forest in a Pipeline</span>
@@ -12019,7 +11998,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : split 70% training and 30% testing</span>
@@ -12045,7 +12024,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting model training....this will take some time&quot;</span><span class="p">)</span>
@@ -12095,10 +12074,12 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select example rows to display.</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
+
+<span class="c1"># Select example rows to display.</span>
 <span class="n">predictions2</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="s2">&quot;CAND_NM&quot;</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
 <span class="c1"># Select (prediction, true label) and compute test error</span>
@@ -12115,43 +12096,13 @@ div#notebook {
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>+----------+--------------------+--------------------+
-|prediction|             CAND_NM|            features|
-+----------+--------------------+--------------------+
-|       2.0|    Trump, Donald J.|[38.905026,-76.98...|
-|       2.0|    Trump, Donald J.|[37.814613,-121.9...|
-|       0.0|Clinton, Hillary ...|[47.63714,-122.32...|
-|       0.0|Clinton, Hillary ...|[25.753332,-80.27...|
-|       0.0|Clinton, Hillary ...|[38.914363,-77.07...|
-+----------+--------------------+--------------------+
-only showing top 5 rows
-
-Test Error = 0.483467
-RandomForestClassificationModel (uid=RandomForestClassifier_4a21987b15aedb7355e5) with 20 trees
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO: Think about the test error here?  Does it seem high?  What does that say about our model?</strong></p>
-<p><strong>=&gt; How do we define model success? </strong></p>
+<p><strong>=&gt; Q: Think about the test error here?  Does it seem high?  What does that say about our model?</strong></p>
+<p><strong>=&gt; Q: How do we define model success?</strong></p>
 
 </div>
 </div>
@@ -12228,7 +12179,7 @@ RandomForestClassificationModel (uid=RandomForestClassifier_4a21987b15aedb7355e5
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO Compare the relative weight of the feature importances? </strong></p>
+<p><strong>=&gt; TODO Compare the relative weight of the feature importances?</strong></p>
 
 </div>
 </div>
@@ -12244,9 +12195,9 @@ RandomForestClassificationModel (uid=RandomForestClassifier_4a21987b15aedb7355e5
 <li>State</li>
 </ol>
 <p>Other fields not significant</p>
-<p><strong>=&gt; TODO Compare the relative weight of the feature importances? </strong></p>
+<p><strong>=&gt; TODO Compare the relative weight of the feature importances?</strong></p>
 <p>Why do you think that the lat/long and other fields did not contribute?</p>
-<p><strong>=&gt; BONUS: Do a Pearson Correlation Matrix of the variables to the outcome, to see correlation </strong></p>
+<p><strong>=&gt; BONUS: Do a Pearson Correlation Matrix of the variables to the outcome, to see correlation|</strong></p>
 
 </div>
 </div>

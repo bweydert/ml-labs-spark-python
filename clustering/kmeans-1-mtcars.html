@@ -11796,11 +11796,9 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">KMeans</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StandardScaler</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -11869,7 +11867,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: create vectorassembler by extracting &quot;mpg&quot; and &quot;cyl&quot; to output column &quot;features&quot;**  </span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+
+<span class="c1">## TODO: create vectorassembler by extracting &quot;mpg&quot; and &quot;cyl&quot; to output column &quot;features&quot;**  </span>
 <span class="c1"># input : mpg, cyl</span>
 <span class="c1"># output : features</span>
 <span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
@@ -11913,7 +11913,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: Instantiate K-means model with value k</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">KMeans</span>
+
+<span class="c1">## TODO: Instantiate K-means model with value k</span>
 <span class="n">k</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">()</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="err">???</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 

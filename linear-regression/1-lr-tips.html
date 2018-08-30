@@ -11796,8 +11796,8 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">LinearRegression</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+
+
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
 
@@ -11903,7 +11903,6 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Step-2:-Let's-do-a-quick-plot-of-the-data">Step 2: Let's do a quick plot of the data<a class="anchor-link" href="#Step-2:-Let's-do-a-quick-plot-of-the-data">&#182;</a></h2><p>Let us use matplotlib to do a quick scatter plot of the data. Note that this is not a Spark dataframe, this is using the pandas dataframe.</p>
-<p><strong>=&gt;TODO: plot the bill (X-axis), versus the tip (Y-axis)</strong></p>
 
 </div>
 </div>
@@ -11929,7 +11928,6 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Step-3:-Create-a-Spark-Dataframe">Step 3: Create a Spark Dataframe<a class="anchor-link" href="#Step-3:-Create-a-Spark-Dataframe">&#182;</a></h2><p>Let's now take our pandas dataframe and make a spark dataframe out of it.</p>
-<p><strong>=&gt;TODO: load the pandas dataframe tip_data into a spark dataframe spark_tips </strong></p>
 
 </div>
 </div>
@@ -11954,7 +11952,6 @@ div#notebook {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Step-4:-Create-a-Features-column-with-the-Vector">Step 4: Create a Features column with the Vector<a class="anchor-link" href="#Step-4:-Create-a-Features-column-with-the-Vector">&#182;</a></h2><p>We need to create a feature vector here.  You might wonder why we need a "vector" after all there's only one variable: "bill."  Nonetheless, we still need the dataframe to have a column called "features" of type Vector Double).</p>
 <p>Luckily, there's a handy class called VectorAssembler that does this for us.</p>
-<p><strong>=&gt;TODO: build a vector from the input column "bill"</strong></p>
 
 </div>
 </div>
@@ -11964,7 +11961,10 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;bill&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+
+<span class="c1">## TODO: build a vector from the input column &quot;bill&quot;</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 <span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">spark_tips</span><span class="p">)</span>
 
 <span class="n">featureVector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -11979,8 +11979,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5:-Create-a-Label-column-with-the-Vector">Step 5: Create a Label column with the Vector<a class="anchor-link" href="#Step-5:-Create-a-Label-column-with-the-Vector">&#182;</a></h2><p>We need a way to have the outcome variable.  In this case, we are trying to predict the tip from the bill.  So, we need to signal to Spark MLlib which one is the outcome variable.  In this case, we'll create a new variable called label.  Since we already have that, we can just rename the "tip" column as the "label".</p>
-<p><strong>=&gt;TODO: rename variable "tip" as "label" </strong></p>
+<h2 id="Step-5:-Create-a-Label-column-with-the-Vector">Step 5: Create a Label column with the Vector<a class="anchor-link" href="#Step-5:-Create-a-Label-column-with-the-Vector">&#182;</a></h2><p>We need a way to have the outcome variable.  In this case, we are trying to predict the tip from the bill.  So, we need to signal to Spark MLlib which one is the outcome variable.  In this case, we'll create a new variable called label.</p>
 
 </div>
 </div>
@@ -11990,7 +11989,11 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s2">&quot;tip&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : create a new column to mirror &#39;tip&#39;</span>
+<span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featureVector</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">])</span>
+
+<span class="c1">#featureVector = featureVector.withColumnRenamed(&quot;tip&quot;, &quot;label&quot;)  # this will rename existing tip column</span>
+
 <span class="n">featureVector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
@@ -12013,7 +12016,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: set number of iterations to 10</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">LinearRegression</span>
+
+<span class="c1">## TODO: set number of iterations to 10</span>
 <span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 
 <span class="c1">## TODO : Try with default params too</span>
@@ -12038,9 +12043,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-7:-Plot-the-fit-line-(abline)">Step 7: Plot the fit line (abline)<a class="anchor-link" href="#Step-7:-Plot-the-fit-line-(abline)">&#182;</a></h2><p><strong>=&gt;TODO: Do a scatterplot of bill versus tip </strong>
-<strong>=&gt;TODO: rename variable "tip" as "label" </strong></p>
-
+<h2 id="Step-7:-Plot-the-fit-line-(abline)">Step 7: Plot the fit line (abline)<a class="anchor-link" href="#Step-7:-Plot-the-fit-line-(abline)">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12070,8 +12073,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-8:-Print-out-the-Outputs">Step 8: Print out the Outputs<a class="anchor-link" href="#Step-8:-Print-out-the-Outputs">&#182;</a></h2><p>Here is a sample output:</p>
-
+<h2 id="Step-8:-Print-out-model-metrics">Step 8: Print out model metrics<a class="anchor-link" href="#Step-8:-Print-out-model-metrics">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12089,12 +12091,8 @@ div#notebook {
 <span class="n">trainingSummary</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;numIterations: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">totalIterations</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;objectiveHistory: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">trainingSummary</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">))</span>
-<span class="n">trainingSummary</span><span class="o">.</span><span class="n">residuals</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RMSE: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">rootMeanSquaredError</span><span class="p">)</span>
-
-<span class="c1">## TODO : print &#39;r2&#39; from training summary</span>
-<span class="c1">## Hint : Use TAB completion</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r2: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12102,87 +12100,13 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-9:-Plot-the-residuals">Step 9: Plot the residuals<a class="anchor-link" href="#Step-9:-Plot-the-residuals">&#182;</a></h2><p>Residuals are the error, or difference between the model predicted and model actual.  We'd like these to be as small as possible, with residuals roughly balanced.   We don't want a model that consistently predicts values too high or too low.</p>
-<p><strong>=&gt;TODO: do a plot of the bill (x-value) versus residuals (y-value) </strong></p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">residuals</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">residuals</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tip_data</span><span class="o">.</span><span class="err">???</span><span class="p">,</span> <span class="n">residuals</span><span class="p">[</span><span class="s1">&#39;residuals&#39;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>  <span class="c1"># horizon</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;bill&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Residuals&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-10-:-Identify-Coefficients">Step 10 : Identify Coefficients<a class="anchor-link" href="#Step-10-:-Identify-Coefficients">&#182;</a></h2><h3 id="Intercept-and-Slope">Intercept and Slope<a class="anchor-link" href="#Intercept-and-Slope">&#182;</a></h3><p>We can see them from output</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Coefficients:
-            Estimate 
-(Intercept) -0.8217112049846651
-bill        0.226334605857</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<ul>
-<li><strong>Slope</strong> (of line) : <strong> 0.226334605857</strong></li>
-<li><strong>Intercept</strong> (where line meets Y-axis) : <strong>-0.8217112049846651</strong>  (below zero line)</li>
-</ul>
-<p>We can also get these programatically.<br>
-If <code>tip = a * amount + b</code></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the coefficients and intercept for linear regression</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficients: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Intercept: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span><span class="p">))</span>
-
-<span class="n">a</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span>
-
-<span class="n">intercept</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span>
-<span class="n">slope</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;intercept : &quot;</span><span class="p">,</span> <span class="n">intercept</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;slope : &quot;</span><span class="p">,</span> <span class="n">slope</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Other metrics</span>
+<span class="c1">#trainingSummary.residuals.show()</span>
 </pre></div>
 
 </div>
@@ -12223,7 +12147,7 @@ If <code>tip = a * amount + b</code></p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>==&gt;  Question : Does bill amount influence tip amount? (are they strongly linked?) </strong></p>
+<p><strong>==&gt;  Question : Does bill amount influence tip amount? (are they strongly linked?)</strong></p>
 <h2>Coefficient of Determination (r&sup2;)</h2>
 
 </div>
@@ -12234,10 +12158,9 @@ If <code>tip = a * amount + b</code></p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># coefficient.of.determination (r^2) </span>
-<span class="n">rsquared</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">r2</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">rsquared</span><span class="p">)</span>
-<span class="c1"># 0.9067141</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : print &#39;r2&#39; from training summary</span>
+<span class="c1">## Hint : Use TAB completion</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r2: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12249,8 +12172,7 @@ If <code>tip = a * amount + b</code></p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>==&gt;  Question : What does r&sup2; tells us? </strong></p>
-<h2 id="Step-11:-Calculate-tip-for-$100-bill">Step 11: Calculate tip for $100 bill<a class="anchor-link" href="#Step-11:-Calculate-tip-for-$100-bill">&#182;</a></h2><p><strong>=&gt;TODO: perform the calculation for tip_for_100 using a,b coefficients </strong></p>
+<h2 id="Step-9:-Plot-the-residuals">Step 9: Plot the residuals<a class="anchor-link" href="#Step-9:-Plot-the-residuals">&#182;</a></h2><p>Residuals are the error, or difference between the model predicted and model actual.  We'd like these to be as small as possible, with residuals roughly balanced.   We don't want a model that consistently predicts values too high or too low.</p>
 
 </div>
 </div>
@@ -12260,10 +12182,15 @@ If <code>tip = a * amount + b</code></p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Hint : tip = a * bill + b</span>
-<span class="c1">## we have already calculated a &amp; b above</span>
-<span class="n">tip_for_100</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="err">???</span> <span class="o">+</span> <span class="n">b</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">tip_for_100</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: do a plot of the bill (x-value) versus residuals (y-value)</span>
+
+<span class="n">residuals</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">residuals</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tip_data</span><span class="o">.</span><span class="err">???</span><span class="p">,</span> <span class="n">residuals</span><span class="p">[</span><span class="s1">&#39;residuals&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>  <span class="c1"># horizon</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;bill&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Residuals&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12275,7 +12202,49 @@ If <code>tip = a * amount + b</code></p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-12:-Add-a-estimated_tip-column-to-pandas-and-spark-dataframe">Step 12: Add a estimated_tip column to pandas and spark dataframe<a class="anchor-link" href="#Step-12:-Add-a-estimated_tip-column-to-pandas-and-spark-dataframe">&#182;</a></h2>
+<h2 id="Step-10:-Calculate-tip-for-$100-bill">Step 10: Calculate tip for $100 bill<a class="anchor-link" href="#Step-10:-Calculate-tip-for-$100-bill">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the coefficients and intercept for linear regression</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Slope: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Intercept: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span><span class="p">))</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">bill</span> <span class="o">=</span> <span class="err">?</span><span class="o">??</span>
+<span class="c1">## we have already calculated a &amp; b above</span>
+<span class="n">tip_for_100</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="n">bill</span> <span class="o">+</span> <span class="n">b</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tip for $100 bill = &quot;</span><span class="p">,</span> <span class="n">tip_for_100</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-11:-Add-a-estimated_tip-column-to-pandas-and-spark-dataframe">Step 11: Add a estimated_tip column to pandas and spark dataframe<a class="anchor-link" href="#Step-11:-Add-a-estimated_tip-column-to-pandas-and-spark-dataframe">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12300,7 +12269,6 @@ If <code>tip = a * amount + b</code></p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Add-estimated-tip-column-to-pyspark-dataframe">Add estimated tip column to pyspark dataframe<a class="anchor-link" href="#Add-estimated-tip-column-to-pyspark-dataframe">&#182;</a></h3><p>This is a bit tricky. We need to use the sql expr function to make this work.</p>
 <p>The formula: (bill * a) + b</p>
-<p><strong>=&gt;TODO: take formula and create new spark column called est_tip </strong></p>
 
 </div>
 </div>
@@ -12329,8 +12297,7 @@ If <code>tip = a * amount + b</code></p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-13:-Perform-a-prediction">Step 13: Perform a prediction<a class="anchor-link" href="#Step-13:-Perform-a-prediction">&#182;</a></h2><p>Let's try to run a prediction on some data: $45.00, $55.00, and $65.00</p>
-<p><strong>=&gt;TODO: use model to transform dataframe with feature vectors to make predictions </strong></p>
+<h2 id="Step-12:-Perform-a-prediction">Step 12: Perform a prediction<a class="anchor-link" href="#Step-12:-Perform-a-prediction">&#182;</a></h2><p>Let's try to run a prediction on some data: $45.00, $55.00, and $65.00</p>
 
 </div>
 </div>
@@ -12361,12 +12328,21 @@ If <code>tip = a * amount + b</code></p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-13:-Complete-Code">Step 13: Complete Code<a class="anchor-link" href="#Step-13:-Complete-Code">&#182;</a></h2><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="kn">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="kn">import</span> <span class="n">expr</span>
+<h2 id="Step-13:-Complete-Code">Step 13: Complete Code<a class="anchor-link" href="#Step-13:-Complete-Code">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="n">expr</span>
 
 
 <span class="c1"># tip = a * amount + b</span>
@@ -12375,8 +12351,8 @@ If <code>tip = a * amount + b</code></p>
 <span class="n">tip_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;bill&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">50.00</span><span class="p">,</span> <span class="mf">30.00</span><span class="p">,</span> <span class="mf">60.00</span><span class="p">,</span> <span class="mf">40.00</span><span class="p">,</span> <span class="mf">65.00</span><span class="p">,</span> <span class="mf">20.00</span><span class="p">,</span> <span class="mf">10.00</span><span class="p">,</span> <span class="mf">15.00</span><span class="p">,</span> <span class="mf">25.00</span><span class="p">,</span> <span class="mf">35.00</span><span class="p">],</span>
               <span class="s1">&#39;tip&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">12.00</span><span class="p">,</span> <span class="mf">7.00</span><span class="p">,</span> <span class="mf">13.00</span><span class="p">,</span> <span class="mf">8.00</span><span class="p">,</span> <span class="mf">15.00</span><span class="p">,</span> <span class="mf">5.00</span><span class="p">,</span> <span class="mf">2.00</span><span class="p">,</span> <span class="mf">2.00</span><span class="p">,</span> <span class="mf">3.00</span><span class="p">,</span> <span class="mf">4.00</span><span class="p">]</span>
              <span class="p">})</span>
-
-<span class="k">print</span><span class="p">(</span><span class="n">tip_data</span><span class="p">)</span>
+                       
+<span class="nb">print</span><span class="p">(</span><span class="n">tip_data</span><span class="p">)</span>
 
 <span class="c1">#Plot the Tip Data</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tip_data</span><span class="o">.</span><span class="n">bill</span><span class="p">,</span> <span class="n">tip_data</span><span class="o">.</span><span class="n">tip</span><span class="p">)</span>
@@ -12396,12 +12372,11 @@ If <code>tip = a * amount + b</code></p>
 <span class="n">featureVector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="c1"># Create the label column</span>
-<span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s2">&quot;tip&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">)</span>
+<span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featureVector</span><span class="p">[</span><span class="s2">&quot;tip&quot;</span><span class="p">])</span>
 <span class="n">featureVector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="c1"># Run Linear Regression</span>
-
-<span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 <span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
 
 
@@ -12418,14 +12393,14 @@ If <code>tip = a * amount + b</code></p>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="c1"># Summarize the model over the training set and print out some metrics</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Coefficients: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Intercept: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficients: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Intercept: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span><span class="p">))</span>
 <span class="n">trainingSummary</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;numIterations: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">totalIterations</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;objectiveHistory: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">trainingSummary</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;numIterations: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">totalIterations</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;objectiveHistory: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">trainingSummary</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">))</span>
 <span class="n">trainingSummary</span><span class="o">.</span><span class="n">residuals</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;RMSE: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">rootMeanSquaredError</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="s2">&quot;r2: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RMSE: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">rootMeanSquaredError</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r2: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
 
 <span class="c1">#Plot Residuals</span>
 <span class="n">residuals</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">residuals</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
@@ -12440,7 +12415,7 @@ If <code>tip = a * amount + b</code></p>
 
 <span class="c1"># Calculate Tip for $100 bill</span>
 <span class="n">tip_for_100</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="n">b</span>   
-<span class="k">print</span><span class="p">(</span><span class="n">tip_for_100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tip_for_100</span><span class="p">)</span>
 
 
 <span class="c1"># Add est_tip to dataframes</span>
@@ -12454,6 +12429,8 @@ If <code>tip = a * amount + b</code></p>
 
 </div>
 </div>
+</div>
+
 </div>
     </div>
   </div>

@@ -11802,10 +11802,7 @@ It looks like this</p>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StandardScaler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.stat</span> <span class="k">import</span> <span class="n">Correlation</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">PCA</span>
+
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
@@ -11910,7 +11907,9 @@ It looks like this</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 <span class="n">feature_vector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">data2</span><span class="p">)</span>
 <span class="n">feature_vector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;features&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 </pre></div>
@@ -11934,7 +11933,10 @@ It looks like this</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Identify components that are highly correlated</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.stat</span> <span class="k">import</span> <span class="n">Correlation</span>
+
+
+<span class="c1">## TODO : Identify components that are highly correlated</span>
 
 <span class="n">corr1</span> <span class="o">=</span> <span class="n">Correlation</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">feature_vector</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 <span class="n">pearson_corr</span> <span class="o">=</span> <span class="n">corr1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -11973,7 +11975,10 @@ It looks like this</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : create a scaler</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StandardScaler</span>
+
+
+<span class="c1">## TODO : create a scaler</span>
 <span class="c1">##   Hint : inputCol = &#39;features&#39;</span>
 <span class="c1">##   Hint : outputCol  = &#39;scaledFeatures&#39;</span>
 
@@ -12006,7 +12011,9 @@ It looks like this</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : create 5 Principal Components</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">PCA</span>
+
+<span class="c1">## TODO : create 5 Principal Components</span>
 <span class="n">num_pc</span> <span class="o">=</span> <span class="err">?</span><span class="o">??</span>
 
 <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">num_pc</span><span class="p">,</span> <span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;scaledFeatures&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;pcaFeatures&quot;</span><span class="p">)</span>
@@ -12034,7 +12041,9 @@ It looks like this</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## correlation matrix for PC</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.stat</span> <span class="k">import</span> <span class="n">Correlation</span>
+
+<span class="c1">## correlation matrix for PC</span>
 <span class="c1">## should be very close to zero</span>
 <span class="n">corr_pc</span> <span class="o">=</span> <span class="n">Correlation</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">pca_features</span><span class="p">,</span> <span class="s2">&quot;pcaFeatures&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">corr_pc_nparr</span> <span class="o">=</span> <span class="n">corr_pc</span><span class="o">.</span><span class="n">toArray</span><span class="p">()</span>

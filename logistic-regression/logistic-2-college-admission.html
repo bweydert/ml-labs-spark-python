@@ -11791,9 +11791,7 @@ div#notebook {
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
+
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
 
@@ -11815,53 +11813,15 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Let's look at the college admission data.  Here, we have some student test scores, GPA, and Rank, followed by whether the student was admitted or not.</p>
-<table>
-<thead><tr>
-<th>gre</th>
-<th>gpa</th>
-<th>rank</th>
-<th>admitted</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>380</td>
-<td>3.61</td>
-<td>3</td>
-<td>no</td>
-</tr>
-<tr>
-<td>660</td>
-<td>3.67</td>
-<td>1</td>
-<td>yes</td>
-</tr>
-<tr>
-<td>800</td>
-<td>4.0</td>
-<td>1</td>
-<td>yes</td>
-</tr>
-<tr>
-<td>640</td>
-<td>3.19</td>
-<td>4</td>
-<td>yes</td>
-</tr>
-<tr>
-<td>520</td>
-<td>2.93</td>
-<td>4</td>
-<td>no</td>
-</tr>
-<tr>
-<td>760</td>
-<td>3.0</td>
-<td>2</td>
-<td>yes</td>
-</tr>
-</tbody>
-</table>
+
+<pre><code>|gre  |gpa  |rank |  admitted |
+|-----------------------------|
+|380  |3.61 | 3   |    no     |
+|660  |3.67 | 1   |    yes    |
+|800  |4.0  | 1   |    yes    |
+|640  |3.19 | 4   |    yes    |
+|520  |2.93 | 4   |    no     |
+|760  |3.0  | 2   |    yes    |</code></pre>
 
 </div>
 </div>
@@ -11872,6 +11832,7 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">admissions</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/college-admissions/admission-data.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">admissions</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
 <span class="n">admissions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
@@ -11884,7 +11845,43 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">Step 2: Convert dataframe to Spark and Prepare feature vector<a class="anchor-link" href="#Step-2:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">&#182;</a></h2><p>We need to firstconvert the dataframe to spark, and then prepare the feature vector.</p>
+<h2 id="Basic-Exploration">Basic Exploration<a class="anchor-link" href="#Basic-Exploration">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># see the data spread</span>
+<span class="n">admissions</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">&quot;admit&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## see each column </span>
+<span class="n">admissions</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-2:-Convert-dataframe-to-Spark-and-prepare-feature-vector">Step 2: Convert dataframe to Spark and prepare feature vector<a class="anchor-link" href="#Step-2:-Convert-dataframe-to-Spark-and-prepare-feature-vector">&#182;</a></h2><p>We need to firstconvert the dataframe to spark, and then prepare the feature vector.</p>
 
 </div>
 </div>
@@ -11894,7 +11891,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: Select all columns except for &quot;admit&quot; to be in features **</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+
+<span class="c1">## TODO: Select all columns except for &quot;admit&quot; to be in features **</span>
 <span class="c1">## Hint : select columns &#39;gpa&#39;, &#39;gre&#39;, &#39;rank&#39;</span>
 <span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">,</span><span class="s2">&quot;???&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 <span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">admissions</span><span class="p">)</span>
@@ -11971,7 +11970,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : set maxIter to 10</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
+
+<span class="c1">## TODO : set maxIter to 10</span>
 <span class="c1">#lr = LogisticRegression(maxIter=???)</span>
 <span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 
@@ -11987,6 +11988,15 @@ div#notebook {
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>==&gt; Q : Do any of your coefficients zero?  What is the implication?</strong></p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -12074,8 +12084,19 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">trainingSummary</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span>
+</pre></div>
 
-<span class="c1"># Area Under Curve is part of training summary</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Area Under Curve is part of training summary</span>
 <span class="c1"># use TAB completion :  trainingSummary.TAB</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;areaUnderROC: &quot;</span> <span class="p">,</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
@@ -12111,7 +12132,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="6.2---Iterations-and-Objective-History">6.2 - Iterations and Objective History<a class="anchor-link" href="#6.2---Iterations-and-Objective-History">&#182;</a></h3><p><strong> Q : how many iterations did we do?</strong></p>
+<h3 id="6.2---Iterations-and-Objective-History">6.2 - Iterations and Objective History<a class="anchor-link" href="#6.2---Iterations-and-Objective-History">&#182;</a></h3><p><strong>==&gt; Q : how many iterations did we do?</strong></p>
 <ul>
 <li>What does that tell you?</li>
 <li>Increase the total number of iterations from 50 to 100, Does it change the results?</li>
@@ -12131,8 +12152,8 @@ div#notebook {
 
 <span class="c1">## you can uncomment this and see how the error is diminishing in each iteration</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;objectiveHistory:&quot;</span><span class="p">)</span>
-<span class="c1">#for objective in trainingSummary.objectiveHistory:</span>
-<span class="c1">#    print(objective)</span>
+<span class="k">for</span> <span class="n">objective</span> <span class="ow">in</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">objective</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12181,7 +12202,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span>
                                               <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
 <span class="n">accuracy</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test set accuracy = &quot;</span> <span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>

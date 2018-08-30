@@ -11796,10 +11796,7 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">KMeans</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span>
-<span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="k">import</span> <span class="n">StringType</span><span class="p">,</span> <span class="n">FloatType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">StructType</span>
 </pre></div>
 
 </div>
@@ -11851,7 +11848,10 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pickup_time_field</span> <span class="o">=</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;pickup_time&quot;</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql.types</span> <span class="k">import</span> <span class="n">StringType</span><span class="p">,</span> <span class="n">FloatType</span><span class="p">,</span> <span class="n">StructField</span><span class="p">,</span> <span class="n">StructType</span>
+
+
+<span class="n">pickup_time_field</span> <span class="o">=</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;pickup_time&quot;</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
 <span class="n">lat_field</span> <span class="o">=</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;Lat&quot;</span><span class="p">,</span> <span class="n">FloatType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
 <span class="n">lon_field</span> <span class="o">=</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;Lon&quot;</span><span class="p">,</span> <span class="n">FloatType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
 <span class="n">base_field</span> <span class="o">=</span> <span class="n">StructField</span><span class="p">(</span><span class="s2">&quot;Base&quot;</span><span class="p">,</span> <span class="n">StringType</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
@@ -11930,7 +11930,9 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : create a feature vectors using &#39;Lat&#39;  and &#39;Lon&#39;  attributes</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+
+<span class="c1">## TODO : create a feature vectors using &#39;Lat&#39;  and &#39;Lon&#39;  attributes</span>
 <span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 <span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">uber_pickups_clean</span><span class="p">)</span>
 <span class="n">featureVector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -11956,7 +11958,9 @@ The data is from this <a href="https://www.kaggle.com/fivethirtyeight/uber-picku
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : start with 4 clusters</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.clustering</span> <span class="k">import</span> <span class="n">KMeans</span>
+
+<span class="c1">## TODO : start with 4 clusters</span>
 <span class="n">num_clusters</span> <span class="o">=</span> <span class="err">?</span><span class="o">??</span>
 <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">()</span><span class="o">.</span><span class="n">setK</span><span class="p">(</span><span class="n">num_clusters</span><span class="p">)</span><span class="o">.</span><span class="n">setSeed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 

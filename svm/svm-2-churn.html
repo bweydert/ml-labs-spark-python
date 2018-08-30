@@ -11788,16 +11788,7 @@ div#notebook {
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StandardScaler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">LinearSVC</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span><span class="p">,</span> <span class="n">VectorIndexer</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">,</span> <span class="n">MulticlassClassificationEvaluator</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="k">import</span> <span class="n">PCA</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 </pre></div>
 
@@ -11959,7 +11950,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">categorical</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">categorical</span><span class="p">)</span>
 <span class="n">dataset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">categorical</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 
 <span class="n">indexers</span> <span class="o">=</span> <span class="p">[</span><span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="n">column</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="n">column</span> <span class="o">+</span> <span class="s2">&quot;_index&quot;</span><span class="p">,</span> <span class="n">handleInvalid</span><span class="o">=</span><span class="s2">&quot;keep&quot;</span><span class="p">)</span><span class="o">.</span>\
@@ -11986,7 +11979,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">columns</span> <span class="o">+</span> <span class="n">categorical_index</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">columns</span> <span class="o">+</span> <span class="n">categorical_index</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11999,7 +11994,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Automatically identify categorical features, and index them.</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span>  <span class="n">VectorIndexer</span>
+
+<span class="c1"># Automatically identify categorical features, and index them.</span>
 <span class="c1"># We specify maxCategories so features with &gt; 4 distinct values are treated as continuous.</span>
 <span class="n">featureIndexer</span> <span class="o">=</span>\
     <span class="n">VectorIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;indexedFeatures&quot;</span><span class="p">,</span> <span class="n">maxCategories</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
@@ -12010,23 +12007,15 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>**=&gt; TODO: Scale the features and output column "scaledFeatures"</p>
-
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Scaler</span>
+<span class="c1">## TODO: Scale the features and output column &quot;scaledFeatures&quot;</span>
 
-<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;indexedFeatures&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span> <span class="c1">#TODO: Fix this.</span>
+<span class="n">scaler</span> <span class="o">=</span> <span class="n">StandardScaler</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;indexedFeatures&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12074,7 +12063,11 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : set maxIteration to 50</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">LinearSVC</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml</span> <span class="k">import</span> <span class="n">Pipeline</span>
+
+
+<span class="c1">## TODO : set maxIteration to 50</span>
 
 <span class="n">lsvc</span> <span class="o">=</span> <span class="n">LinearSVC</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;indexedLabel&quot;</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;scaledFeatures&quot;</span><span class="p">,</span> <span class="n">maxIter</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 
@@ -12172,8 +12165,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-9:--Predict-on-Test-Data">Step 9:  Predict on Test Data<a class="anchor-link" href="#Step-9:--Predict-on-Test-Data">&#182;</a></h2><p><strong>=&gt; TODO: Transform the test dataset to get scaled Vector </strong></p>
-
+<h2 id="Step-9:--Predict-on-Test-Data">Step 9:  Predict on Test Data<a class="anchor-link" href="#Step-9:--Predict-on-Test-Data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12236,7 +12228,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">evaluator</span> <span class="o">=</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s1">&#39;indexedLabel&#39;</span><span class="p">,</span> <span class="n">rawPredictionCol</span><span class="o">=</span><span class="s2">&quot;rawPrediction&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">BinaryClassificationEvaluator</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s1">&#39;indexedLabel&#39;</span><span class="p">,</span> <span class="n">rawPredictionCol</span><span class="o">=</span><span class="s2">&quot;rawPrediction&quot;</span><span class="p">)</span>
 <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>  <span class="c1">#AUC</span>
 </pre></div>
 
@@ -12267,7 +12261,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Select (prediction, true label) and compute test error</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
+
+<span class="c1"># Select (prediction, true label) and compute test error</span>
 <span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span>
     <span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;indexedLabel&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
 <span class="n">accuracy</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
@@ -12306,7 +12302,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO: What is the meaning of the confusion matrix? </strong></p>
+<p><strong>=&gt; Q: What is the meaning of the confusion matrix?</strong></p>
 
 </div>
 </div>
@@ -12318,7 +12314,10 @@ div#notebook {
 <h2 id="Step-11:-Try-running-without-scaling-features">Step 11: Try running without scaling features<a class="anchor-link" href="#Step-11:-Try-running-without-scaling-features">&#182;</a></h2><p>In Step-5  we are adding a scaler at the end to normalize the vector.<br>
 Try without scaler.</p>
 <p>Uncomment the following line</p>
-<h1 id="stages-=-indexers-+-[assembler,-featureIndexer,-labelIndexer]">stages = indexers + [assembler, featureIndexer, labelIndexer]<a class="anchor-link" href="#stages-=-indexers-+-[assembler,-featureIndexer,-labelIndexer]">&#182;</a></h1><p>And run the whole notebook (Cell --&gt; Run All)<br>
+
+<pre><code>pythobn
+#stages = indexers + [assembler, featureIndexer, labelIndexer]</code></pre>
+<p>And run the whole notebook (Cell --&gt; Run All)<br>
 Do you see any improvement/degradation in accuracy / AUC ?</p>
 
 </div>
