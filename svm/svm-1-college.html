@@ -11826,7 +11826,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Data-Exploration">Data Exploration<a class="anchor-link" href="#Data-Exploration">&#182;</a></h2>
+<h2 id="Step-2---Data-Exploration">Step 2 - Data Exploration<a class="anchor-link" href="#Step-2---Data-Exploration">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11862,8 +11862,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2:-Build-the-Vector">Step 2: Build the Vector<a class="anchor-link" href="#Step-2:-Build-the-Vector">&#182;</a></h2><p><strong>=&gt; Build the vector with these three columns: gre, gpa, rank </strong></p>
-
+<h2 id="Step-3:-Build-the-Vector">Step 3: Build the Vector<a class="anchor-link" href="#Step-3:-Build-the-Vector">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11891,7 +11890,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-Split-into-training-and-test.">Step 3: Split into training and test.<a class="anchor-link" href="#Step-3:-Split-into-training-and-test.">&#182;</a></h2>
+<h2 id="Step-4:-Split-into-training-and-test.">Step 4: Split into training and test.<a class="anchor-link" href="#Step-4:-Split-into-training-and-test.">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11917,7 +11916,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Build-the-Linear-SVM-model">Step 4: Build the Linear SVM model<a class="anchor-link" href="#Step-4:-Build-the-Linear-SVM-model">&#182;</a></h2>
+<h2 id="Step-5:-Build-the-Linear-SVM-model">Step 5: Build the Linear SVM model<a class="anchor-link" href="#Step-5:-Build-the-Linear-SVM-model">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11928,10 +11927,12 @@ div#notebook {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">LinearSVC</span>
 
-<span class="n">lsvc</span> <span class="o">=</span> <span class="n">LinearSVC</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="c1">## TODO : set MaxIter to 10</span>
+<span class="n">lsvc</span> <span class="o">=</span> <span class="n">LinearSVC</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 
 <span class="c1"># Fit the model</span>
 <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="c1">## TODO : fit on &#39;training&#39; set</span>
 <span class="n">lsvcModel</span> <span class="o">=</span> <span class="n">lsvc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">???</span><span class="n">training</span> <span class="nb">set</span><span class="err">???</span><span class="p">)</span>
 <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
@@ -11963,7 +11964,7 @@ Set <strong>maxIter=50</strong>  and try again</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5:-Run-the-test-set-and-get-the-predictions">Step 5: Run the test set and get the predictions<a class="anchor-link" href="#Step-5:-Run-the-test-set-and-get-the-predictions">&#182;</a></h2>
+<h2 id="Step-6:-Run-the-test-set-and-get-the-predictions">Step 6: Run the test set and get the predictions<a class="anchor-link" href="#Step-6:-Run-the-test-set-and-get-the-predictions">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11985,7 +11986,16 @@ Set <strong>maxIter=50</strong>  and try again</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-6:-See-the-evaluation-metrics">Step 6: See the evaluation metrics<a class="anchor-link" href="#Step-6:-See-the-evaluation-metrics">&#182;</a></h2>
+<h2 id="Step-7:-See-the-evaluation-metrics">Step 7: See the evaluation metrics<a class="anchor-link" href="#Step-7:-See-the-evaluation-metrics">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="7.1---AUC">7.1 - AUC<a class="anchor-link" href="#7.1---AUC">&#182;</a></h3><p><strong>=&gt; What does AUC mean?</strong></p>
+
 </div>
 </div>
 </div>
@@ -12009,8 +12019,7 @@ Set <strong>maxIter=50</strong>  and try again</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; What does AUC mean?</strong></p>
-
+<h3 id="7.2---Accuracy-on-Test-set">7.2 - Accuracy on Test set<a class="anchor-link" href="#7.2---Accuracy-on-Test-set">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12037,7 +12046,7 @@ Set <strong>maxIter=50</strong>  and try again</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-7:-Show-the-confusion-matrix">Step 7: Show the confusion matrix<a class="anchor-link" href="#Step-7:-Show-the-confusion-matrix">&#182;</a></h2>
+<h3 id="7.3---Confusion-matrix">7.3 - Confusion matrix<a class="anchor-link" href="#7.3---Confusion-matrix">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12068,7 +12077,7 @@ Set <strong>maxIter=50</strong>  and try again</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Increase-'maxIterations'-and-try-again">Increase 'maxIterations' and try again<a class="anchor-link" href="#Increase-'maxIterations'-and-try-again">&#182;</a></h3><p>In Step-4 increase 'maxIter' to 50 and run again.<br>
+<h3 id="Increase-'maxIterations'-and-try-again">Increase 'maxIterations' and try again<a class="anchor-link" href="#Increase-'maxIterations'-and-try-again">&#182;</a></h3><p>In <strong>Step-5</strong> increase 'maxIter' to 50 and run again.<br>
 Does the accuracy go up?</p>
 
 </div>
@@ -12078,9 +12087,7 @@ Does the accuracy go up?</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-8:-Try-running-a-prediction-on-your-own-data">Step 8: Try running a prediction on your own data<a class="anchor-link" href="#Step-8:-Try-running-a-prediction-on-your-own-data">&#182;</a></h2><p><strong>=&gt; Create a few rows in your own dataframe (start with pandas dataframe) </strong></p>
-<p><strong>=&gt; Run .transform from your model to see the results. </strong></p>
-
+<h2 id="Step-8:-Try-running-a-prediction-on-your-own-data">Step 8: Try running a prediction on your own data<a class="anchor-link" href="#Step-8:-Try-running-a-prediction-on-your-own-data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12095,9 +12102,11 @@ Does the accuracy go up?</p>
              <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">newdata</span><span class="p">)</span>
 
+<span class="c1">## TODO : create a spark dataframe</span>
 <span class="c1">## Hint : input is &#39;newdata&#39;</span>
 <span class="n">spark_newdata</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
 
+<span class="c1">## TODO : create feature vector</span>
 <span class="c1">## Hint : spark_newdata</span>
 <span class="n">newfeatures</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
 
@@ -12133,14 +12142,19 @@ We will condense the code to focus on important stuff</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== run with raw data (not scaled) =======&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">,</span> <span class="n">MulticlassClassificationEvaluator</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">LinearSVC</span>
+
+
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== run with raw data (not scaled) =======&quot;</span><span class="p">)</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/college-admissions/admission-data.csv&quot;</span><span class="p">,</span> \
                          <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span> <span class="s1">&#39;gre&#39;</span><span class="p">,</span> <span class="s1">&#39;gpa&#39;</span><span class="p">,</span> <span class="s1">&#39;rank&#39;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 <span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 <span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featureVector</span><span class="p">[</span><span class="s2">&quot;admit&quot;</span><span class="p">])</span>
-<span class="p">(</span><span class="n">training</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
-<span class="n">lsvc</span> <span class="o">=</span> <span class="n">LinearSVC</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s1">&#39;features&#39;</span><span class="p">)</span>
+<span class="p">(</span><span class="n">training</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="n">lsvc</span> <span class="o">=</span> <span class="n">LinearSVC</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s1">&#39;features&#39;</span><span class="p">)</span>
 <span class="n">lsvcModel</span> <span class="o">=</span> <span class="n">lsvc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training</span><span class="p">)</span>
 <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;inputs :  gre, gpa, rank&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficients: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lsvcModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">))</span>
@@ -12173,7 +12187,12 @@ We will condense the code to focus on important stuff</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== run with scaled data  =======&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">,</span> <span class="n">MulticlassClassificationEvaluator</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">LinearSVC</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StandardScaler</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== run with scaled data  =======&quot;</span><span class="p">)</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/college-admissions/admission-data.csv&quot;</span><span class="p">,</span> \
                          <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span> <span class="s1">&#39;gre&#39;</span><span class="p">,</span> <span class="s1">&#39;gpa&#39;</span><span class="p">,</span> <span class="s1">&#39;rank&#39;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
@@ -12187,8 +12206,8 @@ We will condense the code to focus on important stuff</p>
 <span class="n">fv_scaled</span> <span class="o">=</span> <span class="n">scalerModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
 <span class="n">fv_scaled</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-<span class="p">(</span><span class="n">training</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">fv_scaled</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>  <span class="c1">## CHANGED</span>
-<span class="n">lsvc</span> <span class="o">=</span> <span class="n">LinearSVC</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s1">&#39;featuresScaled&#39;</span><span class="p">)</span>  <span class="c1">## CHANGED</span>
+<span class="p">(</span><span class="n">training</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">fv_scaled</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>  <span class="c1">## CHANGED</span>
+<span class="n">lsvc</span> <span class="o">=</span> <span class="n">LinearSVC</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s1">&#39;featuresScaled&#39;</span><span class="p">)</span>  <span class="c1">## CHANGED</span>
 
 <span class="n">lsvcModel</span> <span class="o">=</span> <span class="n">lsvc</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training</span><span class="p">)</span>
 <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;inputs :  gre, gpa, rank&quot;</span><span class="p">)</span>

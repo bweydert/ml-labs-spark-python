@@ -12296,11 +12296,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-11:-Do-a-few-runs-and-see-the-accuracy">Step 11: Do a few runs and see the accuracy<a class="anchor-link" href="#Step-11:-Do-a-few-runs-and-see-the-accuracy">&#182;</a></h2><p>Why do you think the accuracy varies for each run?</p>
-<p>Try this, at Step-3, supply a seed parameter (can be any number) and do the run again.<br>
-Do you see the accuracy varying now?<br>
-Can you explain the behaviour?</p>
-
+<h2 id="Step-11:-Experiment">Step 11: Experiment<a class="anchor-link" href="#Step-11:-Experiment">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12320,6 +12316,50 @@ Can you explain the behaviour?</p>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="11.1---Why-do-you-think-the-accuracy-varies-for-each-run?">11.1 - Why do you think the accuracy varies for each run?<a class="anchor-link" href="#11.1---Why-do-you-think-the-accuracy-varies-for-each-run?">&#182;</a></h3><p>Try this, at Step-3, supply a seed parameter (can be any number) and do the run again.<br>
+Do you see the accuracy varying now?<br>
+Can you explain the behaviour?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="11.2---Adjust-regularization-(lambda)-parameter">11.2 - Adjust regularization (lambda) parameter<a class="anchor-link" href="#11.2---Adjust-regularization-(lambda)-parameter">&#182;</a></h3><p>Vary 'regparam' in <strong>step 4</strong> from 0.1 to 0.9.<br>
+Do you see accuracy changing?</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="11.3---Set-threshold">11.3 - Set threshold<a class="anchor-link" href="#11.3---Set-threshold">&#182;</a></h3><p>We can setup 'threshold' in Step-4, as follows</p>
+<div class="highlight"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">thresholdh</span> <span class="o">=</span> <span class="mf">0.7</span>  <span class="c1"># values between 0 and 1.0</span>
+</pre></div>
+<p>Change the threshold and try a few runs.  See how the accuracy changes.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="11.4---Class-discussion">11.4 - Class discussion<a class="anchor-link" href="#11.4---Class-discussion">&#182;</a></h3><p>How do you find the right 'lambda' ..etc values?<br>
+Hint : lots of experimental runs :-)</p>
+
+</div>
+</div>
 </div>
     </div>
   </div>

@@ -12001,7 +12001,7 @@ Here let's convert <strong>EmploymentStatus</strong> column</p>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the data into training and test sets (30% held out for testing)</span>
-<span class="p">(</span><span class="n">training</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span>  <span class="n">feature_vector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="o">.</span><span class="mi">7</span><span class="p">,</span><span class="o">.</span><span class="mi">3</span><span class="p">])</span>
+<span class="p">(</span><span class="n">training</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span>  <span class="n">feature_vector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="err">???</span><span class="p">,</span><span class="err">???</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training set = &quot;</span> <span class="p">,</span> <span class="n">training</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;testing set = &quot;</span> <span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 </pre></div>
@@ -12036,7 +12036,8 @@ Here let's convert <strong>EmploymentStatus</strong> column</p>
 
 <span class="c1">## TODO : Create a RandomForest with numTrees=20  and maxBins=10000</span>
 
-<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">numTrees</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">maxBins</span><span class="o">=</span><span class="err">???</span><span class="p">)</span>
+<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> \
+                            <span class="n">numTrees</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">maxBins</span><span class="o">=</span><span class="err">???</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12058,7 +12059,10 @@ Here let's convert <strong>EmploymentStatus</strong> column</p>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<span class="n">rf_model</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training</span><span class="p">)</span>
+
+<span class="c1">## TODO : train in training data</span>
+<span class="n">rf_model</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">??</span><span class="n">training</span><span class="err">??</span><span class="p">)</span>
+
 <span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
 <span class="c1">## TODO : NOtice the time it took for training</span>
@@ -12110,7 +12114,8 @@ Here let's convert <strong>EmploymentStatus</strong> column</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions</span> <span class="o">=</span> <span class="n">rf_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : predict on test data</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">rf_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
 
 <span class="n">predictions2</span><span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;rawPrediction&#39;</span><span class="p">,</span> <span class="s1">&#39;probability&#39;</span><span class="p">)</span>
 <span class="n">predictions2</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>

@@ -11872,17 +11872,44 @@ div#notebook {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">HashingTF</span><span class="p">,</span> <span class="n">IDF</span><span class="p">,</span> <span class="n">Tokenizer</span>
 
-<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;words&quot;</span><span class="p">)</span>
+<span class="c1">## TODO : split the text into words</span>
+<span class="c1">## Hint : outputCol = &#39;words&#39;</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
 <span class="n">wordsData</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<span class="n">wordsData</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
 
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## compute the hash of words</span>
 <span class="n">hashingTF</span> <span class="o">=</span> <span class="n">HashingTF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;words&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;rawFeatures&quot;</span><span class="p">,</span> <span class="n">numFeatures</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 <span class="n">featurizedData</span> <span class="o">=</span> <span class="n">hashingTF</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">wordsData</span><span class="p">)</span>
 
 <span class="n">idf</span> <span class="o">=</span> <span class="n">IDF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;rawFeatures&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 <span class="n">idfModel</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featurizedData</span><span class="p">)</span>
 <span class="n">rescaledData</span> <span class="o">=</span> <span class="n">idfModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">featurizedData</span><span class="p">)</span>
+<span class="n">rescaledData</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
 
-<span class="n">rescaledData</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;isspam&quot;</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">rescaledData</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;isspam&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;features&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11905,9 +11932,12 @@ div#notebook {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
 
-<span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;isspam&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+<span class="c1">## TODO : Index &#39;isspam&#39; column into &#39;label&#39; column</span>
+<span class="c1">## Hint : inputCol = &#39;isspam&#39;,   outputCol = &#39;label&#39;</span>
+<span class="n">indexer</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;???&quot;</span><span class="p">)</span>
 <span class="n">indexed</span> <span class="o">=</span> <span class="n">indexer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">rescaledData</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">rescaledData</span><span class="p">)</span>
-<span class="n">indexed</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">indexed</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;isspam&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;features&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11929,9 +11959,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the data into train and test</span>
-<span class="c1">#(train, test) = indexed.randomSplit([0.8, 0.2], seed=1234)</span>
-<span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">indexed</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO : Split the data into train and test into 80/20</span>
+<span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">indexed</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="err">???</span><span class="p">,</span> <span class="err">???</span><span class="p">])</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training set count : &quot;</span><span class="p">,</span> <span class="n">train</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;testing set count : &quot;</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
@@ -11957,8 +11986,9 @@ div#notebook {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">NaiveBayes</span>
 
-<span class="c1"># create the trainer and set its parameters</span>
-<span class="n">nb</span> <span class="o">=</span> <span class="n">NaiveBayes</span><span class="p">(</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">modelType</span><span class="o">=</span><span class="s2">&quot;multinomial&quot;</span><span class="p">)</span>
+<span class="c1">## TODO : create the trainer and set its parameters</span>
+<span class="c1">## Hint : NaiveBauyes  (see the class name above)</span>
+<span class="n">nb</span> <span class="o">=</span> <span class="err">???</span><span class="p">(</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">modelType</span><span class="o">=</span><span class="s2">&quot;multinomial&quot;</span><span class="p">)</span>
 
 <span class="c1"># train the model</span>
 <span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
@@ -12056,7 +12086,16 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-8:--Run-your-own-test">Step 8:  Run your own test<a class="anchor-link" href="#Step-8:--Run-your-own-test">&#182;</a></h2><p>Now it's your turn!   Make a new dataframe with some sample test data of your own creation.  Make some "spammy" SMSes and some ordinary ones.  See how our spam filter does.</p>
+<h2 id="Step-8:-Improve-prediction-results">Step 8: Improve prediction results<a class="anchor-link" href="#Step-8:-Improve-prediction-results">&#182;</a></h2><p>We used too few features above, and got bad accuracy. Increase the number of features for HashingTF</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-9:--Run-your-own-test">Step 9:  Run your own test<a class="anchor-link" href="#Step-9:--Run-your-own-test">&#182;</a></h2><p>Now it's your turn!   Make a new dataframe with some sample test data of your own creation.  Make some "spammy" SMSes and some ordinary ones.  See how our spam filter does.</p>
 
 </div>
 </div>
@@ -12067,10 +12106,24 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: make a dataframe with some of your own data.</span>
+<span class="n">mydata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;text&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;hey, can we meet 1 hr later?&#39;</span><span class="p">,</span> 
+                                <span class="s1">&#39;WINNER!  Click here to claim your prize !!!!&#39;</span><span class="p">,</span>
+                                <span class="s1">&#39;CHEAP DEGREEES !!&#39;</span><span class="p">,</span> 
+                                <span class="s1">&#39;your text here&#39;</span><span class="p">]</span>
+                         <span class="p">})</span>
 
-<span class="n">mydata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;isspam&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;spam&#39;</span><span class="p">,</span> <span class="s1">&#39;ham&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
-              <span class="s1">&#39;text&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;My text here&#39;</span><span class="p">,</span> <span class="s1">&#39;My Text Here 2&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
-             <span class="p">})</span>
+<span class="n">mydata2</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">mydata</span><span class="p">)</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;words&quot;</span><span class="p">)</span>
+<span class="n">fv</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">mydata2</span><span class="p">)</span>
+<span class="n">fv</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">hashingTF</span> <span class="o">=</span> <span class="n">HashingTF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;words&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;rawFeatures&quot;</span><span class="p">,</span> <span class="n">numFeatures</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">fv</span> <span class="o">=</span> <span class="n">hashingTF</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">fv</span><span class="p">)</span>
+
+<span class="n">idf</span> <span class="o">=</span> <span class="n">IDF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;rawFeatures&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">idfModel</span> <span class="o">=</span> <span class="n">idf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featurizedData</span><span class="p">)</span>
+<span class="n">fv</span> <span class="o">=</span> <span class="n">idfModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">fv</span><span class="p">)</span>
+<span class="n">fv</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12078,14 +12131,19 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Step-9:-Improve-prediction-results">Step 9: Improve prediction results<a class="anchor-link" href="#Step-9:-Improve-prediction-results">&#182;</a></h1><p>We used too few features above, and got bad accuracy. Increase the number of features for HashingTF</p>
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">fv</span><span class="p">)</span>
+<span class="n">predictions</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
 
 </div>
 </div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
