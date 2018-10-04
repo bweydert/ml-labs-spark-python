@@ -11987,7 +11987,7 @@ div#notebook {
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">NaiveBayes</span>
 
 <span class="c1">## TODO : create the trainer and set its parameters</span>
-<span class="c1">## Hint : NaiveBauyes  (see the class name above)</span>
+<span class="c1">## Hint : NaiveBayes  (see the class name above)</span>
 <span class="n">nb</span> <span class="o">=</span> <span class="err">???</span><span class="p">(</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">modelType</span><span class="o">=</span><span class="s2">&quot;multinomial&quot;</span><span class="p">)</span>
 
 <span class="c1"># train the model</span>
@@ -12117,6 +12117,7 @@ div#notebook {
 <span class="n">fv</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">mydata2</span><span class="p">)</span>
 <span class="n">fv</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
+<span class="c1">## NOTE : make sure this &#39;numFeatures&#39; matches the &#39;numFeatures&#39; in step-2</span>
 <span class="n">hashingTF</span> <span class="o">=</span> <span class="n">HashingTF</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;words&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;rawFeatures&quot;</span><span class="p">,</span> <span class="n">numFeatures</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 <span class="n">fv</span> <span class="o">=</span> <span class="n">hashingTF</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">fv</span><span class="p">)</span>
 

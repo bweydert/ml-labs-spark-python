@@ -12016,6 +12016,25 @@ print(&quot;read {:,} records&quot;.format(housePrices.count()))
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-5-:-Some-more-FUN">Step 5 : Some more FUN<a class="anchor-link" href="#Step-5-:-Some-more-FUN">&#182;</a></h2><p>Now let's feed 'SalePrice' as an input to our VectorAssembler.<br>
+In Step-2, try this</p>
+<div class="highlight"><pre><span></span><span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SalePrice&quot;</span><span class="p">,</span> <span class="s2">&quot;Bedrooms&quot;</span><span class="p">,</span> <span class="s2">&quot;Bathrooms&quot;</span><span class="p">,</span> <span class="s2">&quot;SqFtTotLiving&quot;</span><span class="p">,</span> <span class="s2">&quot;SqFtLot&quot;</span><span class="p">],</span>
+                            <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+</pre></div>
+<p>Run again, and observe the following:</p>
+<ul>
+<li>look at the coefficients  (why are most of them zero?)</li>
+<li>look at r2</li>
+</ul>
+<p>Can you explain what is going on :-)</p>
+
+</div>
+</div>
+</div>
     </div>
   </div>
 </body>
