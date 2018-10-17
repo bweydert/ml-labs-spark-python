@@ -11,8 +11,11 @@ export PYSPARK_PYTHON=$(which python3)
 export PYSPARK_DRIVER_PYTHON=$(which jupyter)
 export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
 
-## pyspark i local mode
-$SPARK_HOME/bin/pyspark
+## pyspark in local mode
+$SPARK_HOME/bin/pyspark \
+    --master local[*] \
+    --driver-memory 2g \
+    --executor-memory 2g 
 
 ## pyspark connect to cluster
 #$SPARK_HOME/bin/pyspark --master spark://localhost:7077  --executor-memory 4g --driver-memory 1g
