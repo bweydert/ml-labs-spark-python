@@ -11787,7 +11787,9 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
@@ -11812,19 +11814,56 @@ div#notebook {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## small file, start with this</span>
 <span class="n">datafile</span> <span class="o">=</span> <span class="s2">&quot;/data/prosper-loan/prosper-loan-data-sample.csv&quot;</span>
+
 <span class="c1">## this is a large file</span>
 <span class="c1">#datafile = &quot;/data/prosper-loan/prosper-loan-data.csv.gz&quot;</span>
+</pre></div>
 
-<span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span> \
-          <span class="n">option</span><span class="p">(</span><span class="s2">&quot;header&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span><span class="o">.</span> \
-          <span class="n">option</span><span class="p">(</span><span class="s2">&quot;inferSchema&quot;</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span><span class="o">.</span>  \
-          <span class="n">csv</span><span class="p">(</span><span class="n">datafile</span><span class="p">)</span>
-<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+</div>
+</div>
+</div>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;read </span><span class="si">{:,}</span><span class="s2"> records in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
+
+data = spark.read. \
+          option(&quot;header&quot;, &quot;true&quot;). \
+          option(&quot;inferSchema&quot;, &quot;true&quot;).  \
+          csv(datafile)
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;read </span><span class="si">{:,}</span><span class="s2"> records&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
 <span class="c1"># schema</span>
 <span class="n">data</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## print with pandas</span>
+<span class="n">data</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11841,11 +11880,11 @@ div#notebook {
 <span class="c1">## start with: &#39;LoanStatus&#39;,  &#39;EmploymentStatus&#39;, &#39;CreditScore&#39;, &#39;StatedMonthlyIncome&#39;</span>
 <span class="c1">## we add more later</span>
 
-<span class="n">select_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LoanStatus&#39;</span><span class="p">,</span> <span class="s1">&#39;EmploymentStatus&#39;</span><span class="p">,</span> <span class="s1">&#39;CreditScore&#39;</span><span class="p">,</span> <span class="s1">&#39;StatedMonthlyIncome&#39;</span><span class="p">,</span> <span class="s1">&#39;ListingCategory&#39;</span><span class="p">]</span>
+<span class="n">select_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LoanStatus&#39;</span><span class="p">,</span>  <span class="s1">&#39;ProsperScore&#39;</span><span class="p">,</span> <span class="s1">&#39;EmploymentStatus&#39;</span><span class="p">,</span> <span class="s1">&#39;CreditScore&#39;</span><span class="p">,</span> <span class="s1">&#39;StatedMonthlyIncome&#39;</span><span class="p">,</span> <span class="s1">&#39;ListingCategory&#39;</span><span class="p">]</span>
 
 <span class="c1">## Note : vector columns can only have Numbers, don&#39;t include Categorical columns here</span>
 <span class="c1">## And dfefinitely not &#39;LoanStatus&#39;  (if you are curiuos include and see what happens!)</span>
-<span class="n">vector_columns</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;EmpIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;CreditScore&#39;</span><span class="p">,</span> <span class="s1">&#39;StatedMonthlyIncome&#39;</span><span class="p">,</span> <span class="s1">&#39;CategoryIndex&#39;</span><span class="p">]</span>
+<span class="n">vector_columns</span> <span class="o">=</span> <span class="p">[</span>  <span class="s1">&#39;ProsperScore&#39;</span><span class="p">,</span> <span class="s1">&#39;EmpIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;CreditScore&#39;</span><span class="p">,</span> <span class="s1">&#39;StatedMonthlyIncome&#39;</span><span class="p">,</span> <span class="s1">&#39;CategoryIndex&#39;</span><span class="p">]</span>
 </pre></div>
 
 </div>
@@ -11862,8 +11901,8 @@ div#notebook {
 
 <span class="n">prosper</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">select_columns</span><span class="p">)</span>  
 <span class="n">prosper</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
-<span class="n">prosper</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="nb">print</span> <span class="p">(</span><span class="n">prosper</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+
+<span class="n">prosper</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11911,7 +11950,6 @@ div#notebook {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">prosper_clean</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;LoanStatus&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="n">prosper_clean</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;EmploymentStatus&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">prosper_clean</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;ListingCategory&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">60</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11948,10 +11986,7 @@ Here let's convert <strong>EmploymentStatus</strong> column</p>
 <span class="n">strIndexer_employment</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;EmploymentStatus&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;EmpIndex&quot;</span><span class="p">)</span>
 <span class="n">prosper_indexed</span> <span class="o">=</span> <span class="n">strIndexer_employment</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span>
 
-<span class="n">strIndexer_category</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;ListingCategory&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;CategoryIndex&quot;</span><span class="p">)</span>
-<span class="n">prosper_indexed</span> <span class="o">=</span> <span class="n">strIndexer_category</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">prosper_indexed</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_indexed</span><span class="p">)</span>
-
-<span class="n">prosper_indexed</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">prosper_indexed</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11977,7 +12012,8 @@ Here let's convert <strong>EmploymentStatus</strong> column</p>
 <span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">vector_columns</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 <span class="n">feature_vector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_indexed</span><span class="p">)</span>
 <span class="n">feature_vector</span> <span class="o">=</span> <span class="n">feature_vector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">feature_vector</span><span class="p">[</span><span class="s2">&quot;LoanStatus&quot;</span><span class="p">])</span>
-<span class="n">feature_vector</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+<span class="n">feature_vector</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12036,7 +12072,7 @@ Here let's convert <strong>EmploymentStatus</strong> column</p>
 
 <span class="c1">## TODO : Create a RandomForest with numTrees=20  and maxBins=10000</span>
 
-<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> \
+<span class="n">rf</span> <span class="o">=</span> <span class="err">???</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> \
                             <span class="n">numTrees</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">maxBins</span><span class="o">=</span><span class="err">???</span><span class="p">)</span>
 </pre></div>
 
@@ -12058,16 +12094,27 @@ Here let's convert <strong>EmploymentStatus</strong> column</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
+print (&quot;training starting...&quot;)
+## TODO : train in training data
+rf_model = rf.fit(???)
+print (&quot;training done.&quot;)
 
-<span class="c1">## TODO : train in training data</span>
-<span class="n">rf_model</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">??</span><span class="n">training</span><span class="err">??</span><span class="p">)</span>
+## TODO : NOtice the time it took for training
+## Is it more or less than decision trees?
+</pre></div>
 
-<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+</div>
+</div>
+</div>
 
-<span class="c1">## TODO : NOtice the time it took for training</span>
-<span class="c1">## Is it more or less than decision trees?</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;traind on </span><span class="si">{:,}</span><span class="s2"> records using </span><span class="si">{:,}</span><span class="s2"> features in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span>\
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;traind on </span><span class="si">{:,}</span><span class="s2"> records using </span><span class="si">{:,}</span><span class="s2"> features in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span>\
       <span class="nb">format</span><span class="p">(</span><span class="n">training</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector_columns</span><span class="p">),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
 </pre></div>
 

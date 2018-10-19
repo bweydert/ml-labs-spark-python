@@ -11775,118 +11775,308 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Spark-ALS-Recommendations:-MovieLens">Spark ALS Recommendations: MovieLens<a class="anchor-link" href="#Spark-ALS-Recommendations:-MovieLens">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We will use the  <a href="http://grouplens.org/datasets/movielens/">MovieLens dataset</a> to build a movie recommender using <a href="https://en.wikipedia.org/wiki/Recommender_system#Collaborative_filtering">collaborative filtering</a> with <a href="https://spark.apache.org/docs/latest/mllib-collaborative-filtering.html">Spark's Alternating Least Saqures</a> implementation.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="File-download">File download<a class="anchor-link" href="#File-download">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>GroupLens Research has collected and made available rating data sets from the <a href="http://movielens.org">MovieLens web site</a>. The data sets were collected over various periods of time, depending on the size of the set. They can be found <a href="http://grouplens.org/datasets/movielens/">here</a>.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Spark-ALS-Recommendations:-MovieLens">Spark ALS Recommendations: MovieLens<a class="anchor-link" href="#Spark-ALS-Recommendations:-MovieLens">&#182;</a></h1><p>We will use the  <a href="http://grouplens.org/datasets/movielens/">MovieLens dataset</a> to build a movie recommender using <a href="https://en.wikipedia.org/wiki/Recommender_system#Collaborative_filtering">collaborative filtering</a> with <a href="https://spark.apache.org/docs/latest/mllib-collaborative-filtering.html">Spark's Alternating Least Saqures</a> implementation.</p>
+<h2 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h2><p>We will be using Spark's MLLib API for this lab, as some of the features we are using is not available in the newer ML API</p>
+<p>The following sections introduce <em>Collaborative Filtering</em> and explain how to use <em>Spark MLlib</em> to build a recommender model. We will close the tutorial by explaining how a model such this is used to make recommendations, and how to persist it for later use (e.g. in our Python/flask web-service).</p>
+<h2 id="1---Data-download">1 - Data download<a class="anchor-link" href="#1---Data-download">&#182;</a></h2><p>GroupLens Research has collected and made available rating data sets from the <a href="http://movielens.org">MovieLens web site</a>. The data sets were collected over various periods of time, depending on the size of the set. They can be found <a href="http://grouplens.org/datasets/movielens/">here</a>.</p>
 <p>In our case, we will use the latest datasets:</p>
 <ul>
 <li>Small: 100,000 ratings and 2,488 tag applications applied to 8,570 movies by 706 users. Last updated 4/2015.  </li>
 <li>Full: 21,000,000 ratings and 470,000 tag applications applied to 27,000 movies by 230,000 users. Last updated 4/2015.  </li>
 </ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Run the file download.sh in the directory /data/movielens.  This will download the files</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Loading-and-parsing-datasets">Loading and parsing datasets<a class="anchor-link" href="#Loading-and-parsing-datasets">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>No we are ready to read in each of the files and create an RDD consisting of parsed lines.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Each line in the ratings dataset (<code>ratings.csv</code>) is formatted as:</p>
-<p><code>userId,movieId,rating,timestamp</code></p>
-<p>Each line in the movies (<code>movies.csv</code>) dataset is formatted as:</p>
-<p><code>movieId,title,genres</code></p>
-<p>Were <em>genres</em> has the format:</p>
-<p><code>Genre1|Genre2|Genre3...</code></p>
-<p>The tags file (<code>tags.csv</code>) has the format:</p>
-<p><code>userId,movieId,tag,timestamp</code></p>
-<p>And finally, the <code>links.csv</code> file has the format:</p>
-<p><code>movieId,imdbId,tmdbId</code></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The format of these files is uniform and simple, so we can use Python <a href="https://docs.python.org/2/library/stdtypes.html#str.split"><code>split()</code></a> to parse their lines once they are loaded into RDDs. Parsing the movies and ratings files yields two RDDs:</p>
-<ul>
-<li>For each line in the ratings dataset, we create a tuple of <code>(UserID, MovieID, Rating)</code>. We drop the <em>timestamp</em> because we do not need it for this recommender.  </li>
-<li>For each line in the movies dataset, we create a tuple of <code>(MovieID, Title)</code>. We drop the <em>genres</em> because we do not use them for this recommender.  </li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>So let's load the raw ratings data. We need to filter out the header, included in each file.</p>
+<p>Run the file <code>download.sh</code> in the directory /data/movielens.  This will download the files</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Spark UI running on http://YOURIPADDRESS:4040
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="2---Understand-Data">2 - Understand Data<a class="anchor-link" href="#2---Understand-Data">&#182;</a></h2><p>We have</p>
+<ul>
+<li>movies</li>
+<li>ratings</li>
+<li>links</li>
+<li>tags </li>
+</ul>
+<p>See below to understand the data format</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Movies">Movies<a class="anchor-link" href="#Movies">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">### Movie Data</span>
+<span class="n">movies</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/movielens/ml-latest-small/movies.csv&quot;</span><span class="p">,</span> 
+                         <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;movie count </span><span class="si">{:,}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">movies</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
+<span class="n">movies</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>movie count 9,125
++-------+----------------------------------+-------------------------------------------+
+|movieId|title                             |genres                                     |
++-------+----------------------------------+-------------------------------------------+
+|1      |Toy Story (1995)                  |Adventure|Animation|Children|Comedy|Fantasy|
+|2      |Jumanji (1995)                    |Adventure|Children|Fantasy                 |
+|3      |Grumpier Old Men (1995)           |Comedy|Romance                             |
+|4      |Waiting to Exhale (1995)          |Comedy|Drama|Romance                       |
+|5      |Father of the Bride Part II (1995)|Comedy                                     |
++-------+----------------------------------+-------------------------------------------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Ratings-data">Ratings data<a class="anchor-link" href="#Ratings-data">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">### ratings Data</span>
+<span class="n">ratings</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/movielens/ml-latest-small/ratings.csv&quot;</span><span class="p">,</span> 
+                         <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;rating count </span><span class="si">{:,}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ratings</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
+<span class="n">ratings</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>rating count 100,004
++------+-------+------+----------+
+|userId|movieId|rating|timestamp |
++------+-------+------+----------+
+|1     |31     |2.5   |1260759144|
+|1     |1029   |3.0   |1260759179|
+|1     |1061   |3.0   |1260759182|
+|1     |1129   |2.0   |1260759185|
+|1     |1172   |4.0   |1260759205|
++------+-------+------+----------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Links">Links<a class="anchor-link" href="#Links">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">### links Data</span>
+<span class="n">links</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/movielens/ml-latest-small/links.csv&quot;</span><span class="p">,</span> 
+                         <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;links count </span><span class="si">{:,}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">links</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
+<span class="n">links</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>links count 9,125
++-------+------+------+
+|movieId|imdbId|tmdbId|
++-------+------+------+
+|1      |114709|862   |
+|2      |113497|8844  |
+|3      |113228|15602 |
+|4      |114885|31357 |
+|5      |113041|11862 |
++-------+------+------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Tags">Tags<a class="anchor-link" href="#Tags">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">### tags Data</span>
+<span class="n">tags</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/movielens/ml-latest-small/tags.csv&quot;</span><span class="p">,</span> 
+                         <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;tags count </span><span class="si">{:,}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tags</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
+<span class="n">tags</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>tags count 1,296
++------+-------+-----------------------+----------+
+|userId|movieId|tag                    |timestamp |
++------+-------+-----------------------+----------+
+|15    |339    |sandra &#39;boring&#39; bullock|1138537770|
+|15    |1955   |dentist                |1193435061|
+|15    |7478   |Cambodia               |1170560997|
+|15    |32892  |Russian                |1170626366|
+|15    |34162  |forgettable            |1141391765|
++------+-------+-----------------------+----------+
+only showing top 5 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="3---Parsing-Data">3 - Parsing Data<a class="anchor-link" href="#3---Parsing-Data">&#182;</a></h2><p>The format of these files is uniform and simple, so we can use Python <a href="https://docs.python.org/2/library/stdtypes.html#str.split"><code>split()</code></a> to parse their lines once they are loaded into RDDs. Parsing the movies and ratings files yields two RDDs:</p>
+<ul>
+<li>For each line in the ratings dataset, we create a tuple of <code>(UserID, MovieID, Rating)</code>. We drop the <em>timestamp</em> because we do not need it for this recommender.  </li>
+<li>For each line in the movies dataset, we create a tuple of <code>(MovieID, Title)</code>. We drop the <em>genres</em> because we do not use them for this recommender.  </li>
+</ul>
+<p>So let's load the raw ratings data. We need to filter out the header, included in each file.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="3.1---Ratings">3.1 - Ratings<a class="anchor-link" href="#3.1---Ratings">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">small_ratings_raw_data</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">&#39;/data/movielens/ml-latest-small/ratings.csv&#39;</span><span class="p">)</span>
@@ -11900,7 +12090,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">small_ratings_data</span> <span class="o">=</span> <span class="n">small_ratings_raw_data</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="n">line</span><span class="o">!=</span><span class="n">small_ratings_raw_data_header</span><span class="p">)</span>\
@@ -11914,7 +12104,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">small_ratings_data</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -11930,7 +12120,7 @@ div#notebook {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[6]:</div>
+<div class="prompt output_prompt">Out[8]:</div>
 
 
 
@@ -11949,14 +12139,13 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We proceed in a similar way with the <code>movies.csv</code> file.</p>
-
+<h3 id="3.2---We-proceed-in-a-similar-way-with-the-movies.csv-file.">3.2 - We proceed in a similar way with the <code>movies.csv</code> file.<a class="anchor-link" href="#3.2---We-proceed-in-a-similar-way-with-the-movies.csv-file.">&#182;</a></h3>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">small_movies_raw_data</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">&#39;/data/movielens/ml-latest-small/movies.csv&#39;</span><span class="p">)</span>
@@ -11978,7 +12167,7 @@ div#notebook {
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[7]:</div>
+<div class="prompt output_prompt">Out[9]:</div>
 
 
 
@@ -11999,16 +12188,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The following sections introduce <em>Collaborative Filtering</em> and explain how to use <em>Spark MLlib</em> to build a recommender model. We will close the tutorial by explaining how a model such this is used to make recommendations, and how to persist it for later use (e.g. in our Python/flask web-service).</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Collaborative-Filtering">Collaborative Filtering<a class="anchor-link" href="#Collaborative-Filtering">&#182;</a></h2>
+<h2 id="4---Collaborative-Filtering">4 - Collaborative Filtering<a class="anchor-link" href="#4---Collaborative-Filtering">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12017,32 +12197,8 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In Collaborative filtering we make predictions (filtering) about the interests of a user by collecting preferences or taste information from many users (collaborating). The underlying assumption is that if a user A has the same opinion as a user B on an issue, A is more likely to have B's opinion on a different issue x than to have the opinion on x of a user chosen randomly.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p>The image below (from <a href="https://en.wikipedia.org/?title=Collaborative_filtering">Wikipedia</a>) shows an example of collaborative filtering. At first, people rate different items (like videos, images, games). Then, the system makes predictions about a user's rating for an item not rated yet. The new predictions are built upon the existing ratings of other users with similar ratings with the active user. In the image, the system predicts that the user will not like the video.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/5/52/Collaborative_filtering.gif" alt="collaborative filtering"></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p>Spark MLlib library for Machine Learning provides a <a href="https://spark.apache.org/docs/latest/mllib-collaborative-filtering.html">Collaborative Filtering</a> implementation by using <a href="http://dl.acm.org/citation.cfm?id=1608614">Alternating Least Squares</a>. The implementation in MLlib has the following parameters:</p>
 <ul>
 <li>numBlocks is the number of blocks used to parallelize computation (set to -1 to auto-configure).  </li>
@@ -12060,46 +12216,61 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Selecting-ALS-parameters-using-the-small-dataset">Selecting ALS parameters using the small dataset<a class="anchor-link" href="#Selecting-ALS-parameters-using-the-small-dataset">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In order to determine the best ALS parameters, we will use the small dataset. We need first to split it into train, validation, and test datasets.</p>
+<h2 id="5---Selecting-ALS-parameters-using-the-small-dataset">5 - Selecting ALS parameters using the small dataset<a class="anchor-link" href="#5---Selecting-ALS-parameters-using-the-small-dataset">&#182;</a></h2><p>In order to determine the best ALS parameters, we will use the small dataset. We need first to split it into train, validation, and test datasets.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">training_RDD</span><span class="p">,</span> <span class="n">validation_RDD</span><span class="p">,</span> <span class="n">test_RDD</span> <span class="o">=</span> <span class="n">small_ratings_data</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">validation_for_predict_RDD</span> <span class="o">=</span> <span class="n">validation_RDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 <span class="n">test_for_predict_RDD</span> <span class="o">=</span> <span class="n">test_RDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training data size </span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">training_RDD</span><span class="o">.</span><span class="n">count</span><span class="p">())</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;validation data size </span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">validation_RDD</span><span class="o">.</span><span class="n">count</span><span class="p">())</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test data size </span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_RDD</span><span class="o">.</span><span class="n">count</span><span class="p">())</span> <span class="p">)</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>training data size 60,220
+validation data size 19,844
+test data size 19,940
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now we can proceed with the training phase.</p>
-
+<h2 id="6---Training">6 - Training<a class="anchor-link" href="#6---Training">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.mllib.recommendation</span> <span class="k">import</span> <span class="n">ALS</span>
@@ -12129,7 +12300,7 @@ div#notebook {
         <span class="n">min_error</span> <span class="o">=</span> <span class="n">error</span>
         <span class="n">best_rank</span> <span class="o">=</span> <span class="n">rank</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The best model was trained with rank </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">best_rank</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The best model was trained with rank &#39;</span><span class="p">,</span> <span class="n">best_rank</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12146,10 +12317,10 @@ div#notebook {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>For rank 4 the RMSE is 0.9405925542574993
-For rank 8 the RMSE is 0.9451745059144596
-For rank 12 the RMSE is 0.9435903947376889
-The best model was trained with rank 4
+<pre>For rank 4 the RMSE is 0.9317078532174138
+For rank 8 the RMSE is 0.9421828839911472
+For rank 12 the RMSE is 0.9432158182181839
+The best model was trained with rank  4
 </pre>
 </div>
 </div>
@@ -12162,14 +12333,14 @@ The best model was trained with rank 4
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>But let's explain this a little bit. First, let's have a look at how our predictions look.</p>
+<h2 id="7---Understanding-Predictions">7 - Understanding Predictions<a class="anchor-link" href="#7---Understanding-Predictions">&#182;</a></h2><p>But let's explain this a little bit. First, let's have a look at how our predictions look.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -12185,15 +12356,15 @@ The best model was trained with rank 4
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[14]:</div>
+<div class="prompt output_prompt">Out[12]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[((564, 1084), 3.9107053607351405),
- ((468, 1084), 3.2612206066842706),
- ((65, 1084), 3.6045833547509223)]</pre>
+<pre>[((468, 6400), 1.9129122963991014),
+ ((452, 3272), 2.451792839331191),
+ ((262, 3272), 3.239204886744039)]</pre>
 </div>
 
 </div>
@@ -12207,14 +12378,6 @@ The best model was trained with rank 4
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Basically we have the UserID, the MovieID, and the Rating, as we have in our ratings dataset. In this case the predictions third element, the rating for that movie and user, is the predicted by our ALS model.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p>Then we join these with our validation data (the one that includes ratings) and the result looks as follows:</p>
 
 </div>
@@ -12222,7 +12385,7 @@ The best model was trained with rank 4
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">rates_and_preds</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
@@ -12238,15 +12401,15 @@ The best model was trained with rank 4
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[15]:</div>
+<div class="prompt output_prompt">Out[13]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[((378, 8376), (3.5, 2.8265380038046892)),
- ((239, 2805), (2.0, 3.913040044088734)),
- ((57, 1663), (4.0, 3.4910132330495314))]</pre>
+<pre>[((1, 1129), (2.0, 2.886518225200327)),
+ ((3, 44191), (3.5, 3.768400838261381)),
+ ((4, 616), (5.0, 4.227537834403311))]</pre>
 </div>
 
 </div>
@@ -12260,142 +12423,7 @@ The best model was trained with rank 4
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>To that, we apply a squared difference and the we use the <code>mean()</code> action to get the MSE and apply <code>sqrt</code>.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p>Finally we test the selected model.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ALS</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">training_RDD</span><span class="p">,</span> <span class="n">best_rank</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="n">iterations</span><span class="p">,</span>
-                      <span class="n">lambda_</span><span class="o">=</span><span class="n">regularization_parameter</span><span class="p">)</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predictAll</span><span class="p">(</span><span class="n">test_for_predict_RDD</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">((</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
-<span class="n">rates_and_preds</span> <span class="o">=</span> <span class="n">test_RDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
-<span class="n">error</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rates_and_preds</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
-    
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;For testing data the RMSE is </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">error</span><span class="p">))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>For testing data the RMSE is 0.9449699901041986
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Using-the-complete-dataset-to-build-the-final-model">Using the complete dataset to build the final model<a class="anchor-link" href="#Using-the-complete-dataset-to-build-the-final-model">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>In order to build our recommender model, we will use the complete dataset. Therefore, we need to process it the same way we did with the small dataset.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Load the complete dataset file</span>
-<span class="n">complete_ratings_raw_data</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">&#39;/data/movielens/ml-latest/ratings.csv&#39;</span><span class="p">)</span>
-<span class="n">complete_ratings_raw_data_header</span> <span class="o">=</span> <span class="n">complete_ratings_raw_data</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-<span class="c1"># Parse</span>
-<span class="n">complete_ratings_data</span> <span class="o">=</span> <span class="n">complete_ratings_raw_data</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="n">line</span><span class="o">!=</span><span class="n">complete_ratings_raw_data_header</span><span class="p">)</span>\
-    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tokens</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="nb">int</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span>
-    
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">%s</span><span class="s2"> recommendations in the complete dataset&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">complete_ratings_data</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>There are 26024289 recommendations in the complete dataset
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Now we are ready to train the recommender model.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">training_RDD</span><span class="p">,</span> <span class="n">test_RDD</span> <span class="o">=</span> <span class="n">complete_ratings_data</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="n">L</span><span class="p">)</span>
-
-<span class="n">complete_model</span> <span class="o">=</span> <span class="n">ALS</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">training_RDD</span><span class="p">,</span> <span class="n">best_rank</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> 
-                           <span class="n">iterations</span><span class="o">=</span><span class="n">iterations</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="n">regularization_parameter</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Now we test on our testing set.</p>
 
 </div>
 </div>
@@ -12405,13 +12433,13 @@ The best model was trained with rank 4
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_for_predict_RDD</span> <span class="o">=</span> <span class="n">test_RDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">complete_model</span><span class="o">.</span><span class="n">predictAll</span><span class="p">(</span><span class="n">test_for_predict_RDD</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">((</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ALS</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">training_RDD</span><span class="p">,</span> <span class="n">best_rank</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">iterations</span><span class="o">=</span><span class="n">iterations</span><span class="p">,</span>
+                      <span class="n">lambda_</span><span class="o">=</span><span class="n">regularization_parameter</span><span class="p">)</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predictAll</span><span class="p">(</span><span class="n">test_for_predict_RDD</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">((</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
 <span class="n">rates_and_preds</span> <span class="o">=</span> <span class="n">test_RDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
 <span class="n">error</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rates_and_preds</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
     
-<span class="nb">print</span> <span class="s1">&#39;For testing data the RMSE is </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">error</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;For testing data the RMSE is &#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">error</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -12428,7 +12456,261 @@ The best model was trained with rank 4
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>For testing data the RMSE is 0.82183583368
+<pre>For testing data the RMSE is  0.9450330628023882
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="8---Using-the-complete-dataset-to-build-the-final-model">8 - Using the complete dataset to build the final model<a class="anchor-link" href="#8---Using-the-complete-dataset-to-build-the-final-model">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="8.1---Download-the-data">8.1 - Download the data<a class="anchor-link" href="#8.1---Download-the-data">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">!</span> <span class="o">(</span><span class="nb">cd</span> /data/movielens<span class="p">;</span> ./download.sh<span class="o">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>ml-latest.zip exists
+ml-latest-full directory exists
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="8.2---Use-full-dataset">8.2 - Use full dataset<a class="anchor-link" href="#8.2---Use-full-dataset">&#182;</a></h3><p>In order to build our recommender model, we will use the complete dataset. Therefore, we need to process it the same way we did with the small dataset.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Load the complete dataset file</span>
+<span class="n">complete_ratings_raw_data</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s1">&#39;/data/movielens/ml-latest-full/ratings.csv&#39;</span><span class="p">)</span>
+<span class="n">complete_ratings_raw_data_header</span> <span class="o">=</span> <span class="n">complete_ratings_raw_data</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Parse</span>
+<span class="n">complete_ratings_data</span> <span class="o">=</span> <span class="n">complete_ratings_raw_data</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="n">line</span><span class="o">!=</span><span class="n">complete_ratings_raw_data_header</span><span class="p">)</span>\
+    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tokens</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="nb">int</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="nb">float</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span><span class="o">.</span><span class="n">cache</span><span class="p">()</span>
+    
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">{:,}</span><span class="s2"> recommendations in the complete dataset&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">complete_ratings_data</span><span class="o">.</span><span class="n">count</span><span class="p">())))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>There are 27,753,444 recommendations in the complete dataset
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_fraction</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">sample_data</span> <span class="o">=</span> <span class="n">complete_ratings_data</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">sample_fraction</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sample data size : </span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">sample_data</span><span class="o">.</span><span class="n">count</span><span class="p">())))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>sample data size : 5,551,000
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="8.3---Train-on-full-data">8.3 - Train on full data<a class="anchor-link" href="#8.3---Train-on-full-data">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">training_RDD</span><span class="p">,</span> <span class="n">test_RDD</span> <span class="o">=</span> <span class="n">sample_data</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training data size </span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">training_RDD</span><span class="o">.</span><span class="n">count</span><span class="p">())</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;test data size </span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test_RDD</span><span class="o">.</span><span class="n">count</span><span class="p">())</span> <span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>training data size 3,884,787
+test data size 1,666,213
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
+print(&quot;trainnig starting...&quot;)
+complete_model = ALS.train(training_RDD, best_rank, seed=seed, 
+                           iterations=iterations, lambda_=regularization_parameter)
+print(&quot;training done&quot;)
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>trainnig starting...
+training done
+CPU times: user 35.2 ms, sys: 12.5 ms, total: 47.7 ms
+Wall time: 16.7 s
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="8.4---Test">8.4 - Test<a class="anchor-link" href="#8.4---Test">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">test_for_predict_RDD</span> <span class="o">=</span> <span class="n">test_RDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">complete_model</span><span class="o">.</span><span class="n">predictAll</span><span class="p">(</span><span class="n">test_for_predict_RDD</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">((</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+<span class="n">rates_and_preds</span> <span class="o">=</span> <span class="n">test_RDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">((</span><span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+<span class="n">error</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">rates_and_preds</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+    
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;For testing data the RMSE is &#39;</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>For testing data the RMSE is  0.8921419608302642
 </pre>
 </div>
 </div>
@@ -12450,32 +12732,8 @@ The best model was trained with rank 4
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="How-to-make-recommendations">How to make recommendations<a class="anchor-link" href="#How-to-make-recommendations">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Although we aim at building an on-line movie recommender, now that we know how to have our recommender model ready, we can give it a try providing some movie recommendations. This will help us coiding the recommending engine later on when building the web service, and will explain how to use the model in any other circumstances.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="9---How-to-make-recommendations">9 - How to make recommendations<a class="anchor-link" href="#9---How-to-make-recommendations">&#182;</a></h2><p>Although we aim at building an on-line movie recommender, now that we know how to have our recommender model ready, we can give it a try providing some movie recommendations. This will help us coiding the recommending engine later on when building the web service, and will explain how to use the model in any other circumstances.</p>
 <p>When using collaborative filtering, getting recommendations is not as simple as predicting for the new entries using a previously generated model. Instead, we need to train again the model but including the new user preferences in order to compare them with other users in the dataset. That is, the recommender needs to be trained every time we have new user ratings (although a single model can be used by multiple users of course!). This makes the process expensive, and it is one of the reasons why scalability is a problem (and Spark a solution!). Once we have our model trained, we can reuse it to obtain top recomendations for a given user or an individual rating for a particular movie. These are less costly operations than training the model itself.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <p>So let's first load the movies complete file for later use.</p>
 
 </div>
@@ -12483,10 +12741,10 @@ The best model was trained with rank 4
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">complete_movies_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datasets_path</span><span class="p">,</span> <span class="s1">&#39;ml-latest&#39;</span><span class="p">,</span> <span class="s1">&#39;movies.csv&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">complete_movies_file</span> <span class="o">=</span> <span class="s1">&#39;/data/movielens/ml-latest-full/movies.csv&#39;</span>
 <span class="n">complete_movies_raw_data</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="n">complete_movies_file</span><span class="p">)</span>
 <span class="n">complete_movies_raw_data_header</span> <span class="o">=</span> <span class="n">complete_movies_raw_data</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -12496,7 +12754,7 @@ The best model was trained with rank 4
 
 <span class="n">complete_movies_titles</span> <span class="o">=</span> <span class="n">complete_movies_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
     
-<span class="nb">print</span> <span class="s2">&quot;There are </span><span class="si">%s</span><span class="s2"> movies in the complete dataset&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">complete_movies_titles</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">{:,}</span><span class="s2"> movies in the complete dataset&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">complete_movies_titles</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
 </pre></div>
 
 </div>
@@ -12513,7 +12771,7 @@ The best model was trained with rank 4
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>There are 27303 movies in the complete dataset
+<pre>There are 58,098 movies in the complete dataset
 </pre>
 </div>
 </div>
@@ -12533,43 +12791,55 @@ The best model was trained with rank 4
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_counts_and_averages</span><span class="p">(</span><span class="n">ID_and_ratings_tuple</span><span class="p">):</span>
     <span class="n">nratings</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ID_and_ratings_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">ID_and_ratings_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">nratings</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ID_and_ratings_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">/</span><span class="n">nratings</span><span class="p">)</span>
 
-<span class="n">movie_ID_with_ratings_RDD</span> <span class="o">=</span> <span class="p">(</span><span class="n">complete_ratings_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span><span class="o">.</span><span class="n">groupByKey</span><span class="p">())</span>
+<span class="n">movie_ID_with_ratings_RDD</span> <span class="o">=</span> <span class="p">(</span><span class="n">sample_data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span><span class="o">.</span><span class="n">groupByKey</span><span class="p">())</span>
 <span class="n">movie_ID_with_avg_ratings_RDD</span> <span class="o">=</span> <span class="n">movie_ID_with_ratings_RDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">get_counts_and_averages</span><span class="p">)</span>
 <span class="n">movie_rating_counts_RDD</span> <span class="o">=</span> <span class="n">movie_ID_with_avg_ratings_RDD</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="n">movie_rating_counts_RDD</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[(828, 305), (23, 958), (736, 7572), (1127, 3935), (1196, 13219), (1242, 2723), (1909, 2915), (4025, 2709), (4232, 1153), (552, 3076)]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Adding-new-user-ratings">Adding new user ratings<a class="anchor-link" href="#Adding-new-user-ratings">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Now we need to rate some movies for the new user. We will put them in a new RDD and we will use the user ID 0, that is not assigned in the MovieLens dataset. Check the <a href="http://grouplens.org/datasets/movielens/">dataset</a> movies file for ID to Tittle assignment (so you know what movies are you actually rating).</p>
+<h2 id="10---Adding-new-user-ratings">10 - Adding new user ratings<a class="anchor-link" href="#10---Adding-new-user-ratings">&#182;</a></h2><p>Now we need to rate some movies for the new user. We will put them in a new RDD and we will use the user ID 0, that is not assigned in the MovieLens dataset. Check the <a href="http://grouplens.org/datasets/movielens/">dataset</a> movies file for ID to Tittle assignment (so you know what movies are you actually rating).</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">new_user_ID</span> <span class="o">=</span> <span class="mi">0</span>
@@ -12588,7 +12858,7 @@ The best model was trained with rank 4
      <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span> <span class="c1"># Usual Suspects, The (1995)</span>
     <span class="p">]</span>
 <span class="n">new_user_ratings_RDD</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">(</span><span class="n">new_user_ratings</span><span class="p">)</span>
-<span class="nb">print</span> <span class="s1">&#39;New user ratings: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">new_user_ratings_RDD</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;New user ratings: &#39;</span><span class="p">,</span> <span class="n">new_user_ratings_RDD</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -12605,7 +12875,7 @@ The best model was trained with rank 4
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>New user ratings: [(0, 260, 9), (0, 1, 8), (0, 16, 7), (0, 25, 8), (0, 32, 9), (0, 335, 4), (0, 379, 3), (0, 296, 7), (0, 858, 10), (0, 50, 8)]
+<pre>New user ratings:  [(0, 260, 9), (0, 1, 8), (0, 16, 7), (0, 25, 8), (0, 32, 9), (0, 335, 4), (0, 379, 3), (0, 296, 7), (0, 858, 10), (0, 50, 8)]
 </pre>
 </div>
 </div>
@@ -12625,10 +12895,10 @@ The best model was trained with rank 4
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">complete_data_with_new_ratings_RDD</span> <span class="o">=</span> <span class="n">complete_ratings_data</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">new_user_ratings_RDD</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">complete_data_with_new_ratings_RDD</span> <span class="o">=</span> <span class="n">sample_data</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">new_user_ratings_RDD</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12647,17 +12917,14 @@ The best model was trained with rank 4
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
-
-<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-<span class="n">new_ratings_model</span> <span class="o">=</span> <span class="n">ALS</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">complete_data_with_new_ratings_RDD</span><span class="p">,</span> <span class="n">best_rank</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> 
-                              <span class="n">iterations</span><span class="o">=</span><span class="n">iterations</span><span class="p">,</span> <span class="n">lambda_</span><span class="o">=</span><span class="n">regularization_parameter</span><span class="p">)</span>
-<span class="n">tt</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
-
-<span class="nb">print</span> <span class="s2">&quot;New model trained in </span><span class="si">%s</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="nb">round</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span> 
+print(&quot;training starting...&quot;)
+new_ratings_model = ALS.train(complete_data_with_new_ratings_RDD, best_rank, seed=seed, 
+                              iterations=iterations, lambda_=regularization_parameter)
+print (&quot;training done&quot;)
 </pre></div>
 
 </div>
@@ -12674,7 +12941,10 @@ The best model was trained with rank 4
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>New model trained in 56.61 seconds
+<pre>training starting...
+training done
+CPU times: user 48.3 ms, sys: 19.9 ms, total: 68.3 ms
+Wall time: 24.4 s
 </pre>
 </div>
 </div>
@@ -12696,22 +12966,14 @@ The best model was trained with rank 4
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Getting-top-recommendations">Getting top recommendations<a class="anchor-link" href="#Getting-top-recommendations">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>Let's now get some recommendations! For that we will get an RDD with all the movies the new user hasn't rated yet. We will them together with the model to predict ratings.</p>
+<h2 id="11---Getting-top-recommendations">11 - Getting top recommendations<a class="anchor-link" href="#11---Getting-top-recommendations">&#182;</a></h2><p>Let's now get some recommendations! For that we will get an RDD with all the movies the new user hasn't rated yet. We will them together with the model to predict ratings.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">new_user_ratings_ids</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">new_user_ratings</span><span class="p">)</span> <span class="c1"># get just movie IDs</span>
@@ -12738,7 +13000,7 @@ The best model was trained with rank 4
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Transform new_user_recommendations_RDD into pairs of the form (Movie ID, Predicted Rating)</span>
@@ -12758,15 +13020,18 @@ The best model was trained with rank 4
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[22]:</div>
+<div class="prompt output_prompt">Out[27]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[(87040, ((6.834512984654888, u&#39;&#34;Housemaid&#39;), 14)),
- (8194, ((5.966704041954459, u&#39;Baby Doll (1956)&#39;), 79)),
- (130390, ((0.6922328127396398, u&#39;Contract Killers (2009)&#39;), 1))]</pre>
+<pre>[(136680, ((3.147308239394963, &#39;Battle For SkyArk (2015)&#39;), 5)),
+ (55080, ((5.810976549948867, &#39;&#34;Brave One&#39;), 125)),
+ (26520,
+  ((7.711563585045221,
+    &#39;Full Moon in Paris (Les nuits de la pleine lune) (1984)&#39;),
+   7))]</pre>
 </div>
 
 </div>
@@ -12786,7 +13051,7 @@ The best model was trained with rank 4
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">new_user_recommendations_rating_title_and_count_RDD</span> <span class="o">=</span> \
@@ -12809,12 +13074,12 @@ The best model was trained with rank 4
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">top_movies</span> <span class="o">=</span> <span class="n">new_user_recommendations_rating_title_and_count_RDD</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">&gt;=</span><span class="mi">25</span><span class="p">)</span><span class="o">.</span><span class="n">takeOrdered</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;TOP recommended movies (with more than 25 reviews):</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;TOP recommended movies (with more than 25 reviews):</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
         <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">top_movies</span><span class="p">)))</span>
 </pre></div>
 
@@ -12833,31 +13098,31 @@ The best model was trained with rank 4
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>TOP recommended movies (with more than 25 reviews):
-(u&#39;&#34;Godfather: Part II&#39;, 8.503749129186701, 29198)
-(u&#39;&#34;Civil War&#39;, 8.386497469089297, 257)
-(u&#39;Frozen Planet (2011)&#39;, 8.372705479107108, 31)
-(u&#39;&#34;Shawshank Redemption&#39;, 8.258510064442426, 67741)
-(u&#39;Cosmos (1980)&#39;, 8.252254825768972, 948)
-(u&#39;Band of Brothers (2001)&#39;, 8.225114960311624, 4450)
-(u&#39;Generation Kill (2008)&#39;, 8.206487040524653, 52)
-(u&#34;Schindler&#39;s List (1993)&#34;, 8.172761674773625, 53609)
-(u&#39;Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)&#39;, 8.166229786764168, 23915)
-(u&#34;One Flew Over the Cuckoo&#39;s Nest (1975)&#34;, 8.15617022970577, 32948)
-(u&#39;Casablanca (1942)&#39;, 8.141303207981174, 26114)
-(u&#39;Seven Samurai (Shichinin no samurai) (1954)&#39;, 8.139633165142612, 11796)
-(u&#39;Goodfellas (1990)&#39;, 8.12931139039048, 27123)
-(u&#39;Star Wars: Episode V - The Empire Strikes Back (1980)&#39;, 8.124225700242096, 47710)
-(u&#39;Jazz (2001)&#39;, 8.078538221315313, 25)
-(u&#34;Long Night&#39;s Journey Into Day (2000)&#34;, 8.050176820606127, 34)
-(u&#39;Lawrence of Arabia (1962)&#39;, 8.041331489948814, 13452)
-(u&#39;Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark) (1981)&#39;, 8.0399424815528, 45908)
-(u&#39;12 Angry Men (1957)&#39;, 8.011389274280754, 13235)
-(u&#34;It&#39;s Such a Beautiful Day (2012)&#34;, 8.007734839026181, 35)
-(u&#39;Apocalypse Now (1979)&#39;, 8.005094327199552, 23905)
-(u&#39;Paths of Glory (1957)&#39;, 7.999379786394267, 3598)
-(u&#39;Rear Window (1954)&#39;, 7.9860865203540214, 17996)
-(u&#39;State of Play (2003)&#39;, 7.981582126801772, 27)
-(u&#39;Chinatown (1974)&#39;, 7.978673289692703, 16195)
+ (&#39;Gangs of Wasseypur (2012)&#39;, 9.34319143829024, 32)
+(&#39;56 Up (2012)&#39;, 9.301834930364095, 42)
+(&#39;&#34;Unvanquished&#39;, 9.212360108876751, 72)
+(&#39;&#34;Civil War&#39;, 9.102088893288368, 93)
+(&#39;&#34;Sorrow and the Pity&#39;, 9.086578086599339, 27)
+(&#39;The Adventures of Sherlock Holmes and Dr. Watson: Bloody Signature (1979)&#39;, 9.038043704969603, 29)
+(&#34;Empire of Dreams: The Story of the &#39;Star Wars&#39; Trilogy (2004)&#34;, 8.938093515505592, 33)
+(&#39;Shoah (1985)&#39;, 8.92026510034303, 68)
+(&#39;Cosmos&#39;, 8.917868551669244, 36)
+(&#39;Planet Earth (2006)&#39;, 8.901130125562844, 294)
+(&#39;When the Levees Broke: A Requiem in Four Acts (2006)&#39;, 8.843454892554306, 28)
+(&#39;Alone in the Wilderness (2004)&#39;, 8.837415975275022, 79)
+(&#39;The Fool (2014)&#39;, 8.821698469253732, 25)
+(&#39;&#34;World of Apu&#39;, 8.809171957277087, 169)
+(&#39;Seven Up! (1964)&#39;, 8.77984827995737, 93)
+(&#39;Casablanca (1942)&#39;, 8.715574680102954, 6305)
+(&#39;Close-Up (Nema-ye Nazdik) (1990)&#39;, 8.70562785789081, 30)
+(&#39;Sherlock Jr. (1924)&#39;, 8.685331656439345, 126)
+(&#39;Harakiri (Seppuku) (1962)&#39;, 8.68433785702834, 129)
+(&#39;Forbidden Games (Jeux interdits) (1952)&#39;, 8.678354235633037, 36)
+(&#39;Love and Pigeons (1985)&#39;, 8.669049246465441, 30)
+(&#39;&#34;Trou&#39;, 8.669020206467643, 50)
+(&#39;The Godfather Trilogy: 1972-1990 (1992)&#39;, 8.6627411036782, 79)
+(&#39;Planet Earth II (2016)&#39;, 8.662333370889115, 173)
+(&#39;The Earrings of Madame de... (1953)&#39;, 8.654553620600694, 26)
 </pre>
 </div>
 </div>
@@ -12870,7 +13135,7 @@ The best model was trained with rank 4
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Getting-individual-ratings">Getting individual ratings<a class="anchor-link" href="#Getting-individual-ratings">&#182;</a></h3>
+<h2 id="12---Getting-individual-ratings">12 - Getting individual ratings<a class="anchor-link" href="#12---Getting-individual-ratings">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12885,7 +13150,7 @@ The best model was trained with rank 4
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">my_movie</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">500</span><span class="p">)])</span> <span class="c1"># Quiz Show (1994)</span>
@@ -12903,13 +13168,13 @@ The best model was trained with rank 4
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[25]:</div>
+<div class="prompt output_prompt">Out[30]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[Rating(user=0, product=122880, rating=4.955831875971526)]</pre>
+<pre>[Rating(user=0, product=153030, rating=6.689039296689197)]</pre>
 </div>
 
 </div>

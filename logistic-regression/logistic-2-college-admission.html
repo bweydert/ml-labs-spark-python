@@ -11831,7 +11831,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">admissions</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/college-admissions/admission-data.csv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">admissions</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/college-admissions/admission-data.csv&quot;</span><span class="p">,</span>\
+                            <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">admissions</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
 <span class="n">admissions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -11869,7 +11870,7 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## see each column </span>
-<span class="n">admissions</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">admissions</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -11881,7 +11882,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2:-Convert-dataframe-to-Spark-and-prepare-feature-vector">Step 2: Convert dataframe to Spark and prepare feature vector<a class="anchor-link" href="#Step-2:-Convert-dataframe-to-Spark-and-prepare-feature-vector">&#182;</a></h2><p>We need to firstconvert the dataframe to spark, and then prepare the feature vector.</p>
+<h2 id="Step-2:-Prepare-feature-vector">Step 2: Prepare feature vector<a class="anchor-link" href="#Step-2:-Prepare-feature-vector">&#182;</a></h2><p>We need to firstconvert the dataframe to spark, and then prepare the feature vector.</p>
 
 </div>
 </div>
@@ -11976,8 +11977,8 @@ div#notebook {
 <span class="c1">#lr = LogisticRegression(maxIter=???)</span>
 <span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 
-<span class="c1"># Fit the model</span>
-<span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+<span class="c1">## TODO : Fit the model on &#39;training&#39; set</span>
+<span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
 
 <span class="c1"># Print the coefficients and intercept for logistic regression</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficients: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">))</span>
@@ -11993,7 +11994,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>==&gt; Q : Do any of your coefficients zero?  What is the implication?</strong></p>
+<p><strong>==&gt; Q : Do any of your coefficients zero?  What is the implication?<br>
+If you see ZERO coefficients, increase the number of iterations and run again</strong></p>
 
 </div>
 </div>
@@ -12002,7 +12004,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5:-Inspect-Learning">Step 5: Inspect Learning<a class="anchor-link" href="#Step-5:-Inspect-Learning">&#182;</a></h2>
+<h2 id="Step-5:-Predict-on-Test-data">Step 5: Predict on Test data<a class="anchor-link" href="#Step-5:-Predict-on-Test-data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12011,11 +12013,9 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## show predictions in training data</span>
-<span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="c1">## sample based on data</span>
-<span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">sampleBy</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">fractions</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : predict on &#39;test&#39; data</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+<span class="n">predictions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12028,11 +12028,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## How many data points where label != prediction</span>
-<span class="n">missed</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">predictions</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;label != prediction&quot;</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;missed &quot;</span><span class="p">,</span> <span class="n">missed</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
-<span class="n">missed</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sample a few 0 and 1</span>
+<span class="n">predictions</span><span class="o">.</span><span class="n">sampleBy</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">fractions</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12061,8 +12058,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
-<span class="n">predictions</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12344,7 +12340,7 @@ Do you see accuracy changing?</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="11.3---Set-threshold">11.3 - Set threshold<a class="anchor-link" href="#11.3---Set-threshold">&#182;</a></h3><p>We can setup 'threshold' in Step-4, as follows</p>
 <div class="highlight"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
-<span class="n">lr</span><span class="o">.</span><span class="n">thresholdh</span> <span class="o">=</span> <span class="mf">0.7</span>  <span class="c1"># values between 0 and 1.0</span>
+<span class="n">lr</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.7</span>  <span class="c1"># values between 0 and 1.0</span>
 </pre></div>
 <p>Change the threshold and try a few runs.  See how the accuracy changes.</p>
 

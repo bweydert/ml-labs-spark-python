@@ -11955,7 +11955,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5:-Let-us-plot-and-visualize-the-sample-data.">Step 5: Let us plot and visualize the sample data.<a class="anchor-link" href="#Step-5:-Let-us-plot-and-visualize-the-sample-data.">&#182;</a></h2><p><strong>=&gt; Run a scatterplot with score on the X axis and approved on the y axis </strong></p>
+<h2 id="Step-5:-Let-us-plot-and-visualize-the-sample-data.">Step 5: Let us plot and visualize the sample data.<a class="anchor-link" href="#Step-5:-Let-us-plot-and-visualize-the-sample-data.">&#182;</a></h2><p><strong>=&gt; Run a scatterplot with score on the X axis and approved on the y axis</strong></p>
 
 </div>
 </div>
@@ -11981,9 +11981,9 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Step-6:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">Step 6: Convert dataframe to Spark and Prepare feature vector<a class="anchor-link" href="#Step-6:-Convert-dataframe-to-Spark-and-Prepare-feature-vector">&#182;</a></h2><p>We need to first convert the pandas dataframe to a spark dataframe, and then prepare the feature vector. To create the feature vector, we use the VectorAssembler.</p>
-<p><strong>=&gt; Run VectorAssembler by using input column as "score </strong></p>
+<p><strong>=&gt; Run VectorAssembler by using input column as "score"</strong></p>
 <p>We will need a numeric column called "label" in our dataset because our model by default will look for a column by that name.  So, we'll just add it.</p>
-<p><strong>=&gt; Rename columnn "approved" as "label" </strong></p>
+<p><strong>=&gt; Create columnn 'label' as "approved"</strong></p>
 
 </div>
 </div>
@@ -12101,7 +12101,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="8.2-:-ROC-curve-and-AUC-(Area-Under-Curve)">8.2 : ROC curve and AUC (Area Under Curve)<a class="anchor-link" href="#8.2-:-ROC-curve-and-AUC-(Area-Under-Curve)">&#182;</a></h3><p><strong>=&gt; TODO: What is the meaning of the ROC curve?  How is the AUC calculated? </strong></p>
+<h3 id="8.2-:-ROC-curve-and-AUC-(Area-Under-Curve)">8.2 : ROC curve and AUC (Area Under Curve)<a class="anchor-link" href="#8.2-:-ROC-curve-and-AUC-(Area-Under-Curve)">&#182;</a></h3><p><strong>=&gt; TODO: What is the meaning of the ROC curve?  How is the AUC calculated?</strong></p>
 
 </div>
 </div>
@@ -12247,28 +12247,6 @@ Does the accuracy improve?</p>
 <span class="n">spark_newdata</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">newdata</span><span class="p">)</span>
 <span class="n">newfeatures</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">spark_newdata</span><span class="p">)</span>
 <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">newfeatures</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; TODO: Try adding your own test data  </strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: Enter your test data here and re=run.</span>
 </pre></div>
 
 </div>

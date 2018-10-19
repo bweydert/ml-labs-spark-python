@@ -11778,11 +11778,35 @@ div#notebook {
 <h2 id="Predict-Diabetes">Predict Diabetes<a class="anchor-link" href="#Predict-Diabetes">&#182;</a></h2><p><a href="/data/diabetes/">data is here</a>.  (From UCI repository)</p>
 <p>Sample Data:</p>
 
-<pre><code>a,b,c,d,e,f,g,h,outcome
-6,148,72,35,0,33.6,0.627,50,1
-1,85,66,29,0,26.6,0.351,31,0
-8,183,64,0,0,23.3,0.672,32,1
-1,89,66,23,94,28.1,0.167,21,0</code></pre>
+<pre><code>+---+---+---+---+---+----+-----+---+-------+
+|  a|  b|  c|  d|  e|   f|    g|  h|outcome|
++---+---+---+---+---+----+-----+---+-------+
+|  6|148| 72| 35|  0|33.6|0.627| 50|      1|
+|  1| 85| 66| 29|  0|26.6|0.351| 31|      0|
+|  8|183| 64|  0|  0|23.3|0.672| 32|      1|
+|  1| 89| 66| 23| 94|28.1|0.167| 21|      0|
+|  0|137| 40| 35|168|43.1|2.288| 33|      1|
+|  5|116| 74|  0|  0|25.6|0.201| 30|      0|</code></pre>
+<ul>
+<li>attributes : 8</li>
+<li>target variable : 1</li>
+<li>number of observations : 768</li>
+</ul>
+<p>Inputs:</p>
+<ul>
+<li>a :  Number of times pregnant</li>
+<li>b :  Plasma glucose concentration a 2 hours in an oral glucose tolerance test</li>
+<li>c :  Diastolic blood pressure (mm Hg)</li>
+<li>d :  Triceps skin fold thickness (mm)</li>
+<li>e :  2-Hour serum insulin (mu U/ml)</li>
+<li>f :  Body mass index (weight in kg/(height in m)^2)</li>
+<li>g :  Diabetes pedigree function</li>
+<li>h :  Age (years)</li>
+</ul>
+<p>Output:</p>
+<ul>
+<li>outcome : 0 or 1</li>
+</ul>
 
 </div>
 </div>
@@ -11827,7 +11851,7 @@ For example, try to print the distribution of 'outcome'</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
 </pre></div>
 
 </div>

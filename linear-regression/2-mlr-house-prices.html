@@ -11890,8 +11890,8 @@ print(&quot;read {:,} records&quot;.format(housePrices.count()))
 <span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="err">???</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 <span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">housePrices_small</span><span class="p">)</span>
 
-<span class="c1">## TODO : Rename &#39;SalePrice&#39; as &quot;label&quot;</span>
-<span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumnRenamed</span><span class="p">(</span><span class="s2">&quot;SalePrice&quot;</span><span class="p">,</span> <span class="s2">&quot;???&quot;</span><span class="p">)</span>
+<span class="c1">## TODO : create a label column to mirror &#39;SalePrice&#39;</span>
+<span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featureVector</span><span class="p">[</span><span class="s2">&quot;???&quot;</span><span class="p">])</span>
 <span class="n">featureVector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
@@ -11933,7 +11933,7 @@ print(&quot;read {:,} records&quot;.format(housePrices.count()))
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; What is the meaning of coefficients and intercept? </strong></p>
+<p><strong>Insepct the coeffiients.  Are you seeing any ZERO (0) values?  What is the meaning of this?</strong></p>
 
 </div>
 </div>
@@ -11962,7 +11962,23 @@ print(&quot;read {:,} records&quot;.format(housePrices.count()))
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Observe the summary output</strong></p>
+<h4 id="Observe-the-summary-output">Observe the summary output<a class="anchor-link" href="#Observe-the-summary-output">&#182;</a></h4><ul>
+<li>How many iterations did it do?</li>
+<li>Is it more than our 'max' iterations?</li>
+<li>If so, increase the 'maxIter' to 50 and run it again</li>
+<li>How many iterations is done now?  </li>
+<li>Can you explain the behavior?</li>
+<li>Also did the coefficients change from  maxIter=10  to maxIter=50 ?</li>
+<li>Did r2 change?  Why / Why-not?</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Step-3:--Predict-some-home-prices">Step 3:  Predict some home prices<a class="anchor-link" href="#Step-3:--Predict-some-home-prices">&#182;</a></h2><p>Create a new data frame with the following data</p>
 
 </div>
