@@ -11962,8 +11962,8 @@ dataset = spark.read.csv(&quot;/data/churn/telco.csv.gz&quot;, header=True, infe
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">categorical</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">dataset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">categorical_columns</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">prediction_column</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12021,7 +12021,7 @@ dataset = spark.read.csv(&quot;/data/churn/telco.csv.gz&quot;, header=True, infe
 
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;indexing categorical columns : &quot;</span><span class="p">,</span> <span class="n">categorical</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;indexing categorical columns : &quot;</span><span class="p">,</span> <span class="n">categorical_columnscategorical</span><span class="p">)</span>
 
 <span class="c1">## TODO : create indexers in a loop</span>
 <span class="c1">## loop through &#39;categorical_columns&#39;</span>
