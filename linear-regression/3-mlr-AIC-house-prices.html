@@ -11775,8 +11775,6 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<link rel='stylesheet' href='../assets/css/main.css'/>
-
 <p><a href="../README.md">&lt;&lt; back to main index</a></p>
 <h1 id="Multiple-Linear-Regression-Lab-6-:-Akaike&#8217;s-Information-Criteria-(AIC)">Multiple Linear Regression Lab 6 : Akaike&#8217;s Information Criteria (AIC)<a class="anchor-link" href="#Multiple-Linear-Regression-Lab-6-:-Akaike&#8217;s-Information-Criteria-(AIC)">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Figure out which attributes to include using AIC</p>
 <h3 id="Builds-on">Builds on<a class="anchor-link" href="#Builds-on">&#182;</a></h3><p>None</p>
@@ -11790,15 +11788,16 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># initialize Spark Session</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">top_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;../&quot;</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">top_dir</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">top_dir</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">GeneralizedLinearRegression</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">RFormula</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+<span class="kn">from</span> <span class="nn">init_spark</span> <span class="k">import</span> <span class="n">init_spark</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">init_spark</span><span class="p">()</span>
+<span class="n">spark</span>
 </pre></div>
 
 </div>
@@ -11838,7 +11837,7 @@ div#notebook {
 <p>basically, the y variable is the variable we are trying to predict, while the x variable(s) are the variables 
 that we are using to make the prediction.  There are some complexities but that's the gist of it.</p>
 <p>In the process, R will convert all categorical variables using one-hot encoding, and index strings.  Remember, features in spark are only allowed to be numeric (doubles).  NAs are also forbidden, so those are converted as well.</p>
-<p><strong>=&gt;TODO: instantiate R formula with formula tex tand features column = "features" </strong></p>
+<p><strong>=&gt;TODO: instantiate R formula with formula tex tand features column = "features"</strong></p>
 
 </div>
 </div>
@@ -11848,7 +11847,9 @@ that we are using to make the prediction.  There are some complexities but that'
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#lm(SalePrice ~ SqFtTotLiving + SqFtLot + Bathrooms + Bedrooms + BldgGrade + PropertyType + NbrLivingUnits + SqFtFinBasement + YrBuilt + YrRenovated + NewConstruction,</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">RFormula</span>
+
+<span class="c1">#lm(SalePrice ~ SqFtTotLiving + SqFtLot + Bathrooms + Bedrooms + BldgGrade + PropertyType + NbrLivingUnits + SqFtFinBasement + YrBuilt + YrRenovated + NewConstruction,</span>
 <span class="c1">#              data = house.prices, na.action = na.omit)</span>
     
 
@@ -11886,7 +11887,9 @@ that we are using to make the prediction.  There are some complexities but that'
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">glr</span> <span class="o">=</span> <span class="n">GeneralizedLinearRegression</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span> <span class="n">link</span><span class="o">=</span><span class="s2">&quot;identity&quot;</span><span class="p">,</span> <span class="n">maxIter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">GeneralizedLinearRegression</span>
+
+<span class="n">glr</span> <span class="o">=</span> <span class="n">GeneralizedLinearRegression</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span> <span class="n">link</span><span class="o">=</span><span class="s2">&quot;identity&quot;</span><span class="p">,</span> <span class="n">maxIter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 <span class="n">lrModel</span> <span class="o">=</span> <span class="n">glr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficents:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">))</span>
@@ -11928,7 +11931,7 @@ that we are using to make the prediction.  There are some complexities but that'
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Inspect the summary output</strong></p>
-<p><strong>=&gt;TODO: What can we say about our model in terms of evaluation? </strong></p>
+<p><strong>=&gt;TODO: What can we say about our model in terms of evaluation?</strong></p>
 
 </div>
 </div>
@@ -11939,7 +11942,7 @@ that we are using to make the prediction.  There are some complexities but that'
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Step-3:--Run-AIC-calculation">Step 3:  Run AIC calculation<a class="anchor-link" href="#Step-3:--Run-AIC-calculation">&#182;</a></h2><p>We can do some parameter tuning here. In general, lower AIC is better.  By removing certain variables from the mix, we can get lower AICs and therefore a better model.</p>
 <p>But how can we do this?  Let's programatically generate model combinations, and then run them. We're looking at all combinations of 8 variables out of 11, so that's 165 combinations.</p>
-<p><strong>=&gt;TODO: Run a loop of all combinations of 8 variables or more. Watch the output. Which is optimal? </strong></p>
+<p><strong>=&gt;TODO: Run a loop of all combinations of 8 variables or more. Watch the output. Which is optimal?</strong></p>
 
 </div>
 </div>

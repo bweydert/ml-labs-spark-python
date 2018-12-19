@@ -11781,24 +11781,13 @@ $   rm -rf  spark   <span class="c1"># cleanup existing spark installation (if a
 $   tar xvf   files/spark-2.3.0-bin-hadoop2.7.tgz
 $   mv  spark-2.3.0-bin-hadoop2.7    spark
 </pre></div>
-<h2 id="Step-3---Configure-Spark---Hive-Metastore-to-a-database">Step 3 - Configure Spark - Hive Metastore to a database<a class="anchor-link" href="#Step-3---Configure-Spark---Hive-Metastore-to-a-database">&#182;</a></h2><p>This is an optional but recommended step.<br>
-This allows us to run multiple Spark notebooks simultaneously.</p>
-<h3 id="3.1---Create-the-database">3.1 - Create the database<a class="anchor-link" href="#3.1---Create-the-database">&#182;</a></h3><p>This is already done in new VMs (later than v37).  Provided for reference.</p>
-<div class="highlight"><pre><span></span><span class="c1">#$    sudo -u postgres psql -c &quot;create user spark with password &#39;bingobob123&#39; ;&quot;</span>
-<span class="c1">#$    sudo -u postgres psql -c &quot;drop database spark_warehouse;&quot;</span>
-<span class="c1">#$    sudo -u postgres psql -c &quot;create database spark_warehouse with owner spark;&quot;</span>
+<h2 id="Step-3-:-Get-the-labs">Step 3 : Get the labs<a class="anchor-link" href="#Step-3-:-Get-the-labs">&#182;</a></h2><div class="highlight"><pre><span></span>$ git clone --depth <span class="m">1</span>  git@github.com:elephantscale/ml-labs-spark-python.git
 </pre></div>
-<h3 id="3.2---Copy-hive-site.xml-into-Spark-conf">3.2 - Copy <code>hive-site.xml</code> into Spark conf<a class="anchor-link" href="#3.2---Copy-hive-site.xml-into-Spark-conf">&#182;</a></h3><div class="highlight"><pre><span></span>$    cp  ~/config/spark/hive-site.xml    ~/spark/conf/
-</pre></div>
-<h3 id="3.3---Copy-postgress-jdbc-lib--info-Spark-lib">3.3 - Copy postgress jdbc lib  info Spark lib<a class="anchor-link" href="#3.3---Copy-postgress-jdbc-lib--info-Spark-lib">&#182;</a></h3><div class="highlight"><pre><span></span>$    cp  ~/lib/spark/postgresql-42.2.5.jar  ~/spark/jars/
-</pre></div>
-<h2 id="Step-4-:-Get-the-labs">Step 4 : Get the labs<a class="anchor-link" href="#Step-4-:-Get-the-labs">&#182;</a></h2><div class="highlight"><pre><span></span>$ git clone --depth <span class="m">1</span>  git@github.com:elephantscale/ml-labs-spark-python.git
-</pre></div>
-<h2 id="Step-5-:-Get-the-data">Step 5 : Get the data<a class="anchor-link" href="#Step-5-:-Get-the-data">&#182;</a></h2><div class="highlight"><pre><span></span>$  <span class="nb">cd</span> data<span class="p">;</span>  git pull<span class="p">;</span>   <span class="nb">cd</span>
+<h2 id="Step-4-:-Get-the-data">Step 4 : Get the data<a class="anchor-link" href="#Step-4-:-Get-the-data">&#182;</a></h2><div class="highlight"><pre><span></span>$  <span class="nb">cd</span> data<span class="p">;</span>  git pull<span class="p">;</span>   <span class="nb">cd</span>
 </pre></div>
 <p>Also you can download it from <a href="https://s3.amazonaws.com/elephantscale-public/data/datasets.zip">here</a> for your laptop.</p>
-<h2 id="Step-6-:-Start-Jupyter">Step 6 : Start Jupyter<a class="anchor-link" href="#Step-6-:-Start-Jupyter">&#182;</a></h2><div class="highlight"><pre><span></span>$   <span class="nb">cd</span> ml-labs-spark-python
-$   nohup ./run-jupyter.sh <span class="p">&amp;</span>
+<h2 id="Step-5-:-Start-Jupyter">Step 5 : Start Jupyter<a class="anchor-link" href="#Step-5-:-Start-Jupyter">&#182;</a></h2><div class="highlight"><pre><span></span>$   <span class="nb">cd</span> ml-labs-spark-python
+$   nohup ./run-jupyter-labs.sh <span class="p">&amp;</span>
 </pre></div>
 <p>Access Jupyter notebook link from the browser.</p>
 

@@ -11775,8 +11775,6 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<link rel='stylesheet' href='../assets/css/main.css'/>
-
 <p><a href="../README.md">&lt;&lt; back to main index</a></p>
 <h1 id="Lab-:-Spark-Shell">Lab : Spark Shell<a class="anchor-link" href="#Lab-:-Spark-Shell">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Get familiar with Spark shell</p>
 <h2 id="Step-1:-Spark-classes-(sc-&amp;-spark)">Step 1: Spark classes (sc &amp; spark)<a class="anchor-link" href="#Step-1:-Spark-classes-(sc-&amp;-spark)">&#182;</a></h2>
@@ -11788,21 +11786,15 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># older version spark context</span>
-<span class="n">sc</span>
-</pre></div>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># initialize Spark Session</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">top_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;../&quot;</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">top_dir</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">top_dir</span><span class="p">)</span>
 
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># newwer Spark Session</span>
+<span class="kn">from</span> <span class="nn">init_spark</span> <span class="k">import</span> <span class="n">init_spark</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">init_spark</span><span class="p">()</span>
 <span class="n">spark</span>
 </pre></div>
 
@@ -11816,11 +11808,26 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># older version spark context</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">sparkContext</span>
+<span class="n">sc</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Print the name of application name**</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">appName</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;app name :&quot;</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">appName</span><span class="p">)</span>
 
 <span class="c1"># Find the &#39;Spark master&#39; for the shell</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">sc</span><span class="o">.</span><span class="n">master</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;master :&quot;</span><span class="p">,</span> <span class="n">sc</span><span class="o">.</span><span class="n">master</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11843,7 +11850,7 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on port &#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
 
 </div>

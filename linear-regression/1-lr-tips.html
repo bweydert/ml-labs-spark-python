@@ -11775,10 +11775,8 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<link rel='stylesheet' href='../assets/css/main.css'/>
-
 <p><a href="../README.md">&lt;&lt; back to main index</a></p>
-<h1 id="Linear-Regression-in-PySpark-(Demo)">Linear Regression in PySpark (Demo)<a class="anchor-link" href="#Linear-Regression-in-PySpark-(Demo)">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Instructor to demo this on screen.</p>
+<h1 id="Linear-Regression-in-PySpark">Linear Regression in PySpark<a class="anchor-link" href="#Linear-Regression-in-PySpark">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Instructor to demo this on screen.</p>
 <h3 id="Builds-on">Builds on<a class="anchor-link" href="#Builds-on">&#182;</a></h3><p>None</p>
 <h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>approx. 20-30 minutes</p>
 <h3 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h3><p>PySpark has a class called Linear Regression that can be used to do simple linear regression models.</p>
@@ -11791,14 +11789,16 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># initialize Spark Session</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">top_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;../&quot;</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">top_dir</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">top_dir</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+<span class="kn">from</span> <span class="nn">init_spark</span> <span class="k">import</span> <span class="n">init_spark</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">init_spark</span><span class="p">()</span>
+<span class="n">spark</span>
 </pre></div>
 
 </div>
@@ -11886,10 +11886,11 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">tip_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;bill&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">50.00</span><span class="p">,</span> <span class="mf">30.00</span><span class="p">,</span> <span class="mf">60.00</span><span class="p">,</span> <span class="mf">40.00</span><span class="p">,</span> <span class="mf">65.00</span><span class="p">,</span> <span class="mf">20.00</span><span class="p">,</span> <span class="mf">10.00</span><span class="p">,</span> <span class="mf">15.00</span><span class="p">,</span> <span class="mf">25.00</span><span class="p">,</span> <span class="mf">35.00</span><span class="p">],</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">tip_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;bill&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">50.00</span><span class="p">,</span> <span class="mf">30.00</span><span class="p">,</span> <span class="mf">60.00</span><span class="p">,</span> <span class="mf">40.00</span><span class="p">,</span> <span class="mf">65.00</span><span class="p">,</span> <span class="mf">20.00</span><span class="p">,</span> <span class="mf">10.00</span><span class="p">,</span> <span class="mf">15.00</span><span class="p">,</span> <span class="mf">25.00</span><span class="p">,</span> <span class="mf">35.00</span><span class="p">],</span>
               <span class="s1">&#39;tip&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">12.00</span><span class="p">,</span> <span class="mf">7.00</span><span class="p">,</span> <span class="mf">13.00</span><span class="p">,</span> <span class="mf">8.00</span><span class="p">,</span> <span class="mf">15.00</span><span class="p">,</span> <span class="mf">5.00</span><span class="p">,</span> <span class="mf">2.00</span><span class="p">,</span> <span class="mf">2.00</span><span class="p">,</span> <span class="mf">3.00</span><span class="p">,</span> <span class="mf">4.00</span><span class="p">]</span>
              <span class="p">})</span>
-
 <span class="n">tip_data</span>
 </pre></div>
 
@@ -11912,7 +11913,10 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tip_data</span><span class="o">.</span><span class="n">bill</span><span class="p">,</span> <span class="n">tip_data</span><span class="o">.</span><span class="n">tip</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tip_data</span><span class="o">.</span><span class="n">bill</span><span class="p">,</span> <span class="n">tip_data</span><span class="o">.</span><span class="n">tip</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;tip&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;bill&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -12073,7 +12077,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-8:-Print-out-model-metrics">Step 8: Print out model metrics<a class="anchor-link" href="#Step-8:-Print-out-model-metrics">&#182;</a></h2>
+<h2 id="Step-8:-Print-out-model-metrics">Step 8: Print out model metrics<a class="anchor-link" href="#Step-8:-Print-out-model-metrics">&#182;</a></h2><h3 id="8.1---Coefficients">8.1 - Coefficients<a class="anchor-link" href="#8.1---Coefficients">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12092,21 +12096,7 @@ div#notebook {
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;numIterations: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">totalIterations</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;objectiveHistory: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">trainingSummary</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">))</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RMSE: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">rootMeanSquaredError</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Other metrics</span>
-<span class="c1">#trainingSummary.residuals.show()</span>
+<span class="c1"># print(&quot;RMSE: %f&quot; % trainingSummary.rootMeanSquaredError)</span>
 </pre></div>
 
 </div>
@@ -12118,7 +12108,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Correlation-Coefficient-(r)">Correlation Coefficient (r)<a class="anchor-link" href="#Correlation-Coefficient-(r)">&#182;</a></h3><p>Correlation Coefficient (r) denotes how strongly X &amp; Y are inter-related.</p>
+<h3 id="8.2---Correlation-Coefficient-(r)">8.2 - Correlation Coefficient (r)<a class="anchor-link" href="#8.2---Correlation-Coefficient-(r)">&#182;</a></h3><p>Correlation Coefficient (r) denotes how strongly X &amp; Y are inter-related.</p>
 <p>Spark ML can create a correlation Matrix which shows how all the variables in the dataset are correlated, if at all.  Naturally, every variable will have a correlation of 1 when compared to itself.</p>
 
 </div>
@@ -12148,7 +12138,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>==&gt;  Question : Does bill amount influence tip amount? (are they strongly linked?)</strong></p>
-<h2>Coefficient of Determination (r&sup2;)</h2>
+<h3>8.3 - Coefficient of Determination (r&sup2;)</h3>
 
 </div>
 </div>
@@ -12172,37 +12162,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-9:-Plot-the-residuals">Step 9: Plot the residuals<a class="anchor-link" href="#Step-9:-Plot-the-residuals">&#182;</a></h2><p>Residuals are the error, or difference between the model predicted and model actual.  We'd like these to be as small as possible, with residuals roughly balanced.   We don't want a model that consistently predicts values too high or too low.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: do a plot of the bill (x-value) versus residuals (y-value)</span>
-
-<span class="n">residuals</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">residuals</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tip_data</span><span class="o">.</span><span class="err">???</span><span class="p">,</span> <span class="n">residuals</span><span class="p">[</span><span class="s1">&#39;residuals&#39;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>  <span class="c1"># horizon</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;bill&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Residuals&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-10:-Calculate-tip-for-$100-bill">Step 10: Calculate tip for $100 bill<a class="anchor-link" href="#Step-10:-Calculate-tip-for-$100-bill">&#182;</a></h2>
+<h2 id="Step-9:-Calculate-tip-for-$100-bill">Step 9: Calculate tip for $100 bill<a class="anchor-link" href="#Step-9:-Calculate-tip-for-$100-bill">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12244,7 +12204,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-11:-Add-a-estimated_tip-column-to-pandas-and-spark-dataframe">Step 11: Add a estimated_tip column to pandas and spark dataframe<a class="anchor-link" href="#Step-11:-Add-a-estimated_tip-column-to-pandas-and-spark-dataframe">&#182;</a></h2>
+<h2 id="Step-10:-Add-a-estimated_tip-column-to-pandas-and-spark-dataframe">Step 10: Add a estimated_tip column to pandas and spark dataframe<a class="anchor-link" href="#Step-10:-Add-a-estimated_tip-column-to-pandas-and-spark-dataframe">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12297,7 +12257,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-12:-Perform-a-prediction">Step 12: Perform a prediction<a class="anchor-link" href="#Step-12:-Perform-a-prediction">&#182;</a></h2><p>Let's try to run a prediction on some data: $45.00, $55.00, and $65.00</p>
+<h2 id="Step-11:-Perform-a-prediction">Step 11: Perform a prediction<a class="anchor-link" href="#Step-11:-Perform-a-prediction">&#182;</a></h2><p>Let's try to run a prediction on some data: $45.00, $55.00, and $65.00</p>
 
 </div>
 </div>
@@ -12328,7 +12288,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-13:-Complete-Code">Step 13: Complete Code<a class="anchor-link" href="#Step-13:-Complete-Code">&#182;</a></h2>
+<h2 id="Step-12:-Complete-Code">Step 12: Complete Code<a class="anchor-link" href="#Step-12:-Complete-Code">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -12337,12 +12297,13 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">LinearRegression</span>
 <span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
 <span class="kn">from</span> <span class="nn">pyspark.sql.functions</span> <span class="k">import</span> <span class="n">expr</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 
 <span class="c1"># tip = a * amount + b</span>
@@ -12402,18 +12363,9 @@ div#notebook {
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RMSE: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">rootMeanSquaredError</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r2: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
 
-<span class="c1">#Plot Residuals</span>
-<span class="n">residuals</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">residuals</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tip_data</span><span class="o">.</span><span class="n">bill</span><span class="p">,</span> <span class="n">residuals</span><span class="p">[</span><span class="s1">&#39;residuals&#39;</span><span class="p">])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>  <span class="c1"># horizon</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;bill&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Residuals&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-
-
 <span class="c1"># Calculate Tip for $100 bill</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span>
 <span class="n">tip_for_100</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">+</span> <span class="n">b</span>   
 <span class="nb">print</span><span class="p">(</span><span class="n">tip_for_100</span><span class="p">)</span>
 

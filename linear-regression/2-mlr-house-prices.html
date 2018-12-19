@@ -11775,8 +11775,6 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<link rel='stylesheet' href='../assets/css/main.css'/>
-
 <p><a href="../README.md">&lt;&lt; back to main index</a></p>
 <h1 id="Multiple-Linear-Regression-Lab-:-House-Prices">Multiple Linear Regression Lab : House Prices<a class="anchor-link" href="#Multiple-Linear-Regression-Lab-:-House-Prices">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Estimate house prices using MLR</p>
 <h3 id="Builds-on">Builds on<a class="anchor-link" href="#Builds-on">&#182;</a></h3><p>None</p>
@@ -11790,13 +11788,16 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># initialize Spark Session</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">top_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;../&quot;</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">top_dir</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">top_dir</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+<span class="kn">from</span> <span class="nn">init_spark</span> <span class="k">import</span> <span class="n">init_spark</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">init_spark</span><span class="p">()</span>
+<span class="n">spark</span>
 </pre></div>
 
 </div>
@@ -11835,7 +11836,7 @@ print(&quot;read {:,} records&quot;.format(housePrices.count()))
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">housePrices</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
-<span class="n">housePrices</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">housePrices</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
 </pre></div>
 
 </div>
@@ -11979,7 +11980,7 @@ print(&quot;read {:,} records&quot;.format(housePrices.count()))
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:--Predict-some-home-prices">Step 3:  Predict some home prices<a class="anchor-link" href="#Step-3:--Predict-some-home-prices">&#182;</a></h2><p>Create a new data frame with the following data</p>
+<h2 id="Step-4:--Predict-some-home-prices">Step 4:  Predict some home prices<a class="anchor-link" href="#Step-4:--Predict-some-home-prices">&#182;</a></h2><p>Create a new data frame with the following data</p>
 
 </div>
 </div>
@@ -11989,7 +11990,9 @@ print(&quot;read {:,} records&quot;.format(housePrices.count()))
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Make a Pandas dataframe</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># Make a Pandas dataframe</span>
 <span class="n">new_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;Bedrooms&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>
                          <span class="s1">&#39;Bathrooms&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mf">1.5</span><span class="p">],</span>
                          <span class="s1">&#39;SqFtTotLiving&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">4400</span><span class="p">,</span> <span class="mi">1800</span><span class="p">,</span> <span class="mi">1550</span><span class="p">],</span>
@@ -12010,7 +12013,7 @@ print(&quot;read {:,} records&quot;.format(housePrices.count()))
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Run-on-some-prediction-data">Step 4: Run on some prediction data<a class="anchor-link" href="#Step-4:-Run-on-some-prediction-data">&#182;</a></h2><p>Lets see the predicted output.</p>
+<h2 id="Step-5:-Run-on-some-prediction-data">Step 5: Run on some prediction data<a class="anchor-link" href="#Step-5:-Run-on-some-prediction-data">&#182;</a></h2><p>Lets see the predicted output.</p>
 
 </div>
 </div>
@@ -12036,7 +12039,7 @@ print(&quot;read {:,} records&quot;.format(housePrices.count()))
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5-:-Some-more-FUN">Step 5 : Some more FUN<a class="anchor-link" href="#Step-5-:-Some-more-FUN">&#182;</a></h2><p>Now let's feed 'SalePrice' as an input to our VectorAssembler.<br>
+<h2 id="Step-6-:-Some-more-FUN">Step 6 : Some more FUN<a class="anchor-link" href="#Step-6-:-Some-more-FUN">&#182;</a></h2><p>Now let's feed 'SalePrice' as an input to our VectorAssembler.<br>
 In Step-2, try this</p>
 <div class="highlight"><pre><span></span><span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SalePrice&quot;</span><span class="p">,</span> <span class="s2">&quot;Bedrooms&quot;</span><span class="p">,</span> <span class="s2">&quot;Bathrooms&quot;</span><span class="p">,</span> <span class="s2">&quot;SqFtTotLiving&quot;</span><span class="p">,</span> <span class="s2">&quot;SqFtLot&quot;</span><span class="p">],</span>
                             <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>

@@ -11791,14 +11791,16 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># initialize Spark Session</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">top_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;../&quot;</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">top_dir</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">top_dir</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Spark UI running on http://YOURIPADDRESS:&#39;</span> <span class="o">+</span> <span class="n">sc</span><span class="o">.</span><span class="n">uiWebUrl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+<span class="kn">from</span> <span class="nn">init_spark</span> <span class="k">import</span> <span class="n">init_spark</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">init_spark</span><span class="p">()</span>
+<span class="n">spark</span>
 </pre></div>
 
 </div>
@@ -11820,17 +11822,26 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span><span class="o">.</span>\
-          <span class="n">option</span><span class="p">(</span><span class="s1">&#39;header&#39;</span><span class="p">,</span><span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span>\
-          <span class="n">option</span><span class="p">(</span><span class="s1">&#39;delimiter&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span>\
-          <span class="n">option</span><span class="p">(</span><span class="s1">&#39;inferSchema&#39;</span><span class="p">,</span> <span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span>\
-          <span class="n">load</span><span class="p">(</span><span class="s2">&quot;/data/spam/SMSSpamCollection.txt&quot;</span><span class="p">)</span>
+dataset = spark.read.format(&quot;csv&quot;).\
+          option(&#39;header&#39;,&#39;true&#39;).\
+          option(&#39;delimiter&#39;, &#39;\t&#39;).\
+          option(&#39;inferSchema&#39;, &#39;true&#39;).\
+          load(&quot;/data/spam/SMSSpamCollection.txt&quot;)
+</pre></div>
 
-<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> 
+</div>
+</div>
+</div>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;read </span><span class="si">{:,}</span><span class="s2"> records in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;records count : </span><span class="si">{:,}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
 
 <span class="n">dataset</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
 <span class="n">dataset</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -11993,15 +12004,25 @@ div#notebook {
 <span class="c1">## TODO : create the trainer and set its parameters</span>
 <span class="c1">## Hint : NaiveBayes  (see the class name above)</span>
 <span class="n">nb</span> <span class="o">=</span> <span class="err">???</span><span class="p">(</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">modelType</span><span class="o">=</span><span class="s2">&quot;multinomial&quot;</span><span class="p">)</span>
+</pre></div>
 
-<span class="c1"># train the model</span>
-<span class="n">t1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
-<span class="c1">## TODO : fit on training data (hint: train)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+</div>
+</div>
+</div>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;trained on </span><span class="si">{:,}</span><span class="s2"> records  in </span><span class="si">{:,.2f}</span><span class="s2"> ms&quot;</span><span class="o">.</span>\
-      <span class="nb">format</span><span class="p">(</span><span class="n">train</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
+
+# train the model
+print(&quot;training starting...&quot;)
+## TODO : fit on training data (hint: train)
+model = nb.fit(???)
+print(&quot;training done.&quot;)
 </pre></div>
 
 </div>
@@ -12027,7 +12048,7 @@ div#notebook {
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># select example rows to display.</span>
 <span class="c1">## TODO : transform on test data (hint : test)</span>
 <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-<span class="n">predictions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">predictions</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12110,6 +12131,8 @@ div#notebook {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># TODO: make a dataframe with some of your own data.</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
 <span class="n">mydata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;text&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;hey, can we meet 1 hr later?&#39;</span><span class="p">,</span> 
                                 <span class="s1">&#39;WINNER!  Click here to claim your prize !!!!&#39;</span><span class="p">,</span>
                                 <span class="s1">&#39;CHEAP DEGREEES !!&#39;</span><span class="p">,</span> 
