@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>random-forest-1-prosper</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>cross-validation1</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11775,9 +11775,10 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Random-Forest-:-Prosper-Loan-Dataset">Random Forest : Prosper Loan Dataset<a class="anchor-link" href="#Random-Forest-:-Prosper-Loan-Dataset">&#182;</a></h1><p>A decision tree a learned set of rules that allows us to make decisions on data.</p>
-<p>We are going to look at the prosper loan dataset.  This dataset shows a history of loans made by Prosper.</p>
-
+<h1 id="Cross-Validation-&amp;-Hyper-Parameter-Tuning">Cross Validation &amp; Hyper Parameter Tuning<a class="anchor-link" href="#Cross-Validation-&amp;-Hyper-Parameter-Tuning">&#182;</a></h1><h3 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h3><p>Choose the best model by tuning parameters</p>
+<h3 id="Builds-on">Builds on<a class="anchor-link" href="#Builds-on">&#182;</a></h3><p>None</p>
+<h3 id="Run-time">Run time<a class="anchor-link" href="#Run-time">&#182;</a></h3><p>approx. 10-20 minutes</p>
+<h3 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -11807,7 +11808,7 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-1:-Load-the-Data">Step 1: Load the Data<a class="anchor-link" href="#Step-1:-Load-the-Data">&#182;</a></h2>
+<h2 id="Step-1:-Perform-Logistic-Regression">Step 1: Perform Logistic Regression<a class="anchor-link" href="#Step-1:-Perform-Logistic-Regression">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -11816,97 +11817,27 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## small file, start with this</span>
-<span class="n">datafile</span> <span class="o">=</span> <span class="s2">&quot;/data/prosper-loan/prosper-loan-data-sample.csv&quot;</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">admissions</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">csv</span><span class="p">(</span><span class="s2">&quot;/data/college-admissions/admission-data.csv&quot;</span><span class="p">,</span>\
+                            <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inferSchema</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1">## this is a large file</span>
-<span class="c1">#datafile = &quot;/data/prosper-loan/prosper-loan-data.csv.gz&quot;</span>
-</pre></div>
+<span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
 
-</div>
-</div>
-</div>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;gpa&quot;</span><span class="p">,</span> <span class="s2">&quot;gre&quot;</span><span class="p">,</span><span class="s2">&quot;rank&quot;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">admissions</span><span class="p">)</span>
+<span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span><span class="n">featureVector</span><span class="p">[</span><span class="s2">&quot;admit&quot;</span><span class="p">])</span>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
+<span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="mf">0.7</span><span class="p">,</span>  <span class="mf">0.3</span><span class="p">])</span>
 
-data = spark.read. \
-          option(&quot;header&quot;, &quot;true&quot;). \
-          option(&quot;inferSchema&quot;, &quot;true&quot;).  \
-          csv(datafile)
-</pre></div>
 
-</div>
-</div>
-</div>
+<span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">LogisticRegression</span>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;read </span><span class="si">{:,}</span><span class="s2"> records&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">()))</span>
-<span class="c1"># schema</span>
-<span class="n">data</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
-</pre></div>
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 
-</div>
-</div>
-</div>
+<span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## print with pandas</span>
-<span class="n">data</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## select a few columns </span>
-<span class="c1">## start with: &#39;LoanStatus&#39;,  &#39;EmploymentStatus&#39;, &#39;CreditScore&#39;, &#39;StatedMonthlyIncome&#39;</span>
-<span class="c1">## we add more later</span>
-
-<span class="n">select_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LoanStatus&#39;</span><span class="p">,</span>  <span class="s1">&#39;ProsperScore&#39;</span><span class="p">,</span> <span class="s1">&#39;EmploymentStatus&#39;</span><span class="p">,</span> <span class="s1">&#39;CreditScore&#39;</span><span class="p">,</span> <span class="s1">&#39;StatedMonthlyIncome&#39;</span><span class="p">,</span> <span class="s1">&#39;ListingCategory&#39;</span><span class="p">]</span>
-
-<span class="c1">## Note : vector columns can only have Numbers, don&#39;t include Categorical columns here</span>
-<span class="c1">## And dfefinitely not &#39;LoanStatus&#39;  (if you are curiuos include and see what happens!)</span>
-<span class="n">vector_columns</span> <span class="o">=</span> <span class="p">[</span>  <span class="s1">&#39;ProsperScore&#39;</span><span class="p">,</span> <span class="s1">&#39;EmpIndex&#39;</span><span class="p">,</span> <span class="s1">&#39;CreditScore&#39;</span><span class="p">,</span> <span class="s1">&#39;StatedMonthlyIncome&#39;</span><span class="p">]</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Display</span>
-
-<span class="n">prosper</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">select_columns</span><span class="p">)</span>  
-<span class="n">prosper</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
-
-<span class="n">prosper</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
+<span class="c1"># Print the coefficients and intercept for logistic regression</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficients: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Intercept: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">intercept</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -11918,7 +11849,7 @@ data = spark.read. \
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2-:-Clean-Data">Step 2 : Clean Data<a class="anchor-link" href="#Step-2-:-Clean-Data">&#182;</a></h2>
+<h3 id="Evaluate">Evaluate<a class="anchor-link" href="#Evaluate">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -11927,272 +11858,19 @@ data = spark.read. \
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Drop any NA values.  Using `dataframe.na.drop()`</span>
-<span class="n">prosper_clean</span> <span class="o">=</span> <span class="n">prosper</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">drop</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original record count </span><span class="si">{:,}</span><span class="s2">, cleaned records count </span><span class="si">{:,}</span><span class="s2">,  dropped </span><span class="si">{:,}</span><span class="s2">&quot;</span>\
-      <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prosper</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="n">prosper_clean</span><span class="o">.</span><span class="n">count</span><span class="p">(),</span> <span class="p">(</span><span class="n">prosper</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">-</span> <span class="n">prosper_clean</span><span class="o">.</span><span class="n">count</span><span class="p">())))</span>
-<span class="n">prosper_clean</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trainingSummary</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span>
+
+<span class="n">predictions_test</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="n">predictions_train</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+
+<span class="c1"># we can also get this from trainingSummary</span>
+<span class="c1"># predictions_train = lrModel.summary.predictions</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Look-at-some-summary-data">Look at some summary data<a class="anchor-link" href="#Look-at-some-summary-data">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">prosper_clean</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;LoanStatus&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">prosper_clean</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;EmploymentStatus&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>=&gt; What does that say about the cardinality of these categorical columns? *</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-3:-Converting-Categorical-columns">Step 3: Converting Categorical columns<a class="anchor-link" href="#Step-3:-Converting-Categorical-columns">&#182;</a></h2><p>Convert categorical columns to numeric.<br>
-Here let's convert <strong>EmploymentStatus</strong> column</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">StringIndexer</span>
-
-<span class="n">strIndexer_employment</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span><span class="o">=</span><span class="s2">&quot;EmploymentStatus&quot;</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;EmpIndex&quot;</span><span class="p">)</span>
-<span class="n">prosper_indexed</span> <span class="o">=</span> <span class="n">strIndexer_employment</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_clean</span><span class="p">)</span>
-
-<span class="n">prosper_indexed</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-4:-Build-feature-vectors-using-VectorAssembler.">Step 4: Build feature vectors using VectorAssembler.<a class="anchor-link" href="#Step-4:-Build-feature-vectors-using-VectorAssembler.">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
-
-<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">vector_columns</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
-<span class="n">feature_vector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">prosper_indexed</span><span class="p">)</span>
-<span class="n">feature_vector</span> <span class="o">=</span> <span class="n">feature_vector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">feature_vector</span><span class="p">[</span><span class="s2">&quot;LoanStatus&quot;</span><span class="p">])</span>
-
-<span class="n">feature_vector</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-5:-Split-Data-into-training-and-test.">Step 5: Split Data into training and test.<a class="anchor-link" href="#Step-5:-Split-Data-into-training-and-test.">&#182;</a></h2><p>We will split our the data up into training and test.  (You know the drill by now).</p>
-<p><strong>=&gt; TODO: Split dataset into 70% training, 30% validation</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the data into training and test sets (30% held out for testing)</span>
-<span class="p">(</span><span class="n">training</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span> <span class="o">=</span>  <span class="n">feature_vector</span><span class="o">.</span><span class="n">randomSplit</span><span class="p">([</span><span class="err">???</span><span class="p">,</span><span class="err">???</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;training set = &quot;</span> <span class="p">,</span> <span class="n">training</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;testing set = &quot;</span> <span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">count</span><span class="p">())</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-6:-Random-Forest">Step 6: Random Forest<a class="anchor-link" href="#Step-6:-Random-Forest">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="6.1-Create-RF">6.1 Create RF<a class="anchor-link" href="#6.1-Create-RF">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.classification</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span>
-
-<span class="c1">## TODO : Create a RandomForest with numTrees=20  and maxBins=10000</span>
-
-<span class="n">rf</span> <span class="o">=</span> <span class="err">???</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featuresCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> \
-                            <span class="n">numTrees</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">maxBins</span><span class="o">=</span><span class="err">???</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="6.2-Train-the-RF">6.2 Train the RF<a class="anchor-link" href="#6.2-Train-the-RF">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
-print (&quot;training starting...&quot;)
-## TODO : train in training data
-rf_model = rf.fit(???)
-print (&quot;training done.&quot;)
-
-## TODO : NOtice the time it took for training
-## Is it more or less than decision trees?
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="6.3-Print-RF">6.3 Print RF<a class="anchor-link" href="#6.3-Print-RF">&#182;</a></h3><p><strong>==&gt;Q : How many nodes the tree has?</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## print the model</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">rf_model</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">rf_model</span><span class="o">.</span><span class="n">toDebugString</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="6.4-Create-Predictions">6.4 Create Predictions<a class="anchor-link" href="#6.4-Create-Predictions">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : predict on test data</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">rf_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-
-<span class="n">predictions2</span><span class="o">=</span> <span class="n">predictions</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;rawPrediction&#39;</span><span class="p">,</span> <span class="s1">&#39;probability&#39;</span><span class="p">)</span>
-<span class="n">predictions2</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-7:-Evaluate-the-model.">Step 7: Evaluate the model.<a class="anchor-link" href="#Step-7:-Evaluate-the-model.">&#182;</a></h2><p>Let us check to see how the model did, using accuracy as a measure.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions_test</span> <span class="o">=</span> <span class="n">rf_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>  <span class="c1"># Hint : test</span>
-<span class="n">predictions_train</span> <span class="o">=</span> <span class="n">rf_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>  <span class="c1"># Hint : training</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="7.1-Accuracy">7.1 Accuracy<a class="anchor-link" href="#7.1-Accuracy">&#182;</a></h3>
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -12213,20 +11891,13 @@ print (&quot;training done.&quot;)
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="7.2-Confusion-Matrix">7.2 Confusion Matrix<a class="anchor-link" href="#7.2-Confusion-Matrix">&#182;</a></h3>
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cm</span> <span class="o">=</span> <span class="n">predictions_test</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;LoanStatus&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;LoanStatus&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Confusion Matrix</span>
+<span class="n">cm</span> <span class="o">=</span> <span class="n">predictions_test</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span>
 <span class="n">cm</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
@@ -12235,19 +11906,28 @@ print (&quot;training done.&quot;)
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="2---Hyper-Tuning">2 - Hyper Tuning<a class="anchor-link" href="#2---Hyper-Tuning">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2.1---Explain-Parameters-to-the-model">2.1 - Explain Parameters to the model<a class="anchor-link" href="#2.1---Explain-Parameters-to-the-model">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-
-<span class="n">cm_pd</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
-<span class="n">cm_pd</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;LoanStatus&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1"># print(cm_pd)</span>
-
-<span class="c1"># colormaps : cmap=&quot;YlGnBu&quot; , cmap=&quot;Greens&quot;, cmap=&quot;Blues&quot;,  cmap=&quot;Reds&quot;</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">cm_pd</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Blues&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">explainParams</span><span class="p">())</span>
 </pre></div>
 
 </div>
@@ -12259,9 +11939,7 @@ print (&quot;training done.&quot;)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="7.3---AUC">7.3 - AUC<a class="anchor-link" href="#7.3---AUC">&#182;</a></h3><p>For scewed data 'Area Under Precision Recall' curve might be better indicator.<br>
-<a href="https://stats.stackexchange.com/questions/90779/area-under-the-roc-curve-or-area-under-the-pr-curve-for-imbalanced-data">https://stats.stackexchange.com/questions/90779/area-under-the-roc-curve-or-area-under-the-pr-curve-for-imbalanced-data</a></p>
-
+<h3 id="2.2---Create-grid-search-&amp;-Cross-validator">2.2 - Create grid search &amp; Cross validator<a class="anchor-link" href="#2.2---Create-grid-search-&amp;-Cross-validator">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -12270,17 +11948,80 @@ print (&quot;training done.&quot;)
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">BinaryClassificationEvaluator</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.tuning</span> <span class="k">import</span> <span class="n">ParamGridBuilder</span><span class="p">,</span> <span class="n">CrossValidator</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">,</span> <span class="n">BinaryClassificationEvaluator</span>
 
-<span class="c1"># default metrics for BinaryClassificationEvaluator is &#39;areaUnderCurve&#39;</span>
-<span class="n">evaluator1</span> <span class="o">=</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">(</span><span class="n">rawPredictionCol</span><span class="o">=</span><span class="s2">&quot;rawPrediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s1">&#39;areaUnderROC&#39;</span><span class="p">)</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span>
+                                              <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;AUC for training: &quot;</span> <span class="p">,</span> <span class="n">evaluator1</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_train</span><span class="p">))</span>
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;AUC for test : &quot;</span> <span class="p">,</span> <span class="n">evaluator1</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_test</span><span class="p">))</span>
+<span class="c1">## TODO : Experiment with one of the following evaluators</span>
 
-<span class="n">evaluator2</span> <span class="o">=</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">(</span><span class="n">rawPredictionCol</span><span class="o">=</span><span class="s2">&quot;rawPrediction&quot;</span><span class="p">,</span> <span class="n">metricName</span><span class="o">=</span><span class="s1">&#39;areaUnderPR&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Area under PR for training: &quot;</span> <span class="p">,</span> <span class="n">evaluator2</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_train</span><span class="p">))</span>
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Area under PR for test : &quot;</span> <span class="p">,</span> <span class="n">evaluator2</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_test</span><span class="p">))</span>
+<span class="c1">## MulticlassClassificationEvaluator is a good all purpose evaluator</span>
+<span class="c1"># evaluator = MulticlassClassificationEvaluator(labelCol=&quot;label&quot;, predictionCol=&quot;prediction&quot;,</span>
+<span class="c1">#                                               metricName=&quot;accuracy&quot;)</span>
+
+<span class="c1">## AUC</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">BinaryClassificationEvaluator</span> <span class="p">(</span><span class="n">metricName</span><span class="o">=</span><span class="s1">&#39;areaUnderROC&#39;</span><span class="p">)</span>
+
+<span class="c1">## AreaUnderPR - useful for skewed datasets</span>
+<span class="c1"># evaluator = BinaryClassificationEvaluator(metricName=&#39;areaUnderPR&#39;)</span>
+
+<span class="c1"># Create ParamGrid for Cross Validation</span>
+<span class="c1">## TODO 1 - fill in &#39;regParam&#39; values we want to test  (min 0.0)</span>
+<span class="c1">## TODO 2 - fill in &#39;elasticNetParam&#39; we want to test (values  between 0.0 to 1.0)</span>
+<span class="c1">## TODO 3 - fill in &#39;maxIter&#39; values we want to test (10, 50, 100)</span>
+<span class="n">paramGrid</span> <span class="o">=</span> <span class="p">(</span><span class="n">ParamGridBuilder</span><span class="p">()</span>
+             <span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">regParam</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="err">???</span><span class="p">,</span> <span class="err">???</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+             <span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">elasticNetParam</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="err">???</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+             <span class="o">.</span><span class="n">addGrid</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">maxIter</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="err">???</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+             <span class="o">.</span><span class="n">build</span><span class="p">())</span>
+
+<span class="c1"># TODO : Create 5-fold CrossValidator</span>
+<span class="c1">## Hint : numFolds=5</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">CrossValidator</span><span class="p">(</span><span class="n">estimator</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">estimatorParamMaps</span><span class="o">=</span><span class="n">paramGrid</span><span class="p">,</span> <span class="n">evaluator</span><span class="o">=</span><span class="n">evaluator</span><span class="p">,</span> <span class="n">numFolds</span><span class="o">=</span><span class="err">???</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%</span><span class="k">time</span>
+
+## TODO : Run cross validation on training data
+## Hint : &#39;train&#39;
+print(&quot;cross validation starting ...&quot;)
+cvModel = cv.fit(???)
+print(&quot;cross validation done.&quot;)
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Identify the values for the following hyper parameters that cross validation figured out</span>
+<span class="c1">##     - regParam</span>
+<span class="c1">##     - elasticNetParam</span>
+<span class="c1">##     - maxIter</span>
+<span class="c1">## Hint : look at the output of &#39;explainParams&#39;</span>
+
+<span class="n">bestModel</span> <span class="o">=</span> <span class="n">cvModel</span><span class="o">.</span><span class="n">bestModel</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Best model : &quot;</span><span class="p">,</span> <span class="n">bestModel</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficients: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bestModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Intercept: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bestModel</span><span class="o">.</span><span class="n">intercept</span><span class="p">))</span>
+<span class="nb">print</span> <span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Best model params : </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">bestModel</span><span class="o">.</span><span class="n">explainParams</span><span class="p">())</span>
 </pre></div>
 
 </div>
@@ -12292,12 +12033,57 @@ print (&quot;training done.&quot;)
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-8:-Improve-Accuracy">Step 8: Improve Accuracy<a class="anchor-link" href="#Step-8:-Improve-Accuracy">&#182;</a></h2><h3 id="Add-more-data">Add more data<a class="anchor-link" href="#Add-more-data">&#182;</a></h3><p>In Step-1 change the 'datafile' to the full dataset.<br>
-And see how the accuracy above changes</p>
-<h3 id="Add-more-features">Add more features<a class="anchor-link" href="#Add-more-features">&#182;</a></h3><p>Look at the schema of the full dataset.  Are there any columns you want to add</p>
+<h3 id="2.3---Evaluate">2.3 - Evaluate<a class="anchor-link" href="#2.3---Evaluate">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions_cv_test</span> <span class="o">=</span> <span class="n">cvModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+<span class="n">predictions_cv_train</span> <span class="o">=</span> <span class="n">cvModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+</pre></div>
 
 </div>
 </div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : calculate training &amp; testing accuracy</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Training accuracy for cross validated model : &quot;</span><span class="p">,</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_cv_</span><span class="err">???</span><span class="p">))</span> <span class="c1"># Hint : train</span>
+
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;Test accuracy for cross validated model : &quot;</span><span class="p">,</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_cv_</span><span class="err">???</span><span class="p">))</span>  <span class="c1"># Hint : test</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : Inspect the confusion matrix output</span>
+<span class="c1">## does this CM look better than previous CM?</span>
+
+<span class="n">cm</span> <span class="o">=</span> <span class="n">predictions_cv_test</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span>
+<span class="n">cm</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div>
     </div>
   </div>

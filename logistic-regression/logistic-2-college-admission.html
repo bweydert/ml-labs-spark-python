@@ -12018,22 +12018,10 @@ If you see ZERO coefficients, increase the number of iterations and run again</s
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO : predict on &#39;test&#39; data</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-<span class="n">predictions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sample a few 0 and 1</span>
-<span class="n">predictions</span><span class="o">.</span><span class="n">sampleBy</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">fractions</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">predictions_test</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+<span class="n">predictions_test</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="c1"># sample a few 0 and 1</span>
+<span class="n">predictions_test</span><span class="o">.</span><span class="n">sampleBy</span><span class="p">(</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span> <span class="n">fractions</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12049,41 +12037,100 @@ If you see ZERO coefficients, increase the number of iterations and run again</s
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="6.1-Confusion-Matrix">6.1 Confusion Matrix<a class="anchor-link" href="#6.1-Confusion-Matrix">&#182;</a></h3>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predictions</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="6.2-:--ROC-Curve-&amp;-AUC">6.2 :  ROC Curve &amp; AUC<a class="anchor-link" href="#6.2-:--ROC-Curve-&amp;-AUC">&#182;</a></h3>
-</div>
-</div>
-</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">trainingSummary</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span>
+
+<span class="n">predictions_test</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>  <span class="c1"># Hint : &#39;test&#39;</span>
+<span class="n">predictions_train</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span> <span class="c1">#  Hint : &#39;train&#39;</span>
+
+<span class="c1"># we can also get this from trainingSummary</span>
+<span class="n">predictions_train</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">predictions</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="6.1---Iterations-and-Objective-History">6.1 - Iterations and Objective History<a class="anchor-link" href="#6.1---Iterations-and-Objective-History">&#182;</a></h3><p><strong>==&gt; Q : how many iterations did we do?</strong></p>
+<ul>
+<li>What does that tell you?</li>
+<li>Increase the total number of iterations from 50 to 100, Does it change the results?</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## trainingSummary has an attribute called &#39;totalIterations&#39;  </span>
+<span class="c1">## Hint : use the TAB completion</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;total iterations &quot;</span><span class="p">,</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
+
+<span class="c1">## you can uncomment this and see how the error is diminishing in each iteration</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;objectiveHistory:&quot;</span> <span class="p">,</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">)</span>
+<span class="c1"># for objective in trainingSummary.objectiveHistory:</span>
+<span class="c1">#     print(objective)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="6.2---accuracy">6.2 - accuracy<a class="anchor-link" href="#6.2---accuracy">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span>
+                                              <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training set accuracy = &quot;</span> <span class="p">,</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_train</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test set accuracy = &quot;</span> <span class="p">,</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_test</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="6.3-Confusion-Matrix">6.3 Confusion Matrix<a class="anchor-link" href="#6.3-Confusion-Matrix">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cm</span> <span class="o">=</span> <span class="n">predictions_test</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pivot</span><span class="p">(</span><span class="s1">&#39;prediction&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">na</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;admit&#39;</span><span class="p">)</span>
+<span class="n">cm</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -12096,10 +12143,47 @@ If you see ZERO coefficients, increase the number of iterations and run again</s
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Area Under Curve is part of training summary</span>
-<span class="c1"># use TAB completion :  trainingSummary.TAB</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;areaUnderROC: &quot;</span> <span class="p">,</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
+<span class="n">cm_pd</span> <span class="o">=</span> <span class="n">cm</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
+<span class="n">cm_pd</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;admit&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># print(cm_pd)</span>
+
+<span class="c1"># colormaps : cmap=&quot;YlGnBu&quot; , cmap=&quot;Greens&quot;, cmap=&quot;Blues&quot;,  cmap=&quot;Reds&quot;</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">cm_pd</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Blues&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="6.4-:--ROC-Curve-&amp;-AUC">6.4 :  ROC Curve &amp; AUC<a class="anchor-link" href="#6.4-:--ROC-Curve-&amp;-AUC">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">BinaryClassificationEvaluator</span>
+
+<span class="c1"># default metrics for BinaryClassificationEvaluator is &#39;areaUnderCurve&#39;</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">BinaryClassificationEvaluator</span><span class="p">(</span><span class="n">rawPredictionCol</span><span class="o">=</span><span class="s2">&quot;rawPrediction&quot;</span><span class="p">)</span>
+<span class="c1"># print (&quot;default metrics : &quot; ,evaluator.getMetricName())</span>
+
+<span class="c1"># Area Under Curve is part of training summary</span>
+<span class="c1"># use TAB completion :  trainingSummary.TAB</span>
+<span class="c1"># we can get this from trainingSummary</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;AUC for training: &quot;</span> <span class="p">,</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
+<span class="c1"># or</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;AUC for training: &quot;</span> <span class="p">,</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_train</span><span class="p">))</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;AUC for test : &quot;</span> <span class="p">,</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_test</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -12135,94 +12219,7 @@ If you see ZERO coefficients, increase the number of iterations and run again</s
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="6.2---Iterations-and-Objective-History">6.2 - Iterations and Objective History<a class="anchor-link" href="#6.2---Iterations-and-Objective-History">&#182;</a></h3><p><strong>==&gt; Q : how many iterations did we do?</strong></p>
-<ul>
-<li>What does that tell you?</li>
-<li>Increase the total number of iterations from 50 to 100, Does it change the results?</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## trainingSummary has an attribute called &#39;totalIterations&#39;  </span>
-<span class="c1">## Hint : use the TAB completion</span>
-<span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;total iterations &quot;</span><span class="p">,</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
-
-<span class="c1">## you can uncomment this and see how the error is diminishing in each iteration</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;objectiveHistory:&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">objective</span> <span class="ow">in</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">objectiveHistory</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">objective</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-7:-Run-on-the-test-data">Step 7: Run on the test data<a class="anchor-link" href="#Step-7:-Run-on-the-test-data">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: transform the test data</span>
-<span class="c1">## HINT : test</span>
-<span class="n">predictions</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
-<span class="n">predictions</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="c1">## sample</span>
-<span class="n">predictions</span><span class="o">.</span><span class="n">sampleBy</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">fractions</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-8:-Calcuate-Accuracy-on-Test-Data">Step 8: Calcuate Accuracy on Test Data<a class="anchor-link" href="#Step-8:-Calcuate-Accuracy-on-Test-Data">&#182;</a></h2><p>Evaluate the predictions</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
-
-<span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span>
-                                              <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
-<span class="n">accuracy</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test set accuracy = &quot;</span> <span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-9:-Run-some-predictions-on-new-data">Step 9: Run some predictions on new data<a class="anchor-link" href="#Step-9:-Run-some-predictions-on-new-data">&#182;</a></h2><p>Let's take some new data, and run predictions on that.</p>
+<h2 id="Step-7:-Run-some-predictions-on-new-data">Step 7: Run some predictions on new data<a class="anchor-link" href="#Step-7:-Run-some-predictions-on-new-data">&#182;</a></h2><p>Let's take some new data, and run predictions on that.</p>
 
 </div>
 </div>
@@ -12261,7 +12258,7 @@ If you see ZERO coefficients, increase the number of iterations and run again</s
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-10:-Experiment">Step 10: Experiment<a class="anchor-link" href="#Step-10:-Experiment">&#182;</a></h2><p>Click on 'Cell --&gt; RunAll' and watch the accuracy number below.<br>
+<h2 id="Step-8:-Experiment">Step 8: Experiment<a class="anchor-link" href="#Step-8:-Experiment">&#182;</a></h2><p>Click on 'Cell --&gt; RunAll' and watch the accuracy number below.<br>
 See how it changes?<br>
 Can you explain why?</p>
 
@@ -12273,11 +12270,13 @@ Can you explain why?</p>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trainingSummary</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span>
-<span class="c1"># Area Under Curve</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;areaUnderROC: &quot;</span> <span class="p">,</span> <span class="n">trainingSummary</span><span class="o">.</span><span class="n">areaUnderROC</span><span class="p">)</span>
-<span class="n">accuracy</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span> 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test set accuracy = &quot;</span> <span class="p">,</span> <span class="n">accuracy</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.evaluation</span> <span class="k">import</span> <span class="n">MulticlassClassificationEvaluator</span>
+
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">MulticlassClassificationEvaluator</span><span class="p">(</span><span class="n">labelCol</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">predictionCol</span><span class="o">=</span><span class="s2">&quot;prediction&quot;</span><span class="p">,</span>
+                                              <span class="n">metricName</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Training set accuracy = &quot;</span> <span class="p">,</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_train</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test set accuracy = &quot;</span> <span class="p">,</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">predictions_test</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -12289,7 +12288,7 @@ Can you explain why?</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="10.1---Why-do-you-think-the-accuracy-varies-for-each-run?">10.1 - Why do you think the accuracy varies for each run?<a class="anchor-link" href="#10.1---Why-do-you-think-the-accuracy-varies-for-each-run?">&#182;</a></h3><p>Try this, at Step-3, supply a seed parameter (can be any number) and do the run again.<br>
+<h3 id="8.1---Why-do-you-think-the-accuracy-varies-for-each-run?">8.1 - Why do you think the accuracy varies for each run?<a class="anchor-link" href="#8.1---Why-do-you-think-the-accuracy-varies-for-each-run?">&#182;</a></h3><p>Try this, at Step-3, supply a seed parameter (can be any number) and do the run again.<br>
 Do you see the accuracy varying now?<br>
 Can you explain the behavior?</p>
 
@@ -12300,7 +12299,7 @@ Can you explain the behavior?</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="10.2---Adjust-regularization-(lambda)-parameter">10.2 - Adjust regularization (lambda) parameter<a class="anchor-link" href="#10.2---Adjust-regularization-(lambda)-parameter">&#182;</a></h3><p>Vary 'regparam' in <strong>step 4</strong> from 0.1 to 0.9.<br>
+<h3 id="8.2---Adjust-regularization-(lambda)-parameter">8.2 - Adjust regularization (lambda) parameter<a class="anchor-link" href="#8.2---Adjust-regularization-(lambda)-parameter">&#182;</a></h3><p>Vary 'regparam' in <strong>step 4</strong> from 0.1 to 0.9.<br>
 Do you see accuracy changing?</p>
 
 </div>
@@ -12310,7 +12309,7 @@ Do you see accuracy changing?</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="10.3---Set-threshold">10.3 - Set threshold<a class="anchor-link" href="#10.3---Set-threshold">&#182;</a></h3><p>We can setup 'threshold' in Step-4, as follows</p>
+<h3 id="8.3---Set-threshold">8.3 - Set threshold<a class="anchor-link" href="#8.3---Set-threshold">&#182;</a></h3><p>We can setup 'threshold' in Step-4, as follows</p>
 <div class="highlight"><pre><span></span><span class="n">lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 <span class="n">lr</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.7</span>  <span class="c1"># values between 0 and 1.0</span>
 </pre></div>
@@ -12323,7 +12322,7 @@ Do you see accuracy changing?</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="10.4---Class-discussion">10.4 - Class discussion<a class="anchor-link" href="#10.4---Class-discussion">&#182;</a></h3><p>How do you find the right 'lambda' ..etc values?<br>
+<h3 id="8.4---Class-discussion">8.4 - Class discussion<a class="anchor-link" href="#8.4---Class-discussion">&#182;</a></h3><p>How do you find the right 'lambda' ..etc values?<br>
 Hint : lots of experimental runs :-)</p>
 
 </div>
@@ -12333,7 +12332,7 @@ Hint : lots of experimental runs :-)</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-11-:-Save-Output">Step 11 : Save Output<a class="anchor-link" href="#Step-11-:-Save-Output">&#182;</a></h2><p><strong>TODO : Inspect the saved data</strong><br>
+<h2 id="Step-9-:-Save-Output">Step 9 : Save Output<a class="anchor-link" href="#Step-9-:-Save-Output">&#182;</a></h2><p><strong>TODO : Inspect the saved data</strong><br>
 (Hint : you can open them in excel)</p>
 
 </div>
