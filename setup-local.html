@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>README</title>
+<title>setup-local</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13116,133 +13116,56 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Machine-Learning-With-Spark-(Python-Track)">Machine Learning With Spark (Python Track)<a class="anchor-link" href="#Machine-Learning-With-Spark-(Python-Track)">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Getting-the-Data">Getting the Data<a class="anchor-link" href="#Getting-the-Data">&#182;</a></h2><p>The dataset is located <a href="https://s3.amazonaws.com/elephantscale-public/data/datasets.zip">here</a></p>
-<p>Option 1: Click on the above link to download</p>
-<p>Option 2: Using command line client like wget</p>
-<div class="highlight"><pre><span></span>$    wget <span class="s1">&#39;https://s3.amazonaws.com/elephantscale-public/data/datasets.zip&#39;</span>
+<h1 id="Setup-your-local-laptop-for-the-labs">Setup your local laptop for the labs<a class="anchor-link" href="#Setup-your-local-laptop-for-the-labs">&#182;</a></h1><p>This guide will walk you through how to setup a local setup to run the labs.</p>
+<h2 id="Operating-System">Operating System<a class="anchor-link" href="#Operating-System">&#182;</a></h2><p>Setup is easier if you have either <strong>MacOS or Linux</strong>.<br>
+If you are on Windows, download the <a href="https://github.com/elephantscale/sandbox">sandbox</a> and do the setup in the sandbox.</p>
+<h2 id="Software-Needed">Software Needed<a class="anchor-link" href="#Software-Needed">&#182;</a></h2><ul>
+<li>Java version 8 or later</li>
+<li>Anaconda Python version 3.x</li>
+<li>A few more python packages</li>
+<li>Spark version 2.3 or latest</li>
+<li>our data files</li>
+</ul>
+<h2 id="Install-Process">Install Process<a class="anchor-link" href="#Install-Process">&#182;</a></h2><h3 id="1:-Java-8">1: Java 8<a class="anchor-link" href="#1:-Java-8">&#182;</a></h3><p>Download and install JDK (not JRE) v8 or later from <a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">here</a>.<br>
+Verify you have the correct version by doing</p>
+
+<pre><code>    java -version</code></pre>
+<h3 id="2:-Anaconda-Python">2: Anaconda Python<a class="anchor-link" href="#2:-Anaconda-Python">&#182;</a></h3><p>Download and install Anaconda Python version 3.x from <a href="https://www.anaconda.com/download/">here</a>.</p>
+<h3 id="3:-Install-following-add-on-packages">3: Install following add-on packages<a class="anchor-link" href="#3:-Install-following-add-on-packages">&#182;</a></h3><div class="highlight"><pre><span></span>$   conda install findspark
 </pre></div>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="How-to-run-the-labs">How to run the labs<a class="anchor-link" href="#How-to-run-the-labs">&#182;</a></h2><p>The labs are in Jupyter notebook format (.html).<br>
-We have provided a handy script to run the labs</p>
-<div class="highlight"><pre><span></span>$   <span class="nb">cd</span>  ~/ml-labs-spark-python
-
-   $   nohup ./run-jupyter.sh <span class="p">&amp;</span>
+<p>If the above doesn't work, try this</p>
+<div class="highlight"><pre><span></span>$  conda install -c conda-forge findspark
 </pre></div>
-<hr>
+<h3 id="4:-Download-Spark">4: Download Spark<a class="anchor-link" href="#4:-Download-Spark">&#182;</a></h3><ul>
+<li>Download latest Spark from <a href="https://spark.apache.org/downloads.html">here</a></li>
+<li>Unzip the downloaded zip file</li>
+<li>where Spark is unzipped is the SPARK_HOME</li>
+</ul>
+<p>(Labs are tested with version 2.3 of Spark)</p>
+<h3 id="5:-Download-data-files">5: Download data files<a class="anchor-link" href="#5:-Download-data-files">&#182;</a></h3><ul>
+<li>download our data files from <a href="https://s3.amazonaws.com/elephantscale-public/data/datasets.zip">here</a></li>
+<li>unzip this bundle</li>
+<li>our labs look for data in <code>/data</code> directory.  You can unzip it there, or create a link like  this<div class="highlight"><pre><span></span>$   sudo  ln  -s   /path/to/data/dir   /data
+</pre></div>
+</li>
+</ul>
+<h3 id="6:-Download-labs-/-solutions">6: Download labs / solutions<a class="anchor-link" href="#6:-Download-labs-/-solutions">&#182;</a></h3><p>Unzip them anywhere</p>
+<h3 id="7:-Edit--run-jupyter.sh">7: Edit  <code>run-jupyter.sh</code><a class="anchor-link" href="#7:-Edit--run-jupyter.sh">&#182;</a></h3><p>This file is located in the labs directory. 
+Edit this file to match your environment.</p>
+<div class="highlight"><pre><span></span><span class="c1">## TODO : edit this match your anaconda location</span>
+<span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$HOME</span>/anaconda3/bin:<span class="nv">$PATH</span>
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Labs">Labs<a class="anchor-link" href="#Labs">&#182;</a></h2><h3 id="Setup">Setup<a class="anchor-link" href="#Setup">&#182;</a></h3><ul>
-<li>on the VM: Follow <a href="setup.html">setup</a> to set up Spark and Jupyter environment on </li>
-<li>(optional) : follow <a href="setup-local.html">setup-local</a> to setup your laptop</li>
-</ul>
-<h3 id="1---Hello-world-&amp;-Testing">1 - Hello world &amp; Testing<a class="anchor-link" href="#1---Hello-world-&amp;-Testing">&#182;</a></h3><ul>
-<li>1.1 - <a href="0-testing/hello-jupyter.html">Hello Jupyter</a></li>
-<li>1.2 - <a href="0-testing/testing-123.html">Test the setup</a></li>
-</ul>
-<h3 id="(Optional)-Spark-Primer">(Optional) Spark Primer<a class="anchor-link" href="#(Optional)-Spark-Primer">&#182;</a></h3><ul>
-<li><a href="spark/shell-python.html">Spark shell</a></li>
-<li><a href="spark/caching-python.html">Spark caching</a></li>
-<li><a href="spark/dataframe-python.html">Spark SQL 1</a></li>
-<li><a href="spark/sql-python.html">Spark SQL 2</a></li>
-</ul>
-<h3 id="2---(Optional)-Exploring-Numpy-and-Pandas">2 - (Optional) Exploring Numpy and Pandas<a class="anchor-link" href="#2---(Optional)-Exploring-Numpy-and-Pandas">&#182;</a></h3><p>quick labs to get familiar with Numpy and Pandas</p>
-<ul>
-<li>2.1 - <a href="python-analysis/numpy.html">Numpy</a></li>
-<li>2.2 - <a href="python-analysis/pandas.html">Pandas</a></li>
-<li>2.3 - BONUS <a href="python-analysis/exploring-pandas.html">Pandas 2 (adv)</a> </li>
-</ul>
-<h3 id="3--Basics-&amp;-Exploration-&amp;-Visualization">3- Basics &amp; Exploration &amp; Visualization<a class="anchor-link" href="#3--Basics-&amp;-Exploration-&amp;-Visualization">&#182;</a></h3><ul>
-<li>3.1 - Reference only : <a href="basics/stats-basics.html">Basic Stats</a></li>
-<li>3.2 - <a href="basics/visualizing.html">Basic graphs</a></li>
-<li>3.3 - <a href="exploration/data-cleanup.html">Data Cleanup</a></li>
-<li>3.4 - <a href="exploration/explore-house-sales.html">House Sales Exploration</a></li>
-<li>3.5 - BONUS : <a href="exploration/visualize-house-sales.html">House Sales Visualization</a></li>
-<li>3.6 - BONUS / Adv : <a href="exploration/1-explore-prosper.html">Prosper Loan Exploration</a></li>
-<li>3.7 - BONUS / Adv : <a href="exploration/2-explore-walmart.html">Walmart Triptype Exploration</a></li>
-</ul>
-<h3 id="4---Feature-Engineering">4 - Feature Engineering<a class="anchor-link" href="#4---Feature-Engineering">&#182;</a></h3><ul>
-<li>4.1 - Optional / BONUS : <a href="feature-engineering/election.html">Presidential Election Contribution Data</a></li>
-</ul>
-<h3 id="5---Spark-ML-Basics">5 - Spark ML Basics<a class="anchor-link" href="#5---Spark-ML-Basics">&#182;</a></h3><ul>
-<li>5.1 - <a href="spark-ml/spark-ml-basics.html">ML Basics</a></li>
-<li>5.2 - optional : <a href="spark-ml/pipeline-1-basics-prosper.html">ML pipelines</a></li>
-<li>5.3 - BONUS : <a href="spark-ml/pipeline-2-adv-prosper.html">ML pipelines adv</a></li>
-</ul>
-<h3 id="6---Linear-Regression">6 - Linear Regression<a class="anchor-link" href="#6---Linear-Regression">&#182;</a></h3><ul>
-<li>6.1 - <a href="linear-regression/1-lr-tips.html">Linear Regression 1 : Intro : Tips data</a></li>
-<li>6.2 - <a href="linear-regression/2-mlr-house-prices.html">Linear Regresssion 2 : Multiple : House Prices</a></li>
-<li>6.3 - BONUS : <a href="linear-regression/3-mlr-AIC-house-prices.html">Linear Regresssion 3: AIC House Prices</a></li>
-</ul>
-<h3 id="7---Logistic-Regression">7 - Logistic Regression<a class="anchor-link" href="#7---Logistic-Regression">&#182;</a></h3><ul>
-<li>7.1 - <a href="logistic-regression/logistic-1-credit-approval.html">Logistic Regression 1: (Single) Credit card intro</a></li>
-<li>7.2 - <a href="logistic-regression/logistic-2-college-admission.html">Logistic Regression 2: (Multi) College Admission</a></li>
-</ul>
-<h3 id="8---Cross-Validation-&amp;-Hyper-Parameter-Tuning">8 - Cross Validation &amp; Hyper Parameter Tuning<a class="anchor-link" href="#8---Cross-Validation-&amp;-Hyper-Parameter-Tuning">&#182;</a></h3><ul>
-<li>8.1 - <a href="cross-validation/cross-validation1.html">Cross validation 1 : choosing the best model</a></li>
-</ul>
-<h3 id="9----Classification-:-SVM">9 -  Classification : SVM<a class="anchor-link" href="#9----Classification-:-SVM">&#182;</a></h3><ul>
-<li>9.1 -  <a href="svm/svm-1-college.html">SVM 1-  College admissions</a></li>
-<li>9.2 -  <a href="svm/svm-2-churn.html">SVM 2- Customer chrun analysis</a></li>
-</ul>
-<h3 id="10---Classification-:-Naive-Bayes">10 - Classification : Naive Bayes<a class="anchor-link" href="#10---Classification-:-Naive-Bayes">&#182;</a></h3><ul>
-<li>10.1 -  <a href="naive-bayes/naive-bayes-1-spam.html">Naive Bayes 1: Spam classification</a></li>
-<li>10.2 -  <a href="naive-bayes/naive-bayes-2-income-classifier.html">Naive Bayes 2: Income classification</a></li>
-</ul>
-<h3 id="Mid-Course-Workshop-(end-of-day-2,-time-permitting)">Mid-Course Workshop (end of day-2, time permitting)<a class="anchor-link" href="#Mid-Course-Workshop-(end-of-day-2,-time-permitting)">&#182;</a></h3><p>We are going to use 'Diabetes' dataset.  This is an 'open ended lab'.<br>
-Start with a fresh notebook.  And see if you can predict the outcome.<br>
-Also try different algorithms and see which one performs better :-)</p>
-<ul>
-<li><a href="workshops/diabetes-prediction.html">Diabetes prediction</a></li>
-</ul>
-<h3 id="11.-Classification:-Decision-Trees-/-Random-Forests">11. Classification: Decision Trees / Random Forests<a class="anchor-link" href="#11.-Classification:-Decision-Trees-/-Random-Forests">&#182;</a></h3><h4 id="Decision-Trees">Decision Trees<a class="anchor-link" href="#Decision-Trees">&#182;</a></h4><ul>
-<li>11.1 - <a href="decision-trees/decision-tree-1-college-admission.html">Decision Trees 1: College Admission</a></li>
-<li>11.2 - <a href="decision-trees/decision-tree-2-prosper.html">Decision Trees 2: Prosper Loan Data 1</a></li>
-<li>11.3 - <strong>BONUS</strong> <a href="decision-trees/decision-tree-3-prosper2-pipeline.html">Decision Trees 3: Prosper Loan Data 2 (advanced - uses pipelines)</a> </li>
-</ul>
-<h4 id="Random-Forests">Random Forests<a class="anchor-link" href="#Random-Forests">&#182;</a></h4><ul>
-<li>11.4 - <a href="decision-trees/random-forest-1-prosper.html">Random Forests 1: Prosper Loan Data</a></li>
-<li>11.5 - <a href="decision-trees/random-forest-2-election-classification.html">Random Forests 2: Election Data Classification</a></li>
-<li>11.6 - <strong>BONUS</strong> <a href="decision-trees/random-forest-3-election-regression.html">Random Forests 3: Eleciton Data  Regresssion</a></li>
-</ul>
-<h3 id="12---Clustering">12 - Clustering<a class="anchor-link" href="#12---Clustering">&#182;</a></h3><ul>
-<li>12.1 -  <a href="clustering/kmeans-1-mtcars.html">K-means 1:  intro - MTCars</a></li>
-<li>12.2 -  <a href="clustering/kmeans-2-uber-pickups.html">KMeans 2 : Clustering Uber trips</a>  </li>
-<li>12.3 -  <strong>Bonus</strong> : <a href="clustering/kmeans-3-walmart.html">KMeans Clustering Walmart trip types</a></li>
-</ul>
-<h3 id="13---Dimensionality-Reduction">13 - Dimensionality Reduction<a class="anchor-link" href="#13---Dimensionality-Reduction">&#182;</a></h3><ul>
-<li>13.1 -  <a href="dim-reduction/pca-1-wine-quality.html">PCA 1 - wine quality data</a></li>
-</ul>
-<h3 id="14---Recommendations">14 - Recommendations<a class="anchor-link" href="#14---Recommendations">&#182;</a></h3><ul>
-<li>14.2 -  <a href="recommendations/movielens.html">Recommendation 1 : Movie Lens data</a></li>
-<li>14.1 -  <a href="recommendations/recommender.html">Recommendation 2 : Music with Audio scrobbler data</a></li>
-</ul>
-<h3 id="15---Workshops">15 - Workshops<a class="anchor-link" href="#15---Workshops">&#182;</a></h3><p>These are designed to be team projects.<br>
-Choose one of the following dataset to analyze.<br>
-Run your analysys, discuss your finding with the class.</p>
-<p><strong>Datasets</strong></p>
-<ul>
-<li>San Francisco Crime Data (911 call data)</li>
-<li>Netflix prize data</li>
-</ul>
-<p><a href="workshops/README.html">Read more here</a></p>
+<span class="c1">## TODO : Edit this line, to match your spark location</span>
+<span class="nb">export</span> <span class="nv">SPARK_HOME</span><span class="o">=</span><span class="nv">$HOME</span>/spark
+
+
+jupyter lab
+</pre></div>
+<h3 id="8:-Run-the-labs">8: Run the labs<a class="anchor-link" href="#8:-Run-the-labs">&#182;</a></h3><div class="highlight"><pre><span></span>$   ./run-jupyter.sh
+</pre></div>
+<h3 id="9:-Open-and-run-testing123.ipynb-file">9: Open and run <code>testing123.ipynb</code> file<a class="anchor-link" href="#9:-Open-and-run-testing123.ipynb-file">&#182;</a></h3><p>This file will check your setup.<br>
+If there are no errors here, then you are good to go</p>
+<h3 id="10:-Open-README.ipynb">10: Open <code>README.ipynb</code><a class="anchor-link" href="#10:-Open-README.ipynb">&#182;</a></h3><p>And practice!</p>
 
 </div>
 </div>
