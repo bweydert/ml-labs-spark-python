@@ -11783,23 +11783,25 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Getting-the-Data">Getting the Data<a class="anchor-link" href="#Getting-the-Data">&#182;</a></h2><p>The dataset is located <a href="https://s3.amazonaws.com/elephantscale-public/data/datasets.zip">here</a></p>
-<p>Option 1: Click on the above link to download</p>
-<p>Option 2: Using command line client like wget</p>
-<div class="highlight"><pre><span></span>$    wget <span class="s1">&#39;https://s3.amazonaws.com/elephantscale-public/data/datasets.zip&#39;</span>
+<p>To run this lab:</p>
+<div class="highlight"><pre><span></span>$   <span class="nb">cd</span>  /path/to/lab/dir
+    $   ./run-jupyter.sh
 </pre></div>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Labs">Labs<a class="anchor-link" href="#Labs">&#182;</a></h2><h3 id="Setup">Setup<a class="anchor-link" href="#Setup">&#182;</a></h3><ul>
+<h2 id="Labs">Labs<a class="anchor-link" href="#Labs">&#182;</a></h2><h3 id="Setup">Setup<a class="anchor-link" href="#Setup">&#182;</a></h3><ol>
 <li>on the VM: Follow <a href="setup.html">setup</a> to set up Spark and Jupyter environment on </li>
-<li>(optional) : follow <a href="setup-local.html">setup-local</a> to setup your laptop</li>
 <li><strong>Test your setup by running <a href="0-testing/testing-123.html">Testing123</a></strong></li>
+<li>(optional) : follow <a href="setup-local.html">setup-local</a> to setup your laptop</li>
+</ol>
+<h3 id="Where-to-get-Data">Where to get Data<a class="anchor-link" href="#Where-to-get-Data">&#182;</a></h3><ul>
+<li>You can access the data repository <a href="https://s3.amazonaws.com/elephantscale-public/data/datasets.zip">here</a>  - click link to download.<br>
+To download this from command line<div class="highlight"><pre><span></span>$    wget <span class="s1">&#39;https://s3.amazonaws.com/elephantscale-public/data/datasets.zip&#39;</span>
+</pre></div>
+</li>
+<li>Also here are some popular data sources<ul>
+<li><a href="https://archive.ics.uci.edu/ml/index.php">UCI machine learning repository</a> - very popular repo with lots of real world (and reasonably clean) datasets</li>
+<li><a href="https://www.kaggle.com/datasets">Kaggle data repository</a> - lot's of real world data used in competitions</li>
+</ul>
+</li>
 </ul>
 <h3 id="1---Hello-Jupyter">1 - Hello Jupyter<a class="anchor-link" href="#1---Hello-Jupyter">&#182;</a></h3><ul>
 <li>1.1 - <a href="0-testing/hello-jupyter.html">Hello Jupyter</a></li>
