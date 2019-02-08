@@ -11812,11 +11812,11 @@ Verify you have the correct version by doing</p>
 <h3 id="6:-Download-labs-/-solutions">6: Download labs / solutions<a class="anchor-link" href="#6:-Download-labs-/-solutions">&#182;</a></h3><p>Unzip them anywhere</p>
 <h3 id="7:-Edit--run-jupyter.sh">7: Edit  <code>run-jupyter.sh</code><a class="anchor-link" href="#7:-Edit--run-jupyter.sh">&#182;</a></h3><p>This file is located in the labs directory. 
 Edit this file to match your environment.</p>
-<blockquote><p>TODO : Edit the following lines<br>
-   export PATH=$HOME/anaconda3/bin:$PATH<br>
-   export SPARK_HOME=$$HOME/spark<br>
-   jupyter lab</p>
-</blockquote>
+<div class="highlight"><pre><span></span><span class="c1"># TODO : Edit the following lines   </span>
+<span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$HOME</span>/anaconda3/bin:<span class="nv">$PATH</span>   
+<span class="nb">export</span> <span class="nv">SPARK_HOME</span><span class="o">=</span><span class="nv">$HOME</span>/spark   
+jupyter lab
+</pre></div>
 <h3 id="8:-Run-the-labs">8: Run the labs<a class="anchor-link" href="#8:-Run-the-labs">&#182;</a></h3><div class="highlight"><pre><span></span>$   ./run-jupyter.sh
 </pre></div>
 <h3 id="9:-Open-and-run-testing123.ipynb-file">9: Open and run <code>testing123.ipynb</code> file<a class="anchor-link" href="#9:-Open-and-run-testing123.ipynb-file">&#182;</a></h3><p>This file is under <code>0-testing</code> directory.<br>
