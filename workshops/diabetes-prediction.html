@@ -11775,7 +11775,9 @@ div#notebook {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Predict-Diabetes">Predict Diabetes<a class="anchor-link" href="#Predict-Diabetes">&#182;</a></h2><h2 id="Data">Data<a class="anchor-link" href="#Data">&#182;</a></h2><ul>
+<h1 id="Predict-Diabetes">Predict Diabetes<a class="anchor-link" href="#Predict-Diabetes">&#182;</a></h1><h2 id="Overview">Overview<a class="anchor-link" href="#Overview">&#182;</a></h2><h3 id="This-is-a-group-exercise!">This is a group exercise!<a class="anchor-link" href="#This-is-a-group-exercise!">&#182;</a></h3><p>Work in groups, it makes it more fun.<br>
+Also let's see who can get the best accuracy :-)</p>
+<h2 id="Data">Data<a class="anchor-link" href="#Data">&#182;</a></h2><ul>
 <li>Local data is under '/data/diabetes'</li>
 <li><a href="https://archive.ics.uci.edu/ml/datasets/diabetes">UCI repository link</a></li>
 </ul>
@@ -11883,6 +11885,29 @@ For example, try to print the distribution of 'outcome'</p>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Hints">Hints<a class="anchor-link" href="#Hints">&#182;</a></h2><p>Here are some things you may want to think about</p>
+<h3 id="Data-Prep">Data Prep<a class="anchor-link" href="#Data-Prep">&#182;</a></h3><ul>
+<li><strong>Data Cleanup</strong><br>
+Examine if columns have reasonable values.  Otherwise clean them up (for example column 'c' is blood pressure)</li>
+<li><strong>Scaling</strong><br>
+Do we need to scale data?  Which algorithm would benefit most from scaling?</li>
+</ul>
+<h3 id="Algorithm-Choice">Algorithm Choice<a class="anchor-link" href="#Algorithm-Choice">&#182;</a></h3><ul>
+<li><strong>Classification</strong><br>
+This is a classification problem.  So try the classification algorithms you have learned so far.</li>
+<li><strong>getting zero coefficients?</strong><br>
+Your lambda (<code>regparam</code>) may be too high.  Turn it off (set it to zero) and see what happens</li>
+<li><strong>Algorithm Choice</strong><br>
+Try all algorithms and see which one performs better</li>
+</ul>
+
+</div>
+</div>
 </div>
     </div>
   </div>
