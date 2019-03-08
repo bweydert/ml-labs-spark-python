@@ -8,10 +8,9 @@
 numpy
 pandas
 scipy
-scikit
+scikit-learn
 matplotlib
 seaborn
 jupyter
 jupyterlab
-findspark
 
