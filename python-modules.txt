@@ -1,10 +1,14 @@
 ## to install these packages
 ## option 1 : using conda
-##	$   conda install --file python-modules.txt
+##	$   conda install --file=python-modules.txt
 ## 
 ## option 2 : using pip
 ## 	$   pip install -r python-modules.txt
 
+findspark
+jupyter
+jupyterlab
+matplotlib
 numpy
 pandas
 scipy
