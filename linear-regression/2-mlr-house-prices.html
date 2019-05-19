@@ -13224,9 +13224,8 @@ div#notebook {
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
 
 <span class="c1">## TODO : Build features with  &quot;Bedrooms&quot;, &quot;Bathrooms&quot;, &quot;SqFtTotLiving&quot;, &quot;SqFtLot&quot;</span>
-<span class="c1">## Hint : inputCols = [&#39;Bedrooms&#39;, &#39;Bathrooms&#39;, ??? , ??? ]</span>
 
-<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="err">???</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
+<span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Bedrooms&#39;</span><span class="p">,</span> <span class="s1">&#39;???&#39;</span><span class="p">,</span> <span class="s1">&#39;???&#39;</span><span class="p">,</span> <span class="s1">&#39;???&#39;</span><span class="p">],</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 <span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">housePrices_small</span><span class="p">)</span>
 
 <span class="c1">## TODO : create a label column to mirror &#39;SalePrice&#39;</span>
@@ -13382,6 +13381,14 @@ In Step-2, try this</p>
 <li>look at r2</li>
 </ul>
 <p>Can you explain what is going on :-)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Bonus-Lab-:-Add-more-features">Bonus Lab : Add more features<a class="anchor-link" href="#Bonus-Lab-:-Add-more-features">&#182;</a></h2><p>Try adding more features like 'YrBuilt' and 'LandVal' and see if it increases accuracy</p>
 
 </div>
 </div>
