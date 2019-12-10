@@ -13126,7 +13126,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># initialize Spark Session</span>
@@ -13145,6 +13145,66 @@ div#notebook {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Initializing Spark...
+Spark found in :  /Users/sujee/spark
+Spark config:
+	 executor.memory=2g
+	some_property=some_value
+	spark.app.name=TestApp
+	spark.master=local[*]
+	spark.sql.warehouse.dir=/var/folders/lp/qm_skljd2hl4xtps5vw0tdgm0000gn/T/tmpt8x1x358
+	spark.submit.deployMode=client
+	spark.ui.showConsoleProgress=true
+Spark UI running on port 4040
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+
+            <div>
+                <p><b>SparkSession - in-memory</b></p>
+                
+        <div>
+            <p><b>SparkContext</b></p>
+
+            <p><a href="http://10.5.53.106:4040">Spark UI</a></p>
+
+            <dl>
+              <dt>Version</dt>
+                <dd><code>v2.3.0</code></dd>
+              <dt>Master</dt>
+                <dd><code>local[*]</code></dd>
+              <dt>AppName</dt>
+                <dd><code>TestApp</code></dd>
+            </dl>
+        </div>
+        
+            </div>
+        
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -13155,7 +13215,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>
@@ -13169,10 +13229,30 @@ div#notebook {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>read 27,063 records
+CPU times: user 2.21 ms, sys: 1.71 ms, total: 3.92 ms
+Wall time: 370 ms
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">house_prices</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
@@ -13183,23 +13263,291 @@ div#notebook {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>root
+ |-- DocumentID: integer (nullable = true)
+ |-- Date: string (nullable = true)
+ |-- SalePrice: integer (nullable = true)
+ |-- PropertyID: long (nullable = true)
+ |-- PropertyType: string (nullable = true)
+ |-- ym: string (nullable = true)
+ |-- zhvi_px: integer (nullable = true)
+ |-- zhvi_idx: double (nullable = true)
+ |-- AdjSalePrice: decimal(8,0) (nullable = true)
+ |-- NbrLivingUnits: integer (nullable = true)
+ |-- SqFtLot: integer (nullable = true)
+ |-- SqFtTotLiving: integer (nullable = true)
+ |-- SqFtFinBasement: integer (nullable = true)
+ |-- Bathrooms: double (nullable = true)
+ |-- Bedrooms: integer (nullable = true)
+ |-- BldgGrade: integer (nullable = true)
+ |-- YrBuilt: integer (nullable = true)
+ |-- YrRenovated: integer (nullable = true)
+ |-- TrafficNoise: integer (nullable = true)
+ |-- LandVal: integer (nullable = true)
+ |-- ImpsVal: integer (nullable = true)
+ |-- ZipCode: integer (nullable = true)
+ |-- NewConstruction: boolean (nullable = true)
+
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>DocumentID</th>
+      <td>1</td>
+      <td>2</td>
+      <td>3</td>
+      <td>4</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>Date</th>
+      <td>9/16/14</td>
+      <td>6/16/06</td>
+      <td>1/29/07</td>
+      <td>2/25/08</td>
+      <td>3/29/13</td>
+    </tr>
+    <tr>
+      <th>SalePrice</th>
+      <td>280000</td>
+      <td>1000000</td>
+      <td>745000</td>
+      <td>425000</td>
+      <td>240000</td>
+    </tr>
+    <tr>
+      <th>PropertyID</th>
+      <td>1000102</td>
+      <td>1200013</td>
+      <td>1200019</td>
+      <td>2800016</td>
+      <td>2800024</td>
+    </tr>
+    <tr>
+      <th>PropertyType</th>
+      <td>Multiplex</td>
+      <td>Single Family</td>
+      <td>Single Family</td>
+      <td>Single Family</td>
+      <td>Single Family</td>
+    </tr>
+    <tr>
+      <th>ym</th>
+      <td>9/1/14</td>
+      <td>6/1/06</td>
+      <td>1/1/07</td>
+      <td>2/1/08</td>
+      <td>3/1/13</td>
+    </tr>
+    <tr>
+      <th>zhvi_px</th>
+      <td>405100</td>
+      <td>404400</td>
+      <td>425600</td>
+      <td>418400</td>
+      <td>351600</td>
+    </tr>
+    <tr>
+      <th>zhvi_idx</th>
+      <td>0.930836</td>
+      <td>0.929228</td>
+      <td>0.977941</td>
+      <td>0.961397</td>
+      <td>0.807904</td>
+    </tr>
+    <tr>
+      <th>AdjSalePrice</th>
+      <td>300805</td>
+      <td>1076162</td>
+      <td>761805</td>
+      <td>442065</td>
+      <td>297065</td>
+    </tr>
+    <tr>
+      <th>NbrLivingUnits</th>
+      <td>2</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>SqFtLot</th>
+      <td>9373</td>
+      <td>20156</td>
+      <td>26036</td>
+      <td>8618</td>
+      <td>8620</td>
+    </tr>
+    <tr>
+      <th>SqFtTotLiving</th>
+      <td>2400</td>
+      <td>3764</td>
+      <td>2060</td>
+      <td>3200</td>
+      <td>1720</td>
+    </tr>
+    <tr>
+      <th>SqFtFinBasement</th>
+      <td>0</td>
+      <td>1452</td>
+      <td>900</td>
+      <td>1640</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Bathrooms</th>
+      <td>3</td>
+      <td>3.75</td>
+      <td>1.75</td>
+      <td>3.75</td>
+      <td>1.75</td>
+    </tr>
+    <tr>
+      <th>Bedrooms</th>
+      <td>6</td>
+      <td>4</td>
+      <td>4</td>
+      <td>5</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>BldgGrade</th>
+      <td>7</td>
+      <td>10</td>
+      <td>8</td>
+      <td>7</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>YrBuilt</th>
+      <td>1991</td>
+      <td>2005</td>
+      <td>1947</td>
+      <td>1966</td>
+      <td>1948</td>
+    </tr>
+    <tr>
+      <th>YrRenovated</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>TrafficNoise</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>LandVal</th>
+      <td>70000</td>
+      <td>203000</td>
+      <td>183000</td>
+      <td>104000</td>
+      <td>104000</td>
+    </tr>
+    <tr>
+      <th>ImpsVal</th>
+      <td>229000</td>
+      <td>590000</td>
+      <td>275000</td>
+      <td>229000</td>
+      <td>205000</td>
+    </tr>
+    <tr>
+      <th>ZipCode</th>
+      <td>98002</td>
+      <td>98166</td>
+      <td>98166</td>
+      <td>98168</td>
+      <td>98168</td>
+    </tr>
+    <tr>
+      <th>NewConstruction</th>
+      <td>False</td>
+      <td>True</td>
+      <td>False</td>
+      <td>False</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Step-2:-Create-Features-and-Label-Column-in-Dataframe">Step 2: Create Features and Label Column in Dataframe<a class="anchor-link" href="#Step-2:-Create-Features-and-Label-Column-in-Dataframe">&#182;</a></h2><p>Wow! That's a lot of columns.  Maybe we should foucs on just a few of them.</p>
+<p>Wow! That's a lot of columns.  Maybe we should foucs on just a few of them.</p>
+<p><strong>=&gt; Select only "SalePrice", "Bedrooms", "Bathrooms", "SqFtTotLiving", "SqFtLot" </strong></p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">label_column</span> <span class="o">=</span> <span class="s1">&#39;SalePrice&#39;</span>
 
 <span class="c1">## TODO : experiment by adding more features here</span>
+<span class="c1">## Hint :  &#39;LandVal&#39;</span>
 <span class="n">feature_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Bedrooms&quot;</span><span class="p">,</span> <span class="s2">&quot;Bathrooms&quot;</span><span class="p">,</span> <span class="s2">&quot;SqFtTotLiving&quot;</span><span class="p">,</span> <span class="s2">&quot;SqFtLot&quot;</span><span class="p">]</span>
 
 <span class="n">select_columns</span> <span class="o">=</span> <span class="n">feature_columns</span> <span class="o">+</span> <span class="p">[</span><span class="n">label_column</span><span class="p">]</span>
@@ -13212,10 +13560,10 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">house_prices2</span> <span class="o">=</span> <span class="n">house_prices</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">select_columns</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">house_prices2</span> <span class="o">=</span> <span class="n">house_prices</span><span class="o">.</span><span class="n">select</span> <span class="p">(</span><span class="n">select_columns</span><span class="p">)</span>
 <span class="n">house_prices2</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
@@ -13223,22 +13571,120 @@ div#notebook {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+--------+---------+-------------+-------+---------+
+|Bedrooms|Bathrooms|SqFtTotLiving|SqFtLot|SalePrice|
++--------+---------+-------------+-------+---------+
+|       6|      3.0|         2400|   9373|   280000|
+|       4|     3.75|         3764|  20156|  1000000|
+|       4|     1.75|         2060|  26036|   745000|
+|       5|     3.75|         3200|   8618|   425000|
+|       4|     1.75|         1720|   8620|   240000|
+|       2|      1.5|          930|   1012|   349900|
+|       3|      1.5|         1750|  34465|   327500|
+|       4|     1.75|         1860|  14659|   347000|
+|       2|      1.0|          990|   5324|   220400|
+|       4|      2.0|         1980|  10585|   437500|
+|       2|      1.0|          840|  12750|   150000|
+|       3|      1.0|         1750|   5200|   300000|
+|       2|      1.0|          790|   5240|   292000|
+|       2|      1.0|          790|   5240|   299800|
+|       3|     2.25|         1530|   1245|   370000|
+|       3|     2.75|         2120|   7320|   605000|
+|       2|      2.0|         1130|   1148|   475000|
+|       4|      1.5|         2620|   3485|   425000|
+|       2|      1.5|         1250|    924|   357500|
+|       3|     1.75|         1500|   5253|   455000|
++--------+---------+-------------+-------+---------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Step-2:-Create-Features-and-Label-Column-in-Dataframe">Step 2: Create Features and Label Column in Dataframe<a class="anchor-link" href="#Step-2:-Create-Features-and-Label-Column-in-Dataframe">&#182;</a></h2><p>We will create our "features" column, which is of type vector, and our label column, for which we can just reuse the SquareFootage column.</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="k">import</span> <span class="n">VectorAssembler</span>
 
+<span class="c1">## TODO : Build features with  &quot;Bedrooms&quot;, &quot;Bathrooms&quot;, &quot;SqFtTotLiving&quot;, &quot;SqFtLot&quot;</span>
+<span class="c1">## Hint : inputCols = [&#39;Bedrooms&#39;, &#39;Bathrooms&#39;, ??? , ??? ]</span>
+
 <span class="n">assembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span><span class="n">inputCols</span><span class="o">=</span><span class="n">feature_columns</span><span class="p">,</span> <span class="n">outputCol</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
 <span class="n">featureVector</span> <span class="o">=</span> <span class="n">assembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">house_prices2</span><span class="p">)</span>
 
+<span class="c1">## TODO : create a label column to mirror &#39;SalePrice&#39;</span>
 <span class="n">featureVector</span> <span class="o">=</span> <span class="n">featureVector</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="n">featureVector</span><span class="p">[</span><span class="n">label_column</span><span class="p">])</span>
 <span class="n">featureVector</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+--------+---------+-------------+-------+---------+--------------------+-------+
+|Bedrooms|Bathrooms|SqFtTotLiving|SqFtLot|SalePrice|            features|  label|
++--------+---------+-------------+-------+---------+--------------------+-------+
+|       6|      3.0|         2400|   9373|   280000|[6.0,3.0,2400.0,9...| 280000|
+|       4|     3.75|         3764|  20156|  1000000|[4.0,3.75,3764.0,...|1000000|
+|       4|     1.75|         2060|  26036|   745000|[4.0,1.75,2060.0,...| 745000|
+|       5|     3.75|         3200|   8618|   425000|[5.0,3.75,3200.0,...| 425000|
+|       4|     1.75|         1720|   8620|   240000|[4.0,1.75,1720.0,...| 240000|
+|       2|      1.5|          930|   1012|   349900|[2.0,1.5,930.0,10...| 349900|
+|       3|      1.5|         1750|  34465|   327500|[3.0,1.5,1750.0,3...| 327500|
+|       4|     1.75|         1860|  14659|   347000|[4.0,1.75,1860.0,...| 347000|
+|       2|      1.0|          990|   5324|   220400|[2.0,1.0,990.0,53...| 220400|
+|       4|      2.0|         1980|  10585|   437500|[4.0,2.0,1980.0,1...| 437500|
+|       2|      1.0|          840|  12750|   150000|[2.0,1.0,840.0,12...| 150000|
+|       3|      1.0|         1750|   5200|   300000|[3.0,1.0,1750.0,5...| 300000|
+|       2|      1.0|          790|   5240|   292000|[2.0,1.0,790.0,52...| 292000|
+|       2|      1.0|          790|   5240|   299800|[2.0,1.0,790.0,52...| 299800|
+|       3|     2.25|         1530|   1245|   370000|[3.0,2.25,1530.0,...| 370000|
+|       3|     2.75|         2120|   7320|   605000|[3.0,2.75,2120.0,...| 605000|
+|       2|      2.0|         1130|   1148|   475000|[2.0,2.0,1130.0,1...| 475000|
+|       4|      1.5|         2620|   3485|   425000|[4.0,1.5,2620.0,3...| 425000|
+|       2|      1.5|         1250|    924|   357500|[2.0,1.5,1250.0,9...| 357500|
+|       3|     1.75|         1500|   5253|   455000|[3.0,1.75,1500.0,...| 455000|
++--------+---------+-------------+-------+---------+--------------------+-------+
+only showing top 20 rows
+
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13252,14 +13698,14 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="k">import</span> <span class="n">LinearRegression</span>
 
 <span class="c1">## Hint : Run model with max iterations as 10</span>
 <span class="c1">#lr = LinearRegression(maxIter=???)</span>
-<span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="err">???</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">maxIter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">regParam</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">elasticNetParam</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 <span class="n">lrModel</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">featureVector</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coefficents:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">lrModel</span><span class="o">.</span><span class="n">coefficients</span><span class="p">))</span>
@@ -13267,6 +13713,25 @@ div#notebook {
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Coefficents:[-69405.45781195552,25714.1481078027,274.45831276947166,-0.0]
+Intercept: 105562.58117252712
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13281,7 +13746,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;numIterations: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">totalIterations</span><span class="p">)</span>
@@ -13291,10 +13756,31 @@ div#notebook {
 
 <span class="c1">## TODO : print &#39;r2&#39; from training summary</span>
 <span class="c1">## Hint : Use TAB completion</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r2: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="err">???</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r2: </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>numIterations: 11
+objectiveHistory: [0.5000000000000002, 0.4565457266170319, 0.3376986997173243, 0.30010335871879656, 0.2852977093323423, 0.27654782886180707, 0.2701349132960898, 0.26332624819112604, 0.26138384191458414, 0.25967594157902535, 0.25839392000729794]
+RMSE: 246442.225880
+r2: 0.483214
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13325,7 +13811,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -13346,6 +13832,31 @@ div#notebook {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+--------+---------+-------------+-------+--------------------+
+|Bedrooms|Bathrooms|SqFtTotLiving|SqFtLot|            features|
++--------+---------+-------------+-------+--------------------+
+|       5|      3.0|         4400|  10000|[5.0,3.0,4400.0,1...|
+|       3|      2.0|         1800|   5000|[3.0,2.0,1800.0,5...|
+|       2|      1.5|         1550|   4000|[2.0,1.5,1550.0,4...|
++--------+---------+-------------+-------+--------------------+
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -13357,17 +13868,42 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## TODO: transform dataframe with new feature vector to get predictions</span>
 <span class="c1">## Hint : new_featureVector</span>
 
-<span class="n">predicted_prices</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="err">???</span><span class="p">)</span>
+<span class="n">predicted_prices</span> <span class="o">=</span> <span class="n">lrModel</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">new_featureVector</span><span class="p">)</span>
 <span class="n">predicted_prices</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+--------+---------+-------------+-------+--------------------+------------------+
+|Bedrooms|Bathrooms|SqFtTotLiving|SqFtLot|            features|        prediction|
++--------+---------+-------------+-------+--------------------+------------------+
+|       5|      3.0|         4400|  10000|[5.0,3.0,4400.0,1...|1043294.3126218329|
+|       3|      2.0|         1800|   5000|[3.0,2.0,1800.0,5...|442799.46693731495|
+|       2|      1.5|         1550|   4000|[2.0,1.5,1550.0,4...| 430733.2725030012|
++--------+---------+-------------+-------+--------------------+------------------+
+
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -13385,17 +13921,6 @@ In Step-2, try this</p>
 <li>look at r2</li>
 </ul>
 <p>Can you explain what is going on :-)</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Bonus-Lab-:-Add-more-features">Bonus Lab : Add more features<a class="anchor-link" href="#Bonus-Lab-:-Add-more-features">&#182;</a></h2><p>Try adding more features and see if it increases accuracy.<br>
-Add only 'numeric' fields</p>
-<p><strong>Class Competition</strong><br>
-Let's see who can get the best accuracy :-)</p>
 
 </div>
 </div>
